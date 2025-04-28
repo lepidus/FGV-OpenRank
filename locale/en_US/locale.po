@@ -1,0 +1,5 @@
+msgid "plugins.generic.rankingPlugin.displayName"
+msgstr "Ranking Plugin"
+
+msgid "plugins.generic.rankingPlugin.description"
+msgstr "Adds a ranking block with selectable metrics."

@@ -1,0 +1,5 @@
+msgid "plugins.generic.rankingPlugin.displayName"
+msgstr "Plugin de Clasificación"
+
+msgid "plugins.generic.rankingPlugin.description"
+msgstr "Agrega un bloque de clasificación con métricas seleccionables."
