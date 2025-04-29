@@ -2,50 +2,55 @@
 
 import('lib.pkp.classes.plugins.GenericPlugin');
 
-class RankingPlugin extends GenericPlugin {
+class RankingPlugin extends GenericPlugin
+{
+    public function register($category, $path, $mainContextId = null)
+    {
+        $success = parent::register($category, $path);
+        if ($success && $this->getEnabled()) {
+            HookRegistry::register('TemplateManager::display', array($this, 'handleMetricsData'));
+        }
+        return $success;
+    }
 
-	public function register($category, $path, $mainContextId = NULL) {
-		$success = parent::register($category, $path);
-		if ($success && $this->getEnabled()) {
-			HookRegistry::register('TemplateManager::display', array($this, 'handleMetricsData'));
-		}
-		return $success;
-	}
+    public function getDisplayName()
+    {
+        return __('plugins.generic.rankingPlugin.displayName');
+    }
 
-	public function getDisplayName() {
-		return __('plugins.generic.rankingPlugin.displayName');
-	}
+    public function getDescription()
+    {
+        return __('plugins.generic.rankingPlugin.description');
+    }
 
-	public function getDescription() {
-		return __('plugins.generic.rankingPlugin.description');
-	}
-
-	public function handleMetricsData($hookName, $args) {
+    public function handleMetricsData($hookName, $args)
+    {
         $template = $args[1];
 
-		if ($template != 'frontend/pages/indexJournal.tpl') {
-			return false;
-		}
+        if ($template !== 'frontend/pages/indexJournal.tpl') {
+            return false;
+        }
 
-		$templateMgr = $args[0];
-		$request = Application::get()->getRequest();
+        $templateMgr = $args[0];
+        $request = Application::get()->getRequest();
+        $context = $request->getContext();
+        $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
 
-		$limit = 10;
+        $limit = 10;
 
-		$mostRecentSubmissionsIterator = Services::get('submission')->getMany(
-            [
-                'contextId' => '1',
-                'status' => STATUS_PUBLISHED,
-                'orderDirection' => 'DESC',
-                'count' => $limit
-            ]
-        );
+        $mostRecentSubmissionsIterator = Services::get('submission')->getMany([
+            'contextId' => $contextId,
+            'status' => STATUS_PUBLISHED,
+            'orderDirection' => 'DESC',
+            'count' => $limit
+        ]);
 
         $submissionsInSections = [];
         foreach ($mostRecentSubmissionsIterator as $submission) {
-			$submissionsInSections[]['articles'][] = $submission;
+            $submissionsInSections[]['articles'][] = $submission;
         }
 
-		$templateMgr->assign('mostRecentSubmissions', $submissionsInSections);
-	}
+        $templateMgr->assign('mostRecentSubmissions', $submissionsInSections);
+        return false;
+    }
 }
