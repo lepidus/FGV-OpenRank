@@ -51,6 +51,31 @@ class RankingPlugin extends GenericPlugin
         }
 
         $templateMgr->assign('mostRecentSubmissions', $submissionsInSections);
+
+        $data = [
+            'rankingBlock' => $templateMgr->fetch($this->getTemplateResource('ranking.tpl'))
+        ];
+
+        $templateMgr->addJavaScript(
+            'AppData',
+            'app = ' . json_encode($data) . ';',
+            [
+                'inline' => true,
+            ]
+        );
+
+        $templateMgr->addJavaScript(
+            'rankingPluginScript',
+            $request->getBaseUrl() . '/' . $this->getPluginPath() . '/js/insertRankingBlock.js',
+            ['priority' => STYLE_SEQUENCE_LAST]
+        );
+
+        $templateMgr->addStyleSheet(
+            'rankingPluginStyles',
+            $request->getBaseUrl() . '/' . $this->getPluginPath() . '/styles/ranking.css',
+            ['priority' => STYLE_SEQUENCE_LAST]
+        );
+
         return false;
     }
 }
