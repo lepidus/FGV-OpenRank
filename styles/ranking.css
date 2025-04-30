@@ -41,6 +41,10 @@
     text-decoration: none;
 }
 
+.tab-content hr {
+    border: 1px solid #ddd;
+}
+
 .tab-content a:hover {
     text-decoration: underline;
 }
