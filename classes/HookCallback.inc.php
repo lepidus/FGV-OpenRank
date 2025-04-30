@@ -58,7 +58,6 @@ class HookCallback
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/ranking.css',
             ['priority' => STYLE_SEQUENCE_LAST]
         );
-        
     }
 
     private function getMostRecentSubmissions($contextId)

@@ -8,12 +8,12 @@
             rankingTabsDiv.innerHTML = window.app.rankingTemplate;
             document.querySelectorAll('.nav-tabs a[data-toggle="tab"]')
             .forEach(function(tabLink){
-                tabLink.addEventListener('click', function(e){
-                e.preventDefault();
-                document.querySelectorAll('.nav-tabs li').forEach(li=> li.classList.remove('active'));
-                document.querySelectorAll('.tab-pane').forEach(pane=> pane.classList.remove('active'));
-                this.parentElement.classList.add('active');
-                document.querySelector(this.getAttribute('href')).classList.add('active');
+                tabLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.nav-tabs li').forEach(li=> li.classList.remove('active'));
+                    document.querySelectorAll('.tab-pane').forEach(pane=> pane.classList.remove('active'));
+                    this.parentElement.classList.add('active');
+                    document.querySelector(this.getAttribute('href')).classList.add('active');
                 });
             });
         }
