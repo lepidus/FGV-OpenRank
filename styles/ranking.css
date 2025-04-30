@@ -35,6 +35,16 @@
     padding: 1em;
     background: #fff;
 }
+
+.tab-content a {
+    color: #008cba;
+    text-decoration: none;
+}
+
+.tab-content a:hover {
+    text-decoration: underline;
+}
+
 .tab-pane {
     display: none;
 }
