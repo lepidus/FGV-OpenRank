@@ -4,7 +4,7 @@ import('lib.pkp.classes.plugins.GenericPlugin');
 
 class RankingPlugin extends GenericPlugin
 {
-    const LIMIT = 4;
+    private const LIMIT = 4;
 
     public function register($category, $path, $mainContextId = null)
     {
