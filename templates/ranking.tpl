@@ -9,7 +9,7 @@
         <div role="tabpanel" class="tab-pane active" id="mostRecentsSubmissions">
         <div>
             <div style="border: 1px 0px 10px;">
-                <p style="margin: 15px 0px 10px;"><em>Articles most recently published for this journal.</em></p>
+                <p style="margin: 15px 0px 10px;"><em>{translate key="plugins.generic.rankingPlugin.tabs.mostRecents.content.description"}</em></p>
                 <hr>
             </div>
             {foreach from=$mostRecentSubmissions item="submission"}
@@ -20,7 +20,7 @@
                     </div>
                     <p>&nbsp;</p>
                     <div>
-                        <p>Published: {strftime('%b %e, %Y', strtotime($submission->getDatePublished()))}</p>
+                        <p>{translate key="plugins.generic.rankingPlugin.tabs.mostRecents.content.publishedDate" datePublished=strftime('%b %e, %Y', strtotime($submission->getDatePublished()))}</p>
                     </div>
                 </div>
                 <hr>
