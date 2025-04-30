@@ -4,8 +4,11 @@ msgstr "Ranking Plugin"
 msgid "plugins.generic.rankingPlugin.description"
 msgstr "Adds a ranking block with selectable metrics."
 
-msgid "plugins.generic.rankingPlugin.tabs.mostRecents.content.description"
+msgid "plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"
+msgstr "Most recent"
+
+msgid "plugins.generic.rankingPlugin.tabs.mostRecent.content.description"
 msgstr "Articles most recently published for this journal."
 
-msgid "plugins.generic.rankingPlugin.tabs.mostRecents.content.publishedDate"
+msgid "plugins.generic.rankingPlugin.tabs.mostRecent.content.publishedDate"
 msgstr "Published: {$datePublished}"

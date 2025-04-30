@@ -1,7 +1,7 @@
 <div role="tabpanel">
     <ul class="nav nav-tabs" role="tablist">
         <li class="active" role="presentation">
-            <a href="#mostRecentsSubmissions" aria-controls="mostRecentsSubmissions" role="tab" data-toggle="tab">Mais recentes</a>
+            <a href="#mostRecentsSubmissions" aria-controls="mostRecentsSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"}</a>
         </li>
     </ul>
 
@@ -9,7 +9,7 @@
         <div role="tabpanel" class="tab-pane active" id="mostRecentsSubmissions">
         <div>
             <div style="border: 1px 0px 10px;">
-                <p style="margin: 15px 0px 10px;"><em>{translate key="plugins.generic.rankingPlugin.tabs.mostRecents.content.description"}</em></p>
+                <p style="margin: 15px 0px 10px;"><em>{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.content.description"}</em></p>
                 <hr>
             </div>
             {foreach from=$mostRecentSubmissions item="submission"}
@@ -20,7 +20,7 @@
                     </div>
                     <p>&nbsp;</p>
                     <div>
-                        <p>{translate key="plugins.generic.rankingPlugin.tabs.mostRecents.content.publishedDate" datePublished=strftime('%b %e, %Y', strtotime($submission->getDatePublished()))}</p>
+                        <p>{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.content.publishedDate" datePublished=strftime('%b %e, %Y', strtotime($submission->getDatePublished()))}</p>
                     </div>
                 </div>
                 <hr>
