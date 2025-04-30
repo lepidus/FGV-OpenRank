@@ -2,31 +2,26 @@
 
 import('lib.pkp.classes.plugins.GenericPlugin');
 
-class RankingPlugin extends GenericPlugin
-{
+class RankingPlugin extends GenericPlugin {
     private const LIMIT = 4;
 
-    public function register($category, $path, $mainContextId = null)
-    {
+    public function register($category, $path, $mainContextId = null) {
         $success = parent::register($category, $path);
         if ($success && $this->getEnabled()) {
-            HookRegistry::register('TemplateManager::display', array($this, 'handleMetricsData'));
+            HookRegistry::register('TemplateManager::display', [$this, 'handleMetricsData']);
         }
         return $success;
     }
 
-    public function getDisplayName()
-    {
+    public function getDisplayName() {
         return __('plugins.generic.rankingPlugin.displayName');
     }
 
-    public function getDescription()
-    {
+    public function getDescription() {
         return __('plugins.generic.rankingPlugin.description');
     }
 
-    public function handleMetricsData($hookName, $args)
-    {
+    public function handleMetricsData($hookName, $args) {
         $template = $args[1];
 
         if ($template !== 'frontend/pages/indexJournal.tpl') {
@@ -48,8 +43,7 @@ class RankingPlugin extends GenericPlugin
         $templateMgr->assign([
             'mostRecentSubmissions' => $mostRecentSubmissionsIterator,
             'context' => $context
-            ]
-        );
+        ]);
 
         $data = [
             'rankingBlock' => $templateMgr->fetch($this->getTemplateResource('ranking.tpl'))
@@ -58,9 +52,7 @@ class RankingPlugin extends GenericPlugin
         $templateMgr->addJavaScript(
             'AppData',
             'app = ' . json_encode($data) . ';',
-            [
-                'inline' => true,
-            ]
+            ['inline' => true]
         );
 
         $templateMgr->addJavaScript(
