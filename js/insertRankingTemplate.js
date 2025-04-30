@@ -4,8 +4,8 @@
     $(document).ready(function() {
         const rankingTabsDiv = document.querySelector('.rankingTabs');
         
-        if (rankingTabsDiv && window.app && window.app.rankingBlock) {
-            rankingTabsDiv.innerHTML = window.app.rankingBlock;
+        if (rankingTabsDiv && window.app && window.app.rankingTemplate) {
+            rankingTabsDiv.innerHTML = window.app.rankingTemplate;
             document.querySelectorAll('.nav-tabs a[data-toggle="tab"]')
             .forEach(function(tabLink){
                 tabLink.addEventListener('click', function(e){
