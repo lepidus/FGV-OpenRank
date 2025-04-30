@@ -9,7 +9,7 @@ class HookCallback
     {
         $this->plugin = $plugin;
     }
-    
+
     public function handleMetricsData($hookName, $args)
     {
         $template = $args[1];
