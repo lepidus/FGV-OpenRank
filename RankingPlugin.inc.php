@@ -4,6 +4,8 @@ import('lib.pkp.classes.plugins.GenericPlugin');
 
 class RankingPlugin extends GenericPlugin
 {
+    const LIMIT = 4;
+
     public function register($category, $path, $mainContextId = null)
     {
         $success = parent::register($category, $path);
@@ -36,13 +38,11 @@ class RankingPlugin extends GenericPlugin
         $context = $request->getContext();
         $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
 
-        $limit = 10;
-
         $mostRecentSubmissionsIterator = Services::get('submission')->getMany([
             'contextId' => $contextId,
             'status' => STATUS_PUBLISHED,
             'orderDirection' => 'DESC',
-            'count' => $limit
+            'count' => self::LIMIT
         ]);
 
         $templateMgr->assign('mostRecentSubmissions', $mostRecentSubmissionsIterator);
