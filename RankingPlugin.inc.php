@@ -1,21 +1,27 @@
 <?php
 
 import('lib.pkp.classes.plugins.GenericPlugin');
+import('plugins.generic.rankingPlugin.classes.HookCallback');
 
-class RankingPlugin extends GenericPlugin {
+class RankingPlugin extends GenericPlugin
+{
+    public function register($category, $path, $mainContextId = null)
+    {
+        $success = parent::register($category, $path);
+        if ($success && $this->getEnabled()) {
+            $hookCallback = new HookCallback($this);
+            HookRegistry::register('TemplateManager::display', [$hookCallback, 'handleMetricsData']);
+        }
+        return $success;
+    }
 
-	public function register($category, $path, $mainContextId = NULL) {
-		$success = parent::register($category, $path);
-		if ($success && $this->getEnabled()) {
-		}
-		return $success;
-	}
+    public function getDisplayName()
+    {
+        return __('plugins.generic.rankingPlugin.displayName');
+    }
 
-	public function getDisplayName() {
-		return __('plugins.generic.rankingPlugin.displayName');
-	}
-
-	public function getDescription() {
-		return __('plugins.generic.rankingPlugin.description');
-	}
+    public function getDescription()
+    {
+        return __('plugins.generic.rankingPlugin.description');
+    }
 }

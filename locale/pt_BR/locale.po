@@ -3,3 +3,12 @@ msgstr "Plugin de Ranqueamento"
 
 msgid "plugins.generic.rankingPlugin.description"
 msgstr "Adiciona um bloco de ranqueamento com métricas selecionáveis."
+
+msgid "plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"
+msgstr "Mais recentes"
+
+msgid "plugins.generic.rankingPlugin.tabs.mostRecent.content.description"
+msgstr "Artigos publicados mais recentemente nesta revista."
+
+msgid "plugins.generic.rankingPlugin.tabs.mostRecent.content.publishedDate"
+msgstr "Publicado em: {$datePublished}"
