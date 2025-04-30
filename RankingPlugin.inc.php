@@ -2,10 +2,12 @@
 
 import('lib.pkp.classes.plugins.GenericPlugin');
 
-class RankingPlugin extends GenericPlugin {
+class RankingPlugin extends GenericPlugin
+{
     private const LIMIT = 4;
 
-    public function register($category, $path, $mainContextId = null) {
+    public function register($category, $path, $mainContextId = null)
+    {
         $success = parent::register($category, $path);
         if ($success && $this->getEnabled()) {
             HookRegistry::register('TemplateManager::display', [$this, 'handleMetricsData']);
@@ -13,15 +15,18 @@ class RankingPlugin extends GenericPlugin {
         return $success;
     }
 
-    public function getDisplayName() {
+    public function getDisplayName()
+    {
         return __('plugins.generic.rankingPlugin.displayName');
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return __('plugins.generic.rankingPlugin.description');
     }
 
-    public function handleMetricsData($hookName, $args) {
+    public function handleMetricsData($hookName, $args)
+    {
         $template = $args[1];
 
         if ($template !== 'frontend/pages/indexJournal.tpl') {
