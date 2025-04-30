@@ -45,7 +45,11 @@ class RankingPlugin extends GenericPlugin
             'count' => self::LIMIT
         ]);
 
-        $templateMgr->assign('mostRecentSubmissions', $mostRecentSubmissionsIterator);
+        $templateMgr->assign([
+            'mostRecentSubmissions' => $mostRecentSubmissionsIterator,
+            'context' => $context
+            ]
+        );
 
         $data = [
             'rankingBlock' => $templateMgr->fetch($this->getTemplateResource('ranking.tpl'))

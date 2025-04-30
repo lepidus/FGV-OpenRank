@@ -41,8 +41,22 @@
     text-decoration: none;
 }
 
+.tab-content h3 {
+    margin-top: 0;
+}
+
 .tab-content hr {
     border: 1px solid #ddd;
+    margin-top: 21px;
+    margin-bottom: 21px;
+}
+
+.tab-content .article-authors {
+    margin-bottom: 2.7rem;
+}
+
+.tab-content .article-date-published {
+    margin-top: 2px;
 }
 
 .tab-content a:hover {
@@ -54,4 +68,23 @@
 }
 .tab-pane.active {
     display: block;
+}
+
+.article-item {
+    display: flex;
+    gap: 20px;
+}
+
+.article-cover {
+    flex: 0 0 150px;
+    margin: auto;
+}
+
+.article-cover img {
+    max-width: 100%;
+    height: auto;
+}
+
+.article-details {
+    flex: 1;
 }
