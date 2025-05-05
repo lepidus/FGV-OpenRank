@@ -4,7 +4,7 @@
             <a href="#mostRecentsSubmissions" aria-controls="mostRecentsSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"}</a>
         </li>
         <li role="presentation">
-            <a href="#mostReadSubmissions" aria-controls="mostReadSubmissions" role="tab" data-toggle="tab">Most read</a>
+            <a href="#mostReadSubmissions" aria-controls="mostReadSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"}</a>
         </li>
     </ul>
 
@@ -58,7 +58,7 @@
         <div role="tabpanel" class="tab-pane" id="mostReadSubmissions">
             <div>
                 <div>
-                    <p><em>Most read articles in this journal in the last six months.</em></p>
+                    <p><em>{translate key="plugins.generic.rankingPlugin.tabs.mostRead.content.description"}</em></p>
                     <hr>
                 </div>
                 {foreach from=$mostViewedSubmissions item="submission"}
