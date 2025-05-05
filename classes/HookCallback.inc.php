@@ -1,9 +1,10 @@
 <?php
 
+import('plugins.generic.rankingPlugin.classes.RankingSubmission');
+
 class HookCallback
 {
     private $plugin;
-    private const LIMIT = 4;
 
     public function __construct($plugin)
     {
@@ -22,10 +23,11 @@ class HookCallback
         $request = Application::get()->getRequest();
         $context = $request->getContext();
         $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
+        $rankingSubmission = new RankingSubmission($contextId);
 
         $templateMgr->assign([
-            'mostRecentSubmissions' => $this->getMostRecentSubmissions($contextId),
-            'mostViewedSubmissions' => $this->getMostViewedSubmissions($contextId),
+            'mostRecentSubmissions' => $rankingSubmission->getMostRecent(),
+            'mostViewedSubmissions' => $rankingSubmission->getMostViewed(),
             'context' => $context
         ]);
 
@@ -57,41 +59,5 @@ class HookCallback
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/ranking.css',
             ['priority' => STYLE_SEQUENCE_LAST]
         );
-    }
-
-    private function getMostRecentSubmissions($contextId)
-    {
-        $submissions = Services::get('submission')->getMany([
-            'contextId' => $contextId,
-            'status' => STATUS_PUBLISHED,
-            'orderDirection' => 'DESC',
-            'count' => self::LIMIT
-        ]);
-
-        return $submissions;
-    }
-
-    private function getMostViewedSubmissions($contextId) 
-    {
-        $topSubmissions = Services::get('stats')->getOrderedObjects(
-            STATISTICS_DIMENSION_SUBMISSION_ID,
-            STATISTICS_ORDER_DESC,
-            [
-                'contextIds' => [$contextId],
-                'count' => self::LIMIT
-            ]
-        );
-
-        $submissions = [];
-        foreach ($topSubmissions as $topSubmission) {
-            $submissionId = $topSubmission['id'];
-            $submission = Services::get('submission')->get($submissionId);
-            
-            if ($submission) {
-                $submissions[] = $submission;
-            }
-        }
-
-        return $submissions;
     }
 }
