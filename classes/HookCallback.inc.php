@@ -23,10 +23,9 @@ class HookCallback
         $context = $request->getContext();
         $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
 
-        $mostRecentSubmissionsIterator = $this->getMostRecentSubmissions($contextId);
-
         $templateMgr->assign([
-            'mostRecentSubmissions' => $mostRecentSubmissionsIterator,
+            'mostRecentSubmissions' => $this->getMostRecentSubmissions($contextId),
+            'mostViewedSubmissions' => $this->getMostViewedSubmissions($contextId),
             'context' => $context
         ]);
 
@@ -68,6 +67,32 @@ class HookCallback
             'orderDirection' => 'DESC',
             'count' => self::LIMIT
         ]);
+
+        return $submissions;
+    }
+
+    private function getMostViewedSubmissions($contextId) 
+    {
+        $topSubmissions = Services::get('stats')->getOrderedObjects(
+            STATISTICS_DIMENSION_SUBMISSION_ID,
+            STATISTICS_ORDER_DESC,
+            [
+                'contextIds' => [$contextId],
+                'count' => self::LIMIT
+            ]
+        );
+
+        $submissions = [];
+        foreach ($topSubmissions as $topSubmission) {
+            $submissionId = $topSubmission['id'];
+            $submission = Services::get('submission')->get($submissionId);
+            
+            if ($submission) {
+                $submissions[] = [
+                    'submission' => $submission
+                ];
+            }
+        }
 
         return $submissions;
     }
