@@ -10,5 +10,11 @@ msgstr "Mais recentes"
 msgid "plugins.generic.rankingPlugin.tabs.mostRecent.content.description"
 msgstr "Artigos publicados mais recentemente nesta revista."
 
-msgid "plugins.generic.rankingPlugin.tabs.mostRecent.content.publishedDate"
+msgid "plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"
+msgstr "Mais lidos"
+
+msgid "plugins.generic.rankingPlugin.tabs.mostRead.content.description"
+msgstr "Artigos mais lidos nesta revista nos últimos seis meses."
+
+msgid "plugins.generic.rankingPlugin.tabs.content.publishedDate"
 msgstr "Publicado em: {$datePublished}"

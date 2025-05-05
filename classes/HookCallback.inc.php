@@ -1,9 +1,10 @@
 <?php
 
+import('plugins.generic.rankingPlugin.classes.RankingSubmission');
+
 class HookCallback
 {
     private $plugin;
-    private const LIMIT = 4;
 
     public function __construct($plugin)
     {
@@ -22,11 +23,11 @@ class HookCallback
         $request = Application::get()->getRequest();
         $context = $request->getContext();
         $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
-
-        $mostRecentSubmissionsIterator = $this->getMostRecentSubmissions($contextId);
+        $rankingSubmission = new RankingSubmission($contextId);
 
         $templateMgr->assign([
-            'mostRecentSubmissions' => $mostRecentSubmissionsIterator,
+            'mostRecentSubmissions' => $rankingSubmission->getMostRecent(),
+            'mostViewedSubmissions' => $rankingSubmission->getMostViewed(),
             'context' => $context
         ]);
 
@@ -58,17 +59,5 @@ class HookCallback
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/ranking.css',
             ['priority' => STYLE_SEQUENCE_LAST]
         );
-    }
-
-    private function getMostRecentSubmissions($contextId)
-    {
-        $submissions = Services::get('submission')->getMany([
-            'contextId' => $contextId,
-            'status' => STATUS_PUBLISHED,
-            'orderDirection' => 'DESC',
-            'count' => self::LIMIT
-        ]);
-
-        return $submissions;
     }
 }
