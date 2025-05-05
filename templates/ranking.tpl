@@ -47,7 +47,7 @@
                                 <div>{$submission->getAuthorString()|escape}</div>
                             </div>
                             <div class="article-date-published">
-                                <p>{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.content.publishedDate" datePublished=strftime('%b %e, %Y', strtotime($submission->getDatePublished()))}</p>
+                                <p>{translate key="plugins.generic.rankingPlugin.tabs.content.publishedDate" datePublished=strftime('%b %e, %Y', strtotime($submission->getDatePublished()))}</p>
                             </div>
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                                 <div>{$submission->getAuthorString()|escape}</div>
                             </div>
                             <div class="article-date-published">
-                                <p>{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.content.publishedDate" datePublished=strftime('%b %e, %Y', strtotime($submission->getDatePublished()))}</p>
+                                <p>{translate key="plugins.generic.rankingPlugin.tabs.content.publishedDate" datePublished=strftime('%b %e, %Y', strtotime($submission->getDatePublished()))}</p>
                             </div>
                         </div>
                     </div>

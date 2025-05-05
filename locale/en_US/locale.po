@@ -16,5 +16,5 @@ msgstr "Most read"
 msgid "plugins.generic.rankingPlugin.tabs.mostRead.content.description"
 msgstr "Most read articles in this journal in the last six months."
 
-msgid "plugins.generic.rankingPlugin.tabs.mostRecent.content.publishedDate"
+msgid "plugins.generic.rankingPlugin.tabs.content.publishedDate"
 msgstr "Published: {$datePublished}"
