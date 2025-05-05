@@ -88,9 +88,7 @@ class HookCallback
             $submission = Services::get('submission')->get($submissionId);
             
             if ($submission) {
-                $submissions[] = [
-                    'submission' => $submission
-                ];
+                $submissions[] = $submission;
             }
         }
 
