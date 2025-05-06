@@ -1,5 +1,7 @@
 <?php
 
+import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
+
 class RankingSubmission
 {
     private $contextId;
@@ -41,5 +43,16 @@ class RankingSubmission
         }
 
         return $submissions;
+    }
+
+    public function getMostCited()
+    {
+        $mostCitedDoisCache = new MostCitedDois();
+        $mostCitedDois = $mostCitedDoisCache->getMostCitedSubmissionsDois(
+            $this->contextId,
+            "2178-938X",
+            self::LIMIT
+        );
+        return $mostCitedDois;
     }
 }
