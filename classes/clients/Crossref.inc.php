@@ -2,6 +2,7 @@
 
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\ClientException;
 
 class Crossref
 {
@@ -14,7 +15,7 @@ class Crossref
         $this->httpClient = $httpClient;
     }
 
-    public function getMostCitedSubmissions(string $issn, int $limit): array
+    public function fetchMostCitedSubmissions(string $issn, int $limit): array
     {
         try {
             $response = $this->httpClient->request(
@@ -33,6 +34,9 @@ class Crossref
         } catch (ServerException $error) {
             error_log($error->getMessage());
             throw new \Exception(__("##plugins.generic.rankingPlugin.client.serverError##"));
+        } catch (ClientException $error) {
+            error_log($error->getMessage());
+            throw new \Exception(__("##plugins.generic.rankingPlugin.client.clientError##"));
         } catch (GuzzleException $error) {
             throw new \Exception("Crossref Error" . $error->getMessage(), 0, $error);
         }
