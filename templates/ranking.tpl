@@ -18,7 +18,7 @@
                 {foreach from=$mostRecentSubmissions item="submission"}
                     {assign var="publication" value=$submission->getCurrentPublication()}
                     <div class="article-item">
-                        {if $publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())}
+                        {if ($publication && $publication->getLocalizedData('coverImage')) || ($issue && $issue->getLocalizedCoverImage())}
                             <div class="article-cover">
                                 <div class="item cover_image">
                                     <div class="sub_item">
@@ -64,7 +64,7 @@
                 {foreach from=$mostViewedSubmissions item="submission"}
                     {assign var="publication" value=$submission->getCurrentPublication()}
                     <div class="article-item">
-                        {if $publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())}
+                        {if ($publication && $publication->getLocalizedData('coverImage')) || ($issue && $issue->getLocalizedCoverImage())}
                             <div class="article-cover">
                                 <div class="item cover_image">
                                     <div class="sub_item">
