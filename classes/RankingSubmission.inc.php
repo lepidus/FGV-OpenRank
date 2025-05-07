@@ -15,6 +15,7 @@ class RankingSubmission
         return Services::get('submission')->getMany([
             'contextId' => $this->contextId,
             'status' => STATUS_PUBLISHED,
+            'orderBy' => 'datePublished',
             'orderDirection' => 'DESC',
             'count' => self::LIMIT
         ]);
