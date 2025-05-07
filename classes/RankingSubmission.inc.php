@@ -35,7 +35,7 @@ class RankingSubmission
         foreach ($topSubmissions as $topSubmission) {
             $submissionId = $topSubmission['id'];
             $submission = Services::get('submission')->get($submissionId);
-            if ($submission) {
+            if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
                 $submissions[] = $submission;
             }
         }
