@@ -7,7 +7,7 @@
             <a href="#mostReadSubmissions" aria-controls="mostReadSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"}</a>
         </li>
         <li role="presentation">
-            <a href="#mostCitedSubmissions" aria-controls="mostCitedSubmissions" role="tab" data-toggle="tab">Most cited</a>
+            <a href="#mostCitedSubmissions" aria-controls="mostCitedSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"}</a>
         </li>
     </ul>
 
@@ -107,7 +107,7 @@
         <div role="tabpanel" class="tab-pane" id="mostCitedSubmissions">
             <div>
                 <div>
-                    <p><em>Most cited articles published in this journal. These statistics are updated monthly using data sourced exclusively from <a href="https://www.crossref.org/services/cited-by/" target="_blank">CrossRef</a></em></p>
+                    <p><em>{translate key="plugins.generic.rankingPlugin.tabs.mostCited.content.description"}</a></em></p>
                     <hr>
                 </div>
                 {foreach from=$mostCitedSubmissions item="submission"}
