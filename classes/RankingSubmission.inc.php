@@ -45,12 +45,12 @@ class RankingSubmission
         return $submissions;
     }
 
-    public function getMostCited()
+    public function getMostCited($issn)
     {
         $mostCitedDoisCache = new MostCitedDois();
         $mostCitedDois = $mostCitedDoisCache->getMostCitedSubmissionsDois(
             $this->contextId,
-            "2178-938X",
+            $issn,
             self::LIMIT
         );
         return $mostCitedDois;
