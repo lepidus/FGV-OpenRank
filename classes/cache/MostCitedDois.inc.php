@@ -49,7 +49,7 @@ class MostCitedDois
         return $mostCitedDois;
     }
 
-    private function cacheDismiss()
+    public function cacheDismiss()
     {
         return null;
     }

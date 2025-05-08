@@ -53,6 +53,14 @@ class RankingSubmissionService
             $issn,
             self::LIMIT
         );
-        return $mostCitedDois;
+        $submissionDao = DAORegistry::getDAO('SubmissionDAO');
+        $submissions = [];
+        foreach ($mostCitedDois as $doi) {
+            $submission = $submissionDao->getByPubId('doi', $doi, $this->contextId);
+            if ($submission) {
+                $submissions[] = $submission;
+            }
+        }
+        return $submissions;
     }
 }
