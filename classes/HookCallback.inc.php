@@ -1,6 +1,6 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.RankingSubmission');
+import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
 
 class HookCallback
 {
@@ -23,11 +23,11 @@ class HookCallback
         $request = Application::get()->getRequest();
         $context = $request->getContext();
         $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
-        $rankingSubmission = new RankingSubmission($contextId);
+        $rankingSubmissionService = new RankingSubmissionService($contextId);
 
         $templateMgr->assign([
-            'mostRecentSubmissions' => $rankingSubmission->getMostRecent(),
-            'mostViewedSubmissions' => $rankingSubmission->getMostViewed(),
+            'mostRecentSubmissions' => $rankingSubmissionService->getMostRecent(),
+            'mostViewedSubmissions' => $rankingSubmissionService->getMostViewed(),
             'context' => $context
         ]);
 

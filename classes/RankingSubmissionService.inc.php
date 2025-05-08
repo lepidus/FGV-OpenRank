@@ -2,7 +2,7 @@
 
 import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
 
-class RankingSubmission
+class RankingSubmissionService
 {
     private $contextId;
     private const LIMIT = 4;
