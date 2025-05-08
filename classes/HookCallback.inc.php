@@ -24,6 +24,14 @@ class HookCallback
         $context = $request->getContext();
         $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
         $rankingSubmissionService = new RankingSubmissionService($contextId);
+        $issn = $context->getData('issn') ?: $context->getData('printIssn');
+
+        if (!empty($issn)) {
+            $templateMgr->assign(
+                'mostCitedSubmissions',
+                $rankingSubmissionService->getMostCited($issn)
+            );
+        }
 
         $templateMgr->assign([
             'mostRecentSubmissions' => $rankingSubmissionService->getMostRecent(),
