@@ -24,7 +24,7 @@ class HookCallback
         $context = $request->getContext();
         $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
         $rankingSubmissionService = new RankingSubmissionService($contextId);
-        $issn = $context->getData('issn') ?: $context->getData('printIssn');
+        $issn = $context->getData('onlineIssn') ?: $context->getData('printIssn');
 
         if (!empty($issn)) {
             $templateMgr->assign(
