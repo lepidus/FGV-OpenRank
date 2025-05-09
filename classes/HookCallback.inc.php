@@ -11,6 +11,27 @@ class HookCallback
         $this->plugin = $plugin;
     }
 
+    public function setupRankingPluginAPIHandler(string $hookname, Request $request)
+    {
+        $router = $request->getRouter();
+        if (!($router instanceof \APIRouter)) {
+            return;
+        }
+
+        if (str_contains($request->getRequestPath(), 'api/v1/rankingPlugin')) {
+            $this->plugin->import('api.v1.rankingPlugin.RankingPluginHandler');
+            $handler = new RankingPluginHandler();
+        }
+
+        if (!isset($handler)) {
+            return;
+        }
+
+        $router->setHandler($handler);
+        $handler->getApp()->run();
+        exit;
+    }
+
     public function handleMetricsData($hookName, $args)
     {
         $template = $args[1];
