@@ -24,3 +24,6 @@ msgstr "Artículos más citados publicados en esta revista. Estas estadísticas 
 
 msgid "plugins.generic.rankingPlugin.tabs.content.publishedDate"
 msgstr "Publicado: {$datePublished}"
+
+msgid "plugins.generic.rankingPlugin.loading"
+msgstr "Cargando artículos..."

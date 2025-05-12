@@ -44,23 +44,4 @@ class RankingSubmissionService
 
         return $submissions;
     }
-
-    public function getMostCited($issn)
-    {
-        $mostCitedDoisCache = new MostCitedDois();
-        $mostCitedDois = $mostCitedDoisCache->getMostCitedSubmissionsDois(
-            $this->contextId,
-            $issn,
-            self::LIMIT
-        );
-        $submissionDao = DAORegistry::getDAO('SubmissionDAO');
-        $submissions = [];
-        foreach ($mostCitedDois as $doi) {
-            $submission = $submissionDao->getByPubId('doi', $doi, $this->contextId);
-            if ($submission) {
-                $submissions[] = $submission;
-            }
-        }
-        return $submissions;
-    }
 }

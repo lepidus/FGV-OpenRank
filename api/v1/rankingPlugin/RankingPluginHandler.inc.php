@@ -9,19 +9,18 @@ class RankingPluginHandler extends APIHandler
     {
         $this->_handlerPath = 'rankingPlugin';
         $roles = [ROLE_ID_MANAGER];
-        error_log($this->getEndpointPattern());
         $this->_endpoints = array(
             'GET' => array(
                 array(
-                    'pattern' => $this->getEndpointPattern() . '/validate/caches',
-                    'handler' => array($this, 'hasMostCitedDoisCache')
+                    'pattern' => $this->getEndpointPattern() . '/mostCitedSubmissions',
+                    'handler' => array($this, 'getMostCited')
                 )
             ),
         );
         parent::__construct();
     }
 
-    public function hasMostCitedDoisCache($slimRequest, $response, $args)
+    public function getMostCited($slimRequest, $response, $args)
     {
         $request = $this->getRequest();
         $context = $request->getContext();
@@ -40,10 +39,25 @@ class RankingPluginHandler extends APIHandler
         foreach ($mostCitedDois as $doi) {
             $submission = $submissionDao->getByPubId('doi', $doi, $context->getId());
             if ($submission) {
-                $submissions[] = $submission;
+                $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $context->getPath(), 'article', 'view', $submission->getBestId());
+                $mostRecentSubmissionData = [
+                    'submissionUrl' => $submissionUrl,
+                    'title' => $submission->getLocalizedTitle(),
+                    'authorString' => $submission->getAuthorString(),
+                    'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
+                ];
+                $publication = $submission->getCurrentPublication();
+                $issueDao = DAORegistry::getDAO('IssueDAO');
+                $issue = $issueDao->getBySubmissionId($submission->getId());
+
+                if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
+                    $mostRecentSubmissionData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
+                    $mostRecentSubmissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($context->getId());
+                }
+                $submissions[] = $mostRecentSubmissionData;
             }
         }
 
-        return $response->withJson(['hasCache' => $submissions], 200);
+        return $response->withJson(['mostCitedSubmissions' => $submissions], 200);
     }
 }

@@ -45,14 +45,6 @@ class HookCallback
         $context = $request->getContext();
         $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
         $rankingSubmissionService = new RankingSubmissionService($contextId);
-        $issn = $context->getData('onlineIssn') ?: $context->getData('printIssn');
-
-        if (!empty($issn)) {
-            $templateMgr->assign(
-                'mostCitedSubmissions',
-                $rankingSubmissionService->getMostCited($issn)
-            );
-        }
 
         $templateMgr->assign([
             'mostRecentSubmissions' => $rankingSubmissionService->getMostRecent(),
@@ -60,20 +52,28 @@ class HookCallback
             'context' => $context
         ]);
 
-        $rankingTemplate = [
-            'rankingTemplate' => $templateMgr->fetch($this->plugin->getTemplateResource('ranking.tpl'))
+        $rankingPluginApiBaseUrl = $request->getDispatcher()->url(
+            $request,
+            ROUTE_API,
+            $context->getPath(),
+            'rankingPlugin/'
+        );
+
+        $rankingPluginJavaScriptVariables = [
+            'rankingTemplate' => $templateMgr->fetch($this->plugin->getTemplateResource('ranking.tpl')),
+            'rankingPluginApiBaseUrl' => $rankingPluginApiBaseUrl,
         ];
 
-        $this->loadResources($templateMgr, $request, $rankingTemplate);
+        $this->loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables);
 
         return false;
     }
 
-    private function loadResources($templateMgr, $request, $rankingTemplate)
+    private function loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables)
     {
         $templateMgr->addJavaScript(
             'AppData',
-            'app = ' . json_encode($rankingTemplate) . ';',
+            'app = ' . json_encode($rankingPluginJavaScriptVariables) . ';',
             ['inline' => true]
         );
 
