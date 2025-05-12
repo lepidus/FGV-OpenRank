@@ -62,6 +62,7 @@ class HookCallback
         $rankingPluginJavaScriptVariables = [
             'rankingTemplate' => $templateMgr->fetch($this->plugin->getTemplateResource('ranking.tpl')),
             'rankingPluginApiBaseUrl' => $rankingPluginApiBaseUrl,
+            'mostCitedFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostCitedFailed'),
         ];
 
         $this->loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables);

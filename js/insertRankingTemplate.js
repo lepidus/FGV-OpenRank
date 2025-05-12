@@ -19,16 +19,16 @@
         }
         
         $.ajax({
-            url: `${window.app.rankingPluginApiBaseUrl}/mostCitedSubmissions`,
+            url: `${window.app.rankingPluginApiBaseUrl}/mostCitedSubmissionsa`,
             method: 'GET',
             dataType: 'json',
             success: function(data) {
                 renderMostCitedSubmissions(data['mostCitedSubmissions']);
             },
             error: function(xhr, status, error) {
-                console.error('Error loading most cited submissions.', error);
+                console.error(window.app.mostCitedFailedMessage, error);
                 $('#mostCitedSubmissionsContainer').html(
-                    '<div class="alert alert-danger">Error loading most cited submissions.</div>'
+                    `<div class="alert alert-danger">${window.app.mostCitedFailedMessage}</div>`
                 );
             }
         });
@@ -37,7 +37,7 @@
             const container = $('#mostCitedSubmissionsContainer');
             container.empty();
             if (!submissions || !Array.isArray(submissions) || submissions.length === 0) {
-                container.html('<p>Nenhuma submissão citada encontrada.</p>');
+                container.html('<p>Nenhuma publicação encontrada.</p>');
                 return;
             }
             
