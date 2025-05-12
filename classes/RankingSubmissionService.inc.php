@@ -17,6 +17,7 @@ class RankingSubmissionService
         return Services::get('submission')->getMany([
             'contextId' => $this->contextId,
             'status' => STATUS_PUBLISHED,
+            'orderBy' => 'datePublished',
             'orderDirection' => 'DESC',
             'count' => self::LIMIT
         ]);
@@ -37,7 +38,7 @@ class RankingSubmissionService
         foreach ($topSubmissions as $topSubmission) {
             $submissionId = $topSubmission['id'];
             $submission = Services::get('submission')->get($submissionId);
-            if ($submission) {
+            if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
                 $submissions[] = $submission;
             }
         }
