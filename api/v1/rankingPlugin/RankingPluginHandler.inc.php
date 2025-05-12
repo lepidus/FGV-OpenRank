@@ -5,6 +5,8 @@ import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
 
 class RankingPluginHandler extends APIHandler
 {
+    private const LIMIT = 4;
+
     public function __construct()
     {
         $this->_handlerPath = 'rankingPlugin';
@@ -24,16 +26,22 @@ class RankingPluginHandler extends APIHandler
     {
         $request = $this->getRequest();
         $context = $request->getContext();
-        if (!$context) {
-            return $this->handleError(new Exception('Context not found'), $request);
-        }
+
         $issn = $context->getData('onlineIssn') ?: $context->getData('printIssn');
-        $mostCitedDoisCache = new MostCitedDois();
-        $mostCitedDois = $mostCitedDoisCache->getMostCitedSubmissionsDois(
-            $context->getId(),
-            $issn,
-            4
-        );
+        if ($issn) {
+            $mostCitedDoisCache = new MostCitedDois();
+            $mostCitedDois = $mostCitedDoisCache->getMostCitedSubmissionsDois(
+                $context->getId(),
+                $issn,
+                self::LIMIT
+            );
+            $submissions = $this->getAListOfSubmissionsByCachedDois($mostCitedDois, $context, $request);
+            return $response->withJson(['mostCitedSubmissions' => $submissions], 200);
+        }
+    }
+
+    private function getAListOfSubmissionsByCachedDois($mostCitedDois, $context, $request)
+    {
         $submissionDao = DAORegistry::getDAO('SubmissionDAO');
         $submissions = [];
         foreach ($mostCitedDois as $doi) {
@@ -57,7 +65,6 @@ class RankingPluginHandler extends APIHandler
                 $submissions[] = $mostRecentSubmissionData;
             }
         }
-
-        return $response->withJson(['mostCitedSubmissions' => $submissions], 200);
+        return $submissions;
     }
 }
