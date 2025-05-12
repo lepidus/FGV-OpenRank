@@ -1,6 +1,8 @@
 <?php
 
-class RankingSubmission
+import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
+
+class RankingSubmissionService
 {
     private $contextId;
     private const LIMIT = 4;

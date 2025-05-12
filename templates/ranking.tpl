@@ -6,6 +6,9 @@
         <li role="presentation">
             <a href="#mostReadSubmissions" aria-controls="mostReadSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"}</a>
         </li>
+        <li role="presentation">
+            <a href="#mostCitedSubmissions" aria-controls="mostCitedSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"}</a>
+        </li>
     </ul>
 
     <div class="tab-content">
@@ -99,6 +102,19 @@
                     </div>
                     <hr>
                 {/foreach}
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="mostCitedSubmissions">
+            <div>
+                <div>
+                    <p><em>{translate key="plugins.generic.rankingPlugin.tabs.mostCited.content.description"}</a></em></p>
+                    <hr>
+                </div>
+                <div id="mostCitedSubmissionsContainer">
+                    <div class="loading-message">
+                        <p>{translate key="plugins.generic.rankingPlugin.loading"}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

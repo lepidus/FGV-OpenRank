@@ -16,5 +16,29 @@ msgstr "Más leídos"
 msgid "plugins.generic.rankingPlugin.tabs.mostRead.content.description"
 msgstr "Artículos más leídos en esta revista en los últimos seis meses."
 
+msgid "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
+msgstr "Más citados"
+
+msgid "plugins.generic.rankingPlugin.tabs.mostCited.content.description"
+msgstr "Artículos más citados publicados en esta revista. Estas estadísticas se actualizan mensualmente utilizando datos obtenidos exclusivamente de <a href="https://www.crossref.org/services/cited-by/" target="_blank">CrossRef</a>"
+
+msgid "plugins.generic.rankingPlugin.tabs.mostCitedFailed"
+msgstr "Error al intentar encontrar los envíos más citados."
+
 msgid "plugins.generic.rankingPlugin.tabs.content.publishedDate"
 msgstr "Publicado: {$datePublished}"
+
+msgid "plugins.generic.rankingPlugin.loading"
+msgstr "Cargando artículos..."
+
+msgid "plugins.generic.rankingPlugin.NoPublicationsFound"
+msgstr "No se han encontrado publicaciones."
+
+msgid "plugins.generic.rankingPlugin.client.crossref.serverError"
+msgstr "Error al intentar obtener las publicaciones más citadas. La API de Crossref devolvió un error interno."
+
+msgid "plugins.generic.rankingPlugin.client.crossref.clientError"
+msgstr "Error al intentar obtener las publicaciones más citadas. La API de Crossref devolvió un error de cliente."
+
+msgid "plugins.generic.rankingPlugin.client.crossref.transferError"
+msgstr "Error al intentar obtener las publicaciones más citadas. La API de Crossref devolvió un error de transferencia."

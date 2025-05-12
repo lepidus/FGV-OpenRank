@@ -1,6 +1,6 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.RankingSubmission');
+import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
 
 class HookCallback
 {
@@ -9,6 +9,27 @@ class HookCallback
     public function __construct($plugin)
     {
         $this->plugin = $plugin;
+    }
+
+    public function setupRankingPluginAPIHandler(string $hookname, Request $request)
+    {
+        $router = $request->getRouter();
+        if (!($router instanceof \APIRouter)) {
+            return;
+        }
+
+        if (str_contains($request->getRequestPath(), 'api/v1/rankingPlugin')) {
+            $this->plugin->import('api.v1.rankingPlugin.RankingPluginHandler');
+            $handler = new RankingPluginHandler();
+        }
+
+        if (!isset($handler)) {
+            return;
+        }
+
+        $router->setHandler($handler);
+        $handler->getApp()->run();
+        exit;
     }
 
     public function handleMetricsData($hookName, $args)
@@ -23,28 +44,38 @@ class HookCallback
         $request = Application::get()->getRequest();
         $context = $request->getContext();
         $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
-        $rankingSubmission = new RankingSubmission($contextId);
+        $rankingSubmissionService = new RankingSubmissionService($contextId);
 
         $templateMgr->assign([
-            'mostRecentSubmissions' => $rankingSubmission->getMostRecent(),
-            'mostViewedSubmissions' => $rankingSubmission->getMostViewed(),
+            'mostRecentSubmissions' => $rankingSubmissionService->getMostRecent(),
+            'mostViewedSubmissions' => $rankingSubmissionService->getMostViewed(),
             'context' => $context
         ]);
 
-        $rankingTemplate = [
-            'rankingTemplate' => $templateMgr->fetch($this->plugin->getTemplateResource('ranking.tpl'))
+        $rankingPluginApiBaseUrl = $request->getDispatcher()->url(
+            $request,
+            ROUTE_API,
+            $context->getPath(),
+            'rankingPlugin/'
+        );
+
+        $rankingPluginJavaScriptVariables = [
+            'rankingTemplate' => $templateMgr->fetch($this->plugin->getTemplateResource('ranking.tpl')),
+            'rankingPluginApiBaseUrl' => $rankingPluginApiBaseUrl,
+            'mostCitedFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostCitedFailed'),
+            'noPublicationsFoundMessage' => __('plugins.generic.rankingPlugin.NoPublicationsFound'),
         ];
 
-        $this->loadResources($templateMgr, $request, $rankingTemplate);
+        $this->loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables);
 
         return false;
     }
 
-    private function loadResources($templateMgr, $request, $rankingTemplate)
+    private function loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables)
     {
         $templateMgr->addJavaScript(
             'AppData',
-            'app = ' . json_encode($rankingTemplate) . ';',
+            'app = ' . json_encode($rankingPluginJavaScriptVariables) . ';',
             ['inline' => true]
         );
 

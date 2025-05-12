@@ -10,6 +10,7 @@ class RankingPlugin extends GenericPlugin
         $success = parent::register($category, $path);
         if ($success && $this->getEnabled()) {
             $hookCallback = new HookCallback($this);
+            HookRegistry::register('Dispatcher::dispatch', array($hookCallback, 'setupRankingPluginAPIHandler'));
             HookRegistry::register('TemplateManager::display', [$hookCallback, 'handleMetricsData']);
         }
         return $success;
