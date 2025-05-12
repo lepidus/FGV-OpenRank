@@ -6,6 +6,7 @@ import('plugins.generic.rankingPlugin.tests.helpers.ClientInterfaceForTests');
 
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
 
@@ -44,6 +45,23 @@ class CrossrefApiClientTest extends PKPTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
             "##plugins.generic.rankingPlugin.client.clientError##"
+        );
+        $statusCode = $apiClient->fetchMostCitedSubmissions(self::ISSN, self::LIMIT);
+    }
+
+    /**
+     * @test
+    */
+    public function itShoudReturnTransferErrorWhenTryToRetrieveMostCitedSubmissions()
+    {
+        $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
+        $httpClientMock->method('request')
+            ->willThrowException(new TransferException('Transfer error'));
+
+        $apiClient = new Crossref($httpClientMock);
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(
+            "##plugins.generic.rankingPlugin.client.transferError##"
         );
         $statusCode = $apiClient->fetchMostCitedSubmissions(self::ISSN, self::LIMIT);
     }

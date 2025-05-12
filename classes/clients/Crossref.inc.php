@@ -3,6 +3,7 @@
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\TransferException;
 
 class Crossref
 {
@@ -33,12 +34,15 @@ class Crossref
             return json_decode($response->getBody()->getContents(), true);
         } catch (ServerException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("##plugins.generic.rankingPlugin.client.serverError##"));
+            throw new \Exception(__("plugins.generic.rankingPlugin.client.serverError"));
         } catch (ClientException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("##plugins.generic.rankingPlugin.client.clientError##"));
+            throw new \Exception(__("plugins.generic.rankingPlugin.client.clientError"));
+        } catch (TransferException $error) {
+            error_log($error->getMessage());
+            throw new \Exception(__("plugins.generic.rankingPlugin.client.transferError"));
         } catch (GuzzleException $error) {
-            throw new \Exception("Crossref Error" . $error->getMessage(), 0, $error);
+            throw new \Exception("Crossref Client Error" . $error->getMessage(), 0, $error);
         }
     }
 }
