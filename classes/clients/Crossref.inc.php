@@ -34,13 +34,13 @@ class Crossref
             return json_decode($response->getBody()->getContents(), true);
         } catch (ServerException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("plugins.generic.rankingPlugin.client.serverError"));
+            throw new \Exception(__("plugins.generic.rankingPlugin.client.crossref.serverError"));
         } catch (ClientException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("plugins.generic.rankingPlugin.client.clientError"));
+            throw new \Exception(__("plugins.generic.rankingPlugin.client.crossref.clientError"));
         } catch (TransferException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("plugins.generic.rankingPlugin.client.transferError"));
+            throw new \Exception(__("plugins.generic.rankingPlugin.client.crossref.transferError"));
         } catch (GuzzleException $error) {
             throw new \Exception("Crossref Client Error" . $error->getMessage(), 0, $error);
         }

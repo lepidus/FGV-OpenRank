@@ -33,3 +33,12 @@ msgstr "Loading articles..."
 
 msgid "plugins.generic.rankingPlugin.NoPublicationsFound"
 msgstr "No publications found."
+
+msgid "plugins.generic.rankingPlugin.client.crossref.serverError"
+msgstr "Error while trying to retrieve the most cited publications. The Crossref API returned an internal error."
+
+msgid "plugins.generic.rankingPlugin.client.crossref.clientError"
+msgstr "Error while trying to retrieve the most cited publications. The Crossref API returned a client error."
+
+msgid "plugins.generic.rankingPlugin.client.crossref.transferError"
+msgstr "Error while trying to retrieve the most cited publications. The Crossref API returned a transfer error."
