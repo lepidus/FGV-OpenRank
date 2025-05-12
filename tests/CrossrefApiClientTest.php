@@ -27,7 +27,7 @@ class CrossrefApiClientTest extends PKPTestCase
         $apiClient = new Crossref($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "##plugins.generic.rankingPlugin.client.serverError##"
+            "##plugins.generic.rankingPlugin.client.crossref.serverError##"
         );
         $statusCode = $apiClient->fetchMostCitedSubmissions(self::ISSN, self::LIMIT);
     }
@@ -44,7 +44,7 @@ class CrossrefApiClientTest extends PKPTestCase
         $apiClient = new Crossref($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "##plugins.generic.rankingPlugin.client.clientError##"
+            "##plugins.generic.rankingPlugin.client.crossref.clientError##"
         );
         $statusCode = $apiClient->fetchMostCitedSubmissions(self::ISSN, self::LIMIT);
     }
@@ -61,7 +61,7 @@ class CrossrefApiClientTest extends PKPTestCase
         $apiClient = new Crossref($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "##plugins.generic.rankingPlugin.client.transferError##"
+            "##plugins.generic.rankingPlugin.client.crossref.transferError##"
         );
         $statusCode = $apiClient->fetchMostCitedSubmissions(self::ISSN, self::LIMIT);
     }
