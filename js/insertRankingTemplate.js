@@ -26,9 +26,9 @@
                 renderMostCitedSubmissions(data['mostCitedSubmissions']);
             },
             error: function(xhr, status, error) {
-                console.error('Erro ao buscar submissões mais citadas:', error);
+                console.error('Error loading most cited submissions.', error);
                 $('#mostCitedSubmissionsContainer').html(
-                    '<div class="alert alert-danger">Erro ao carregar submissões mais citadas.</div>'
+                    '<div class="alert alert-danger">Error loading most cited submissions.</div>'
                 );
             }
         });
