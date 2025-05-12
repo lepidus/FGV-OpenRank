@@ -30,3 +30,6 @@ msgstr "Published: {$datePublished}"
 
 msgid "plugins.generic.rankingPlugin.loading"
 msgstr "Loading articles..."
+
+msgid "plugins.generic.rankingPlugin.NoPublicationsFound"
+msgstr "No publications found."

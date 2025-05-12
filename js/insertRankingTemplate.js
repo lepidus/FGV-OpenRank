@@ -19,7 +19,7 @@
         }
         
         $.ajax({
-            url: `${window.app.rankingPluginApiBaseUrl}/mostCitedSubmissionsa`,
+            url: `${window.app.rankingPluginApiBaseUrl}/mostCitedSubmissions`,
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -37,7 +37,7 @@
             const container = $('#mostCitedSubmissionsContainer');
             container.empty();
             if (!submissions || !Array.isArray(submissions) || submissions.length === 0) {
-                container.html('<p>Nenhuma publicação encontrada.</p>');
+                container.html(`<p>${window.app.noPublicationsFoundMessage}</p>`);
                 return;
             }
             
