@@ -3,6 +3,7 @@
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\TransferException;
 
 class Altmetrics
 {
@@ -29,6 +30,9 @@ class Altmetrics
         } catch (ClientException $error) {
             error_log($error->getMessage());
             throw new \Exception(__("plugins.generic.rankingPlugin.client.altmetrics.clientError"));
+        } catch (TransferException $error) {
+            error_log($error->getMessage());
+            throw new \Exception(__("plugins.generic.rankingPlugin.client.altmetrics.transferError"));
         } catch (GuzzleException $error) {
             throw new \Exception("Altmetrics Error: " . $error->getMessage(), 0, $error);
         }
