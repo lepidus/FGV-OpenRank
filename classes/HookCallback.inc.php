@@ -76,7 +76,7 @@ class HookCallback
         $schema = $args[0];
 
         $schema->properties->{"altmetricsScore"} = (object) [
-            'type' => 'float',
+            'type' => 'number',
             'apiSummary' => true,
             'validation' => ['nullable'],
         ];
