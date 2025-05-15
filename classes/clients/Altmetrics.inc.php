@@ -7,7 +7,7 @@ use GuzzleHttp\Exception\TransferException;
 
 class Altmetrics
 {
-    private const BASE_URL = ' https://api.altmetric.com/v1/';
+    private const BASE_URL = 'https://api.altmetric.com/v1/';
     private const ALTMETRICS_ENDPOINT = 'doi';
     private $httpClient;
 
@@ -18,10 +18,11 @@ class Altmetrics
 
     public function fetchAltmetrics(string $doi): array
     {
+        $uri = self::BASE_URL . self::ALTMETRICS_ENDPOINT . '/' . $doi;
         try {
             $response = $this->httpClient->request(
                 'GET',
-                self::BASE_URL . self::ALTMETRICS_ENDPOINT . '/' . $doi
+                $uri
             );
             return json_decode($response->getBody()->getContents(), true);
         } catch (ServerException $error) {
