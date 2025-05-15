@@ -71,6 +71,19 @@ class HookCallback
         return false;
     }
 
+    public function addScoreFieldToPublicationSchema($hookName, $args)
+    {
+        $schema = $args[0];
+
+        $schema->properties->{"altmetricsScore"} = (object) [
+            'type' => 'float',
+            'apiSummary' => true,
+            'validation' => ['nullable'],
+        ];
+
+        return false;
+    }
+
     private function loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables)
     {
         $templateMgr->addJavaScript(
