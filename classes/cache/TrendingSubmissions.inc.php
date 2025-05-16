@@ -15,7 +15,7 @@ class TrendingSubmissions
         $this->altmetricsClient = new Altmetrics($this->application->getHttpClient());
     }
 
-    public function getTrendingSubmissions($contextId)
+    public function getTrendingSubmissions($contextId, $contextPath)
     {
         $cacheManager = CacheManager::getManager();
         $cache = $cacheManager->getFileCache(
@@ -80,9 +80,24 @@ class TrendingSubmissions
         $submissions = $queryResults->toAssociativeArray();
 
         $trendingSubmissions = [];
-
+        $request = $this->application->getRequest();
         foreach ($submissions as $submission) {
-            $trendingSubmissions[] = $submission->getId();
+            $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
+            $trendingSubmissionData = [
+                'submissionUrl' => $submissionUrl,
+                'title' => $submission->getLocalizedTitle(),
+                'authorString' => $submission->getAuthorString(),
+                'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
+            ];
+            $publication = $submission->getCurrentPublication();
+            $issueDao = DAORegistry::getDAO('IssueDAO');
+            $issue = $issueDao->getBySubmissionId($submission->getId());
+
+            if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
+                $trendingSubmissionData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
+                $trendingSubmissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+            }
+            $trendingSubmissions[] = $trendingSubmissionData;
         }
 
         $cache->setEntireCache($trendingSubmissions);
