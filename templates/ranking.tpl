@@ -10,7 +10,7 @@
             <a href="#mostCitedSubmissions" aria-controls="mostCitedSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"}</a>
         </li>
         <li role="presentation">
-            <a href="#trendingSubmissions" aria-controls="trendingSubmissions" role="tab" data-toggle="tab">Trending</a>
+            <a href="#trendingSubmissions" aria-controls="trendingSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.trending.defaultTitle"}</a>
         </li>
     </ul>
 
@@ -123,7 +123,7 @@
         <div role="tabpanel" class="tab-pane" id="trendingSubmissions">
             <div>
                 <div>
-                    <p><em>Articles with the highest Altmetrics score, indicating influence and impact.</em></p>
+                    <p><em>{translate key="plugins.generic.rankingPlugin.tabs.trending.content.description"}</em></p>
                     <hr>
                 </div>
                 <div id="trendingSubmissionsContainer">

@@ -41,9 +41,9 @@
                 renderTrendingSubmissions(data['trendingSubmissions']);
             },
             error: function(xhr, status, error) {
-                console.error(window.app.mostCitedFailedMessage, error);
+                console.error(window.app.trendingFailedMessage, error);
                 $('#trendingSubmissionsContainer').html(
-                    `<div class="alert alert-danger">${window.app.mostCitedFailedMessage}</div>`
+                    `<div class="alert alert-danger">${window.app.trendingFailedMessage}</div>`
                 );
             }
         });

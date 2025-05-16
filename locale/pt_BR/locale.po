@@ -25,6 +25,15 @@ msgstr "Artigos mais citados publicados nesta revista. Estas estatísticas são 
 msgid "plugins.generic.rankingPlugin.tabs.mostCitedFailed"
 msgstr "Erro ao tentar buscar submissões mais citadas."
 
+msgid "plugins.generic.rankingPlugin.tabs.trending.defaultTitle"
+msgstr "Em alta"
+
+msgid "plugins.generic.rankingPlugin.tabs.trending.content.description"
+msgstr "Artigos com maior pontuação Altmetrics, indicando influência e impacto."
+
+msgid "plugins.generic.rankingPlugin.tabs.trendingFailed"
+msgstr "Erro ao tentar encontrar as submissões em alta."
+
 msgid "plugins.generic.rankingPlugin.tabs.content.publishedDate"
 msgstr "Publicado em: {$datePublished}"
 
@@ -42,3 +51,12 @@ msgstr "Erro ao tentar obter as publicações mais citadas. A API da Crossref re
 
 msgid "plugins.generic.rankingPlugin.client.crossref.transferError"
 msgstr "Erro ao tentar obter as publicações mais citadas. A API da Crossref retornou um erro de transferência."
+
+msgid "plugins.generic.rankingPlugin.client.altmetrics.serverError"
+msgstr "Erro ao tentar recuperar a pontuação Altmetrics. A API do Altmetrics retornou um erro interno."
+
+msgid "plugins.generic.rankingPlugin.client.altmetrics.clientError"
+msgstr "Erro ao tentar recuperar a pontuação Altmetrics. A API do Altmetrics retornou um erro de cliente."
+
+msgid "plugins.generic.rankingPlugin.client.altmetrics.transferError"
+msgstr "Erro ao tentar recuperar a pontuação Altmetrics. A API do Altmetrics retornou um erro de transferência."

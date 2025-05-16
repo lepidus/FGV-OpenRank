@@ -25,6 +25,15 @@ msgstr "Most cited articles published in this journal. These statistics are upda
 msgid "plugins.generic.rankingPlugin.tabs.mostCitedFailed"
 msgstr "Error when trying to find the most cited submissions."
 
+msgid "plugins.generic.rankingPlugin.tabs.trending.defaultTitle"
+msgstr "Trending"
+
+msgid "plugins.generic.rankingPlugin.tabs.trending.content.description"
+msgstr "Articles with the highest Altmetrics score, indicating influence and impact."
+
+msgid "plugins.generic.rankingPlugin.tabs.trendingFailed"
+msgstr "Error when trying to find the trending submissions."
+
 msgid "plugins.generic.rankingPlugin.tabs.content.publishedDate"
 msgstr "Published: {$datePublished}"
 
@@ -42,3 +51,12 @@ msgstr "Error while trying to retrieve the most cited publications. The Crossref
 
 msgid "plugins.generic.rankingPlugin.client.crossref.transferError"
 msgstr "Error while trying to retrieve the most cited publications. The Crossref API returned a transfer error."
+
+msgid "plugins.generic.rankingPlugin.client.altmetrics.serverError"
+msgstr "Error while trying to retrieve the Altmetrics Score. The Altmetrics API returned an internal error."
+
+msgid "plugins.generic.rankingPlugin.client.altmetrics.clientError"
+msgstr "Error while trying to retrieve the Altmetrics Score. The Altmetrics API returned a client error."
+
+msgid "plugins.generic.rankingPlugin.client.altmetrics.transferError"
+msgstr "Error while trying to retrieve the Altmetrics Score. The Altmetrics API returned a transfer error."

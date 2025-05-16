@@ -63,6 +63,7 @@ class HookCallback
             'rankingTemplate' => $templateMgr->fetch($this->plugin->getTemplateResource('ranking.tpl')),
             'rankingPluginApiBaseUrl' => $rankingPluginApiBaseUrl,
             'mostCitedFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostCitedFailed'),
+            'trendingFailedMessage' => __('plugins.generic.rankingPlugin.tabs.trendingFailed'),
             'noPublicationsFoundMessage' => __('plugins.generic.rankingPlugin.NoPublicationsFound'),
         ];
 
