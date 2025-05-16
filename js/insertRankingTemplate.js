@@ -32,6 +32,21 @@
                 );
             }
         });
+
+        $.ajax({
+            url: `${window.app.rankingPluginApiBaseUrl}/trendingSubmissions`,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                renderTrendingSubmissions(data['trendingSubmissions']);
+            },
+            error: function(xhr, status, error) {
+                console.error(window.app.mostCitedFailedMessage, error);
+                $('#trendingSubmissionsContainer').html(
+                    `<div class="alert alert-danger">${window.app.mostCitedFailedMessage}</div>`
+                );
+            }
+        });
         
         function renderMostCitedSubmissions(submissions) {
             const container = $('#mostCitedSubmissionsContainer');
@@ -69,6 +84,44 @@
                     </div>
                 `;
                 articleItem.append(detailsHtml);
+                
+                container.append(articleItem);
+                container.append('<hr>');
+            });
+        }
+
+        function renderTrendingSubmissions(submissions) {
+            const container = $('#trendingSubmissionsContainer');
+            container.empty();
+            if (!submissions || !Array.isArray(submissions) || submissions.length === 0) {
+                container.html(`<p>${window.app.noPublicationsFoundMessage}</p>`);
+                return;
+            }
+            
+            submissions.forEach(function(submission) {
+                const articleItem = $('<div class="article-item"></div>');
+                
+                const detailsHtml = `
+                    <div class="article-details">
+                        <h3><a href="${submission.submissionUrl}">${submission.title}</a></h3>
+                        <div class="article-authors">
+                            <div>${submission.authorString}</div>
+                        </div>
+                        <div class="article-date-published">
+                            <p>${submission.datePublishedLabel}</p>
+                        </div>
+                    </div>
+                `;
+                articleItem.append(detailsHtml);
+
+                if (submission.altmetricsScore) {
+                    const altmetricsBadgeHtml = `
+                        <div class="article-cover">
+                            <div class='altmetric-embed' data-badge-type='donut' data-doi="${submission.doi}"></div>
+                        </div>
+                    `;
+                    articleItem.append(altmetricsBadgeHtml);
+                }
                 
                 container.append(articleItem);
                 container.append('<hr>');

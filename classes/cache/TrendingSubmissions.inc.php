@@ -90,6 +90,7 @@ class TrendingSubmissions
                 'authorString' => $submission->getAuthorString(),
                 'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
                 'altmetricsScore' => $submission->getData('altmetricsScore'),
+                'doi' => $submission->getCurrentPublication()->getData('pub-id::doi'),
             ];
             $publication = $submission->getCurrentPublication();
             $issueDao = DAORegistry::getDAO('IssueDAO');
