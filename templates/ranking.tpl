@@ -1,7 +1,7 @@
 <div role="tabpanel">
     <ul class="nav nav-tabs" role="tablist">
         <li class="active" role="presentation">
-            <a href="#highlight" aria-controls="highlight" role="tab" data-toggle="tab">Highlight</a>
+            <a href="#highlight" aria-controls="highlight" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"}</a>
         </li>
         <li role="presentation">
             <a href="#mostRecentsSubmissions" aria-controls="mostRecentsSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"}</a>
@@ -30,7 +30,7 @@
                     </div>
                     
                     <div class="article-details highlight">
-                        <p>Launched in 1961, RAE supported the development of administrative thinking in Brazil and the consolidation of the profession of administrator.</p>
+                        <p>{translate key="plugins.generic.rankingPlugin.tabs.highlight.content.videoDescription"}</p>
                     </div>
                 </div>
             </div>

@@ -4,6 +4,12 @@ msgstr "Plugin de Ranqueamento"
 msgid "plugins.generic.rankingPlugin.description"
 msgstr "Adiciona um bloco de ranqueamento com métricas selecionáveis."
 
+msgid "plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"
+msgstr "Destaque"
+
+msgid "plugins.generic.rankingPlugin.tabs.highlight.content.videoDescription"
+msgstr "Lançada em 1961, a RAE apoiou o desenvolvimento do pensamento administrativo no Brasil e a consolidação da profissão de administrador."
+
 msgid "plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"
 msgstr "Mais recentes"
 
