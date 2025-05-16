@@ -1,6 +1,9 @@
 <div role="tabpanel">
     <ul class="nav nav-tabs" role="tablist">
         <li class="active" role="presentation">
+            <a href="#highlight" aria-controls="highlight" role="tab" data-toggle="tab">Highlight</a>
+        </li>
+        <li role="presentation">
             <a href="#mostRecentsSubmissions" aria-controls="mostRecentsSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"}</a>
         </li>
         <li role="presentation">
@@ -15,7 +18,24 @@
     </ul>
 
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="mostRecentsSubmissions">
+        <div role="tabpanel" class="tab-pane active" id="highlight">
+            <div>
+                <div class="article-item">
+                    <div class="article-cover">
+                        <div class="item cover_image">
+                            <div class="sub_item">
+                                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/RhmSruZR2Kw"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="article-details">
+                        <p>Launched in 1961, RAE supported the development of administrative thinking in Brazil and the consolidation of the profession of administrator.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="mostRecentsSubmissions">
             <div>
                 <div>
                     <p><em>{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.content.description"}</em></p>
