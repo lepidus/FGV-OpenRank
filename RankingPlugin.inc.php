@@ -12,6 +12,7 @@ class RankingPlugin extends GenericPlugin
             $hookCallback = new HookCallback($this);
             HookRegistry::register('Dispatcher::dispatch', array($hookCallback, 'setupRankingPluginAPIHandler'));
             HookRegistry::register('TemplateManager::display', [$hookCallback, 'handleMetricsData']);
+            HookRegistry::register('Schema::get::submission', array($hookCallback, 'addScoreFieldToSubmissionSchema'));
         }
         return $success;
     }

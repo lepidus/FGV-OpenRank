@@ -63,10 +63,24 @@ class HookCallback
             'rankingTemplate' => $templateMgr->fetch($this->plugin->getTemplateResource('ranking.tpl')),
             'rankingPluginApiBaseUrl' => $rankingPluginApiBaseUrl,
             'mostCitedFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostCitedFailed'),
+            'trendingFailedMessage' => __('plugins.generic.rankingPlugin.tabs.trendingFailed'),
             'noPublicationsFoundMessage' => __('plugins.generic.rankingPlugin.NoPublicationsFound'),
         ];
 
         $this->loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables);
+
+        return false;
+    }
+
+    public function addScoreFieldToSubmissionSchema($hookName, $args)
+    {
+        $schema = $args[0];
+
+        $schema->properties->{"altmetricsScore"} = (object) [
+            'type' => 'number',
+            'apiSummary' => true,
+            'validation' => ['nullable'],
+        ];
 
         return false;
     }
@@ -88,6 +102,12 @@ class HookCallback
         $templateMgr->addStyleSheet(
             'rankingPluginStyles',
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/ranking.css',
+            ['priority' => STYLE_SEQUENCE_LAST]
+        );
+
+        $templateMgr->addJavaScript(
+            'AltmetricsBadgeScript',
+            'https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js',
             ['priority' => STYLE_SEQUENCE_LAST]
         );
     }

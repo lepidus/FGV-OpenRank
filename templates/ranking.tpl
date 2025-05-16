@@ -9,6 +9,9 @@
         <li role="presentation">
             <a href="#mostCitedSubmissions" aria-controls="mostCitedSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"}</a>
         </li>
+        <li role="presentation">
+            <a href="#trendingSubmissions" aria-controls="trendingSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.trending.defaultTitle"}</a>
+        </li>
     </ul>
 
     <div class="tab-content">
@@ -111,6 +114,19 @@
                     <hr>
                 </div>
                 <div id="mostCitedSubmissionsContainer">
+                    <div class="loading-message">
+                        <p>{translate key="plugins.generic.rankingPlugin.loading"}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="trendingSubmissions">
+            <div>
+                <div>
+                    <p><em>{translate key="plugins.generic.rankingPlugin.tabs.trending.content.description"}</em></p>
+                    <hr>
+                </div>
+                <div id="trendingSubmissionsContainer">
                     <div class="loading-message">
                         <p>{translate key="plugins.generic.rankingPlugin.loading"}</p>
                     </div>

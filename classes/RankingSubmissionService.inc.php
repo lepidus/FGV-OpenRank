@@ -1,7 +1,5 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
-
 class RankingSubmissionService
 {
     private $contextId;
