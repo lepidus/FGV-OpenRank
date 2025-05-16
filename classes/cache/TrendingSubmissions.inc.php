@@ -8,6 +8,7 @@ class TrendingSubmissions
 {
     private $altmetricsClient;
     private $application;
+    private const LIMIT = 4;
 
     public function __construct()
     {
@@ -68,7 +69,7 @@ class TrendingSubmissions
             STATUS_PUBLISHED,
             $contextId
         ];
-        $range = new \DBResultRange(1);
+        $range = new \DBResultRange(self::LIMIT);
 
         $sql = 'SELECT s.* FROM submissions s LEFT JOIN submission_settings ssas ON (s.submission_id = ssas.submission_id AND ssas.setting_name = ?) WHERE s.status = ? AND s.context_id = ? AND ssas.setting_value IS NOT NULL GROUP BY s.submission_id ORDER BY ssas.setting_value DESC';
         $result = $submissionDao->retrieveRange(
@@ -88,6 +89,7 @@ class TrendingSubmissions
                 'title' => $submission->getLocalizedTitle(),
                 'authorString' => $submission->getAuthorString(),
                 'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
+                'altmetricsScore' => $submission->getData('altmetricsScore'),
             ];
             $publication = $submission->getCurrentPublication();
             $issueDao = DAORegistry::getDAO('IssueDAO');
