@@ -24,12 +24,12 @@
                     <div class="article-cover">
                         <div class="item cover_image">
                             <div class="sub_item">
-                                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/RhmSruZR2Kw"></iframe>
+                                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/RhmSruZR2Kw" style="width: 30rem; height: 15rem; border: 0;"></iframe>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="article-details">
+                    <div class="article-details highlight">
                         <p>Launched in 1961, RAE supported the development of administrative thinking in Brazil and the consolidation of the profession of administrator.</p>
                     </div>
                 </div>

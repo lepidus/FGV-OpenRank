@@ -88,3 +88,11 @@
 .article-details {
     flex: 1;
 }
+
+.article-details.highlight {
+    align-content: center;
+}
+
+.article-details.highlight p {
+    margin: 0;
+}
