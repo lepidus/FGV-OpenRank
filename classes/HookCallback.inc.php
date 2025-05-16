@@ -71,7 +71,7 @@ class HookCallback
         return false;
     }
 
-    public function addScoreFieldToPublicationSchema($hookName, $args)
+    public function addScoreFieldToSubmissionSchema($hookName, $args)
     {
         $schema = $args[0];
 
