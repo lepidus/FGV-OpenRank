@@ -2,8 +2,6 @@
 
 import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
 
-define('ONE_DAY_SECONDS', 60 * 60 * 24);
-
 class TrendingSubmissions
 {
     private $altmetricsClient;
