@@ -1,19 +1,10 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
 import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
 
 class TrendingSubmissions
 {
-    private $altmetricsClient;
-    private $application;
     private const LIMIT = 4;
-
-    public function __construct()
-    {
-        $this->application = Application::get();
-        $this->altmetricsClient = new Altmetrics($this->application->getHttpClient());
-    }
 
     public function getTrendingSubmissions($contextId, $contextPath)
     {
@@ -42,10 +33,10 @@ class TrendingSubmissions
             'contextId' => $contextId,
             'status' => STATUS_PUBLISHED
         ]);
-        $request = $this->application->getRequest();
+        $request = Application::get()->getRequest();
         $context = $request->getContext();
         $rankingSubmissionService = new RankingSubmissionService($context->getId(), $context->getPath());
-        $rankingSubmissionService->updatePublishedSubmissionsAltmetricsScore($publishedSubmissions, $this->altmetricsClient, $request);
+        $rankingSubmissionService->updatePublishedSubmissionsAltmetricsScore($publishedSubmissions, $request);
 
         $trendingSubmissions = $rankingSubmissionService->retrieveTrendingSubmissions($request);
 

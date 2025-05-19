@@ -1,5 +1,7 @@
 <?php
 
+import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
+
 class RankingSubmissionService
 {
     private $contextId;
@@ -74,8 +76,9 @@ class RankingSubmissionService
         return $mostCitedSubmissions;
     }
 
-    public function updatePublishedSubmissionsAltmetricsScore($publishedSubmissions, $altmetricsClient, $request)
+    public function updatePublishedSubmissionsAltmetricsScore($publishedSubmissions, $request)
     {
+        $altmetricsClient = new Altmetrics(Application::get()->getHttpClient());
         foreach ($publishedSubmissions as $submission) {
             $publication = $submission->getCurrentPublication();
             if (!empty($publication->getData('pub-id::doi'))) {
