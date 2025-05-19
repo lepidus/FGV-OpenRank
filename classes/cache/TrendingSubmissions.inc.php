@@ -44,6 +44,15 @@ class TrendingSubmissions
 
         $this->updatePublishedSubmissionsAltmetricsScore($publishedSubmissions);
 
+        $trendingSubmissions = $this->retrieveTrendingSubmissions($contextId, $contextPath);
+
+        $cache->setEntireCache($trendingSubmissions);
+        $trendingSubmissions = & $cache->getContents();
+        return $trendingSubmissions;
+    }
+
+    private function retrieveTrendingSubmissions($contextId, $contextPath)
+    {
         $submissionDao = DAORegistry::getDAO('SubmissionDAO');
 
         $params = [
@@ -85,8 +94,6 @@ class TrendingSubmissions
             $trendingSubmissions[] = $trendingSubmissionData;
         }
 
-        $cache->setEntireCache($trendingSubmissions);
-        $trendingSubmissions = & $cache->getContents();
         return $trendingSubmissions;
     }
 
