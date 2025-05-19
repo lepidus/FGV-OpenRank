@@ -44,10 +44,10 @@ class TrendingSubmissions
         ]);
         $request = $this->application->getRequest();
         $context = $request->getContext();
-        $rankingSubmissionService = new RankingSubmissionService($context->getId());
+        $rankingSubmissionService = new RankingSubmissionService($context->getId(), $context->getPath());
         $rankingSubmissionService->updatePublishedSubmissionsAltmetricsScore($publishedSubmissions, $this->altmetricsClient, $request);
 
-        $trendingSubmissions = $rankingSubmissionService->retrieveTrendingSubmissions($context->getPath(), $request);
+        $trendingSubmissions = $rankingSubmissionService->retrieveTrendingSubmissions($request);
 
         $cache->setEntireCache($trendingSubmissions);
         $trendingSubmissions = & $cache->getContents();

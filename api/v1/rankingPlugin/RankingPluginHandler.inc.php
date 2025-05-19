@@ -32,7 +32,7 @@ class RankingPluginHandler extends APIHandler
     {
         $request = $this->getRequest();
         $context = $request->getContext();
-        $rankingSubmissionService = new RankingSubmissionService($context->getId());
+        $rankingSubmissionService = new RankingSubmissionService($context->getId(), $context->getPath());
 
         $issn = $context->getData('onlineIssn') ?: $context->getData('printIssn');
         if ($issn) {
@@ -42,7 +42,7 @@ class RankingPluginHandler extends APIHandler
                 $issn,
                 self::LIMIT
             );
-            $submissions = $rankingSubmissionService->getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $context->getPath(), $request);
+            $submissions = $rankingSubmissionService->getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $request);
             return $response->withJson(['mostCitedSubmissions' => $submissions], 200);
         }
     }

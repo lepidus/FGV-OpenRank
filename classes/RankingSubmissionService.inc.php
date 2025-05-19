@@ -3,11 +3,13 @@
 class RankingSubmissionService
 {
     private $contextId;
+    private $contextPath;
     private const LIMIT = 4;
 
-    public function __construct($contextId)
+    public function __construct($contextId, $contextPath)
     {
         $this->contextId = $contextId;
+        $this->contextPath = $contextPath;
     }
 
     public function getMostRecent()
@@ -44,14 +46,14 @@ class RankingSubmissionService
         return $submissions;
     }
 
-    public function getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $contextPath, $request)
+    public function getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $request)
     {
         $submissionDao = DAORegistry::getDAO('SubmissionDAO');
         $mostCitedSubmissions = [];
         foreach ($mostCitedDois as $doi) {
             $submission = $submissionDao->getByPubId('doi', $doi, $this->contextId);
             if ($submission) {
-                $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
+                $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $this->contextPath, 'article', 'view', $submission->getBestId());
                 $mostCitedSubmissionData = [
                     'submissionUrl' => $submissionUrl,
                     'title' => $submission->getLocalizedTitle(),
@@ -93,7 +95,7 @@ class RankingSubmissionService
         }
     }
 
-    public function retrieveTrendingSubmissions($contextPath, $request)
+    public function retrieveTrendingSubmissions($request)
     {
         $submissionDao = DAORegistry::getDAO('SubmissionDAO');
 
@@ -115,7 +117,7 @@ class RankingSubmissionService
 
         $trendingSubmissions = [];
         foreach ($submissions as $submission) {
-            $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
+            $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $this->contextPath, 'article', 'view', $submission->getBestId());
             $trendingSubmissionData = [
                 'submissionUrl' => $submissionUrl,
                 'title' => $submission->getLocalizedTitle(),
