@@ -37,28 +37,12 @@ class TrendingSubmissions
             $cache->flush();
         }
 
-        $submissions = Services::get('submission')->getMany([
+        $publishedSubmissions = Services::get('submission')->getMany([
             'contextId' => $contextId,
             'status' => STATUS_PUBLISHED
         ]);
 
-        foreach ($submissions as $submission) {
-            $publication = $submission->getCurrentPublication();
-            if (!empty($publication->getData('pub-id::doi'))) {
-                $submissionDoi = $publication->getData('pub-id::doi');
-                $submissionMetrics = [];
-                try {
-                    $submissionMetrics = $this->altmetricsClient->fetchAltmetrics($submissionDoi);
-                } catch (Exception $e) {
-                    error_log($e->getMessage());
-                }
-                if (isset($submissionMetrics["score"])) {
-                    $score = (float) $submissionMetrics["score"];
-                    Services::get('submission')->edit($submission, ['altmetricsScore' => $score], $this->application->getRequest());
-                }
-
-            }
-        }
+        $this->updatePublishedSubmissionsAltmetricsScore($publishedSubmissions);
 
         $submissionDao = DAORegistry::getDAO('SubmissionDAO');
 
@@ -104,6 +88,27 @@ class TrendingSubmissions
         $cache->setEntireCache($trendingSubmissions);
         $trendingSubmissions = & $cache->getContents();
         return $trendingSubmissions;
+    }
+
+    private function updatePublishedSubmissionsAltmetricsScore($publishedSubmissions)
+    {
+        foreach ($publishedSubmissions as $submission) {
+            $publication = $submission->getCurrentPublication();
+            if (!empty($publication->getData('pub-id::doi'))) {
+                $submissionDoi = $publication->getData('pub-id::doi');
+                $submissionMetrics = [];
+                try {
+                    $submissionMetrics = $this->altmetricsClient->fetchAltmetrics($submissionDoi);
+                } catch (Exception $e) {
+                    error_log($e->getMessage());
+                }
+                if (isset($submissionMetrics["score"])) {
+                    $score = (float) $submissionMetrics["score"];
+                    Services::get('submission')->edit($submission, ['altmetricsScore' => $score], $this->application->getRequest());
+                }
+
+            }
+        }
     }
 
     public function cacheDismiss()
