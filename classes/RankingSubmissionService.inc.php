@@ -43,4 +43,32 @@ class RankingSubmissionService
 
         return $submissions;
     }
+
+    public function getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $contextPath, $request)
+    {
+        $submissionDao = DAORegistry::getDAO('SubmissionDAO');
+        $mostCitedSubmissions = [];
+        foreach ($mostCitedDois as $doi) {
+            $submission = $submissionDao->getByPubId('doi', $doi, $this->contextId);
+            if ($submission) {
+                $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
+                $mostCitedSubmissionData = [
+                    'submissionUrl' => $submissionUrl,
+                    'title' => $submission->getLocalizedTitle(),
+                    'authorString' => $submission->getAuthorString(),
+                    'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
+                ];
+                $publication = $submission->getCurrentPublication();
+                $issueDao = DAORegistry::getDAO('IssueDAO');
+                $issue = $issueDao->getBySubmissionId($submission->getId());
+
+                if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
+                    $mostCitedSubmissionData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
+                    $mostCitedSubmissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($this->contextId);
+                }
+                $mostCitedSubmissions[] = $mostCitedSubmissionData;
+            }
+        }
+        return $mostCitedSubmissions;
+    }
 }
