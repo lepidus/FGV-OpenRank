@@ -3,6 +3,8 @@
 import('lib.pkp.classes.plugins.GenericPlugin');
 import('plugins.generic.rankingPlugin.classes.HookCallback');
 
+define('ONE_DAY_SECONDS', 60 * 60 * 24);
+
 class RankingPlugin extends GenericPlugin
 {
     public function register($category, $path, $mainContextId = null)

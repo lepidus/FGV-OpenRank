@@ -1,46 +1,69 @@
 <?php
 
+import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
+import('plugins.generic.rankingPlugin.classes.factory.RankingSubmission');
+
 class RankingSubmissionService
 {
     private $contextId;
+    private $contextPath;
     private const LIMIT = 4;
 
-    public function __construct($contextId)
+    public function __construct($contextId, $contextPath)
     {
         $this->contextId = $contextId;
+        $this->contextPath = $contextPath;
     }
 
     public function getMostRecent()
     {
-        return Services::get('submission')->getMany([
-            'contextId' => $this->contextId,
-            'status' => STATUS_PUBLISHED,
-            'orderBy' => 'datePublished',
-            'orderDirection' => 'DESC',
-            'count' => self::LIMIT
-        ]);
+        return RankingSubmission::get('mostRecent', ['contextId' => $this->contextId, 'limit' => self::LIMIT]);
     }
 
     public function getMostViewed()
     {
-        $topSubmissions = Services::get('stats')->getOrderedObjects(
-            STATISTICS_DIMENSION_SUBMISSION_ID,
-            STATISTICS_ORDER_DESC,
-            [
-                'contextIds' => [$this->contextId],
-                'count' => self::LIMIT
-            ]
-        );
+        return RankingSubmission::get('mostViewed', ['contextId' => $this->contextId, 'limit' => self::LIMIT]);
+    }
 
-        $submissions = [];
-        foreach ($topSubmissions as $topSubmission) {
-            $submissionId = $topSubmission['id'];
-            $submission = Services::get('submission')->get($submissionId);
-            if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
-                $submissions[] = $submission;
+    public function getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $request)
+    {
+        return RankingSubmission::get('mostCited', [
+            'contextId' => $this->contextId,
+            'contextPath' => $this->contextPath,
+            'mostCitedDois' => $mostCitedDois,
+            'request' => $request
+        ]);
+    }
+
+    public function retrieveTrendingSubmissions($request)
+    {
+        return RankingSubmission::get('trending', [
+            'contextId' => $this->contextId,
+            'contextPath' => $this->contextPath,
+            'request' => $request,
+            'limit' => self::LIMIT
+        ]);
+    }
+
+    public function updatePublishedSubmissionsAltmetricsScore($publishedSubmissions, $request)
+    {
+        $altmetricsClient = new Altmetrics(Application::get()->getHttpClient());
+        foreach ($publishedSubmissions as $submission) {
+            $publication = $submission->getCurrentPublication();
+            if (!empty($publication->getData('pub-id::doi'))) {
+                $submissionDoi = $publication->getData('pub-id::doi');
+                $submissionMetrics = [];
+                try {
+                    $submissionMetrics = $altmetricsClient->fetchAltmetrics($submissionDoi);
+                } catch (Exception $e) {
+                    error_log($e->getMessage());
+                }
+                if (isset($submissionMetrics["score"])) {
+                    $score = (float) $submissionMetrics["score"];
+                    Services::get('submission')->edit($submission, ['altmetricsScore' => $score], $request);
+                }
+
             }
         }
-
-        return $submissions;
     }
 }

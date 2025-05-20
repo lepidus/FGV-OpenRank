@@ -44,7 +44,7 @@ class HookCallback
         $request = Application::get()->getRequest();
         $context = $request->getContext();
         $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
-        $rankingSubmissionService = new RankingSubmissionService($contextId);
+        $rankingSubmissionService = new RankingSubmissionService($contextId, $context->getPath());
 
         $templateMgr->assign([
             'mostRecentSubmissions' => $rankingSubmissionService->getMostRecent(),

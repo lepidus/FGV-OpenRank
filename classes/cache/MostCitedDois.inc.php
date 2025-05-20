@@ -2,8 +2,6 @@
 
 import('plugins.generic.rankingPlugin.classes.clients.Crossref');
 
-define('ONE_DAY_SECONDS', 60 * 60 * 24);
-
 class MostCitedDois
 {
     private $crossrefClient;
