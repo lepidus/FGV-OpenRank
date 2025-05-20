@@ -5,6 +5,8 @@ import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
 import('plugins.generic.rankingPlugin.classes.cache.TrendingSubmissions');
 import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
 
+define('SESSION_DISABLE_INIT', true);
+
 class RankingPluginHandler extends APIHandler
 {
     private const LIMIT = 4;
@@ -12,7 +14,6 @@ class RankingPluginHandler extends APIHandler
     public function __construct()
     {
         $this->_handlerPath = 'rankingPlugin';
-        $roles = [ROLE_ID_MANAGER];
         $this->_endpoints = array(
             'GET' => array(
                 array(
@@ -26,6 +27,11 @@ class RankingPluginHandler extends APIHandler
             ),
         );
         parent::__construct();
+    }
+
+    public function authorize($request, &$args, $roleAssignments)
+    {
+        return parent::authorize($request, $args, $roleAssignments);
     }
 
     public function getMostCited($slimRequest, $response, $args)
