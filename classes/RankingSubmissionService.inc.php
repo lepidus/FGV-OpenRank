@@ -1,6 +1,7 @@
 <?php
 
 import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
+import('plugins.generic.rankingPlugin.classes.factory.RankingSubmission');
 
 class RankingSubmissionService
 {
@@ -16,64 +17,32 @@ class RankingSubmissionService
 
     public function getMostRecent()
     {
-        return Services::get('submission')->getMany([
-            'contextId' => $this->contextId,
-            'status' => STATUS_PUBLISHED,
-            'orderBy' => 'datePublished',
-            'orderDirection' => 'DESC',
-            'count' => self::LIMIT
-        ]);
+        return RankingSubmission::get('mostRecent', ['contextId' => $this->contextId, 'limit' => self::LIMIT]);
     }
 
     public function getMostViewed()
     {
-        $topSubmissions = Services::get('stats')->getOrderedObjects(
-            STATISTICS_DIMENSION_SUBMISSION_ID,
-            STATISTICS_ORDER_DESC,
-            [
-                'contextIds' => [$this->contextId],
-                'count' => self::LIMIT
-            ]
-        );
-
-        $submissions = [];
-        foreach ($topSubmissions as $topSubmission) {
-            $submissionId = $topSubmission['id'];
-            $submission = Services::get('submission')->get($submissionId);
-            if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
-                $submissions[] = $submission;
-            }
-        }
-
-        return $submissions;
+        return RankingSubmission::get('mostViewed', ['contextId' => $this->contextId, 'limit' => self::LIMIT]);
     }
 
     public function getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $request)
     {
-        $submissionDao = DAORegistry::getDAO('SubmissionDAO');
-        $mostCitedSubmissions = [];
-        foreach ($mostCitedDois as $doi) {
-            $submission = $submissionDao->getByPubId('doi', $doi, $this->contextId);
-            if ($submission) {
-                $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $this->contextPath, 'article', 'view', $submission->getBestId());
-                $mostCitedSubmissionData = [
-                    'submissionUrl' => $submissionUrl,
-                    'title' => $submission->getLocalizedTitle(),
-                    'authorString' => $submission->getAuthorString(),
-                    'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
-                ];
-                $publication = $submission->getCurrentPublication();
-                $issueDao = DAORegistry::getDAO('IssueDAO');
-                $issue = $issueDao->getBySubmissionId($submission->getId());
+        return RankingSubmission::get('mostCited', [
+            'contextId' => $this->contextId,
+            'contextPath' => $this->contextPath,
+            'mostCitedDois' => $mostCitedDois,
+            'request' => $request
+        ]);
+    }
 
-                if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
-                    $mostCitedSubmissionData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
-                    $mostCitedSubmissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($this->contextId);
-                }
-                $mostCitedSubmissions[] = $mostCitedSubmissionData;
-            }
-        }
-        return $mostCitedSubmissions;
+    public function retrieveTrendingSubmissions($request)
+    {
+        return RankingSubmission::get('trending', [
+            'contextId' => $this->contextId,
+            'contextPath' => $this->contextPath,
+            'request' => $request,
+            'limit' => self::LIMIT
+        ]);
     }
 
     public function updatePublishedSubmissionsAltmetricsScore($publishedSubmissions, $request)
@@ -96,50 +65,5 @@ class RankingSubmissionService
 
             }
         }
-    }
-
-    public function retrieveTrendingSubmissions($request)
-    {
-        $submissionDao = DAORegistry::getDAO('SubmissionDAO');
-
-        $params = [
-            'altmetricsScore',
-            STATUS_PUBLISHED,
-            $this->contextId
-        ];
-        $range = new \DBResultRange(self::LIMIT);
-
-        $sql = 'SELECT s.* FROM submissions s LEFT JOIN submission_settings ssas ON (s.submission_id = ssas.submission_id AND ssas.setting_name = ?) WHERE s.status = ? AND s.context_id = ? AND ssas.setting_value IS NOT NULL GROUP BY s.submission_id ORDER BY ssas.setting_value DESC';
-        $result = $submissionDao->retrieveRange(
-            $sql,
-            $params,
-            $range
-        );
-        $queryResults = new DAOResultFactory($result, $submissionDao, '_fromRow', [], $sql, $params, $range);
-        $submissions = $queryResults->toAssociativeArray();
-
-        $trendingSubmissions = [];
-        foreach ($submissions as $submission) {
-            $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $this->contextPath, 'article', 'view', $submission->getBestId());
-            $trendingSubmissionData = [
-                'submissionUrl' => $submissionUrl,
-                'title' => $submission->getLocalizedTitle(),
-                'authorString' => $submission->getAuthorString(),
-                'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
-                'altmetricsScore' => $submission->getData('altmetricsScore'),
-                'doi' => $submission->getCurrentPublication()->getData('pub-id::doi'),
-            ];
-            $publication = $submission->getCurrentPublication();
-            $issueDao = DAORegistry::getDAO('IssueDAO');
-            $issue = $issueDao->getBySubmissionId($submission->getId());
-
-            if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
-                $trendingSubmissionData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
-                $trendingSubmissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
-            }
-            $trendingSubmissions[] = $trendingSubmissionData;
-        }
-
-        return $trendingSubmissions;
     }
 }
