@@ -59,8 +59,11 @@ class RankingPluginHandler extends APIHandler
         $context = $request->getContext();
 
         $trendingSubmissions = new TrendingSubmissions();
-        $trendingSubmissions = $trendingSubmissions->getTrendingSubmissions($context->getId(), $context->getPath());
-
-        return $response->withJson(['trendingSubmissions' => $trendingSubmissions], 200);
+        try {
+            $trendingSubmissions = $trendingSubmissions->getTrendingSubmissions($context->getId(), $context->getPath());
+            return $response->withJson(['trendingSubmissions' => $trendingSubmissions], 200);
+        } catch (\Exception $e) {
+            return $response->withJson(['errorMessage' => $e->getMessage()], 500);
+        }
     }
 }
