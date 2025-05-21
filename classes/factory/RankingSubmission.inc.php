@@ -98,7 +98,14 @@ class RankingSubmission
         ];
         $range = new \DBResultRange($limit);
 
-        $sql = 'SELECT s.* FROM submissions s LEFT JOIN submission_settings ssas ON (s.submission_id = ssas.submission_id AND ssas.setting_name = ?) WHERE s.status = ? AND s.context_id = ? AND ssas.setting_value IS NOT NULL GROUP BY s.submission_id ORDER BY ssas.setting_value DESC';
+        $sql = 'SELECT s.*, MAX(ssas.setting_value) as max_score 
+            FROM submissions s 
+            LEFT JOIN submission_settings ssas ON (s.submission_id = ssas.submission_id AND ssas.setting_name = ?) 
+            WHERE s.status = ? 
+            AND s.context_id = ? 
+            AND ssas.setting_value IS NOT NULL 
+            GROUP BY s.submission_id 
+            ORDER BY max_score DESC';
         $result = $submissionDao->retrieveRange(
             $sql,
             $sqlParams,
