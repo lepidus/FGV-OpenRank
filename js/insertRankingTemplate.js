@@ -32,6 +32,21 @@
                 );
             }
         });
+
+        $.ajax({
+            url: `${window.app.rankingPluginApiBaseUrl}/mostRead`,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                renderSubmissions(data['mostReadSubmissions'], $('#mostReadSubmissionsContainer'));
+            },
+            error: function(xhr, status, error) {
+                console.error(window.app.mostCitedFailedMessage, error);
+                $('#mostReadSubmissionsContainer').html(
+                    `<div class="alert alert-danger">${window.app.mostReadFailedMessage}</div>`
+                );
+            }
+        });
         
         $.ajax({
             url: `${window.app.rankingPluginApiBaseUrl}/mostCitedSubmissions`,

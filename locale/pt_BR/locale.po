@@ -25,6 +25,9 @@ msgstr "Mais lidos"
 msgid "plugins.generic.rankingPlugin.tabs.mostRead.content.description"
 msgstr "Artigos mais lidos nesta revista nos últimos seis meses."
 
+msgid "plugins.generic.rankingPlugin.tabs.mostReadFailed"
+msgstr "Erro ao tentar buscar submissões mais lidas."
+
 msgid "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
 msgstr "Mais citados"
 
