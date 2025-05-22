@@ -34,12 +34,21 @@ class RankingSubmission
         $mostRecentSubmissionsData = [];
         foreach ($submissions as $submission) {
             $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
-            $mostRecentSubmissionsData[] = [
+            $submissionData = [
                 'submissionUrl' => $submissionUrl,
                 'title' => $submission->getLocalizedTitle(),
                 'authorString' => $submission->getAuthorString(),
                 'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
             ];
+            $publication = $submission->getCurrentPublication();
+            $issueDao = DAORegistry::getDAO('IssueDAO');
+            $issue = $issueDao->getBySubmissionId($submission->getId());
+
+            if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
+                $submissionData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
+                $submissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+            }
+            $mostRecentSubmissionsData[] = $submissionData;
         }
 
         return $mostRecentSubmissionsData;
@@ -48,12 +57,14 @@ class RankingSubmission
     public static function getMostRead($params)
     {
         $request = $params['request'];
+        $contextId = $params['contextId'];
+        $limit = $params['limit'];
         $topSubmissions = Services::get('stats')->getOrderedObjects(
             STATISTICS_DIMENSION_SUBMISSION_ID,
             STATISTICS_ORDER_DESC,
             [
-                'contextIds' => [$params['contextId']],
-                'count' => $params['limit']
+                'contextIds' => [$contextId],
+                'count' => $limit
             ]
         );
 
@@ -63,12 +74,20 @@ class RankingSubmission
             $submission = Services::get('submission')->get($submissionId);
             if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
                 $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
-                $mostReadSubmissionsData[] = [
+                $mostReadSubmissionsData = [
                     'submissionUrl' => $submissionUrl,
                     'title' => $submission->getLocalizedTitle(),
                     'authorString' => $submission->getAuthorString(),
                     'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
                 ];
+                $publication = $submission->getCurrentPublication();
+                $issueDao = DAORegistry::getDAO('IssueDAO');
+                $issue = $issueDao->getBySubmissionId($submission->getId());
+
+                if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
+                    $mostReadSubmissionsData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
+                    $mostReadSubmissionsData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+                }
                 $mostReadSubmissions[] = $mostReadSubmissionsData;
             }
         }

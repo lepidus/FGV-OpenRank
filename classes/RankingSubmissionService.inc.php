@@ -22,7 +22,7 @@ class RankingSubmissionService
 
     public function getMostRead($request)
     {
-        return RankingSubmission::get('mostRead', ['contextId' => $this->contextId, 'limit' => self::LIMIT]);
+        return RankingSubmission::get('mostRead', ['contextId' => $this->contextId, 'limit' => self::LIMIT, 'request' => $request]);
     }
 
     public function getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $request)
