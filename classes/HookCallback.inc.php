@@ -96,11 +96,5 @@ class HookCallback
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/ranking.css',
             ['priority' => STYLE_SEQUENCE_LAST]
         );
-
-        $templateMgr->addJavaScript(
-            'AltmetricsBadgeScript',
-            'https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js',
-            ['priority' => STYLE_SEQUENCE_LAST]
-        );
     }
 }
