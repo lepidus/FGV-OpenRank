@@ -6,7 +6,7 @@ class RankingSubmission
     {
         $availableFunctionNames = [
             'mostRecent' => 'getMostRecent',
-            'mostViewed' => 'getMostViewed',
+            'mostRead' => 'getMostRead',
             'mostCited' => 'getMostCited',
             'trending' => 'getTrending',
         ];
@@ -45,8 +45,9 @@ class RankingSubmission
         return $mostRecentSubmissionsData;
     }
 
-    public static function getMostViewed($params)
+    public static function getMostRead($params)
     {
+        $request = $params['request'];
         $topSubmissions = Services::get('stats')->getOrderedObjects(
             STATISTICS_DIMENSION_SUBMISSION_ID,
             STATISTICS_ORDER_DESC,
@@ -56,16 +57,23 @@ class RankingSubmission
             ]
         );
 
-        $submissions = [];
+        $mostReadSubmissions = [];
         foreach ($topSubmissions as $topSubmission) {
             $submissionId = $topSubmission['id'];
             $submission = Services::get('submission')->get($submissionId);
             if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
-                $submissions[] = $submission;
+                $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
+                $mostReadSubmissionsData[] = [
+                    'submissionUrl' => $submissionUrl,
+                    'title' => $submission->getLocalizedTitle(),
+                    'authorString' => $submission->getAuthorString(),
+                    'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
+                ];
+                $mostReadSubmissions[] = $mostReadSubmissionsData;
             }
         }
 
-        return $submissions;
+        return $mostReadSubmissions;
     }
 
     public static function getMostCited($params)

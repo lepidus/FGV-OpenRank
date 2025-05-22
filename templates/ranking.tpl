@@ -54,7 +54,7 @@
                     <p><em>{translate key="plugins.generic.rankingPlugin.tabs.mostRead.content.description"}</em></p>
                     <hr>
                 </div>
-                {foreach from=$mostViewedSubmissions item="submission"}
+                {foreach from=$mostReadSubmissions item="submission"}
                     {assign var="publication" value=$submission->getCurrentPublication()}
                     <div class="article-item">
                         {if ($publication && $publication->getLocalizedData('coverImage')) || ($issue && $issue->getLocalizedCoverImage())}

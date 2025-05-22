@@ -47,7 +47,6 @@ class HookCallback
         $rankingSubmissionService = new RankingSubmissionService($contextId, $context->getPath());
 
         $templateMgr->assign([
-            'mostViewedSubmissions' => $rankingSubmissionService->getMostViewed(),
             'context' => $context
         ]);
 
