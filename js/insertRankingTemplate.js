@@ -17,13 +17,28 @@
                 });
             });
         }
+
+        $.ajax({
+            url: `${window.app.rankingPluginApiBaseUrl}/mostRecent`,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                renderSubmissions(data['mostRecentSubmissions'], $('#mostRecentSubmissionsContainer'));
+            },
+            error: function(xhr, status, error) {
+                console.error(window.app.mostCitedFailedMessage, error);
+                $('#mostRecentSubmissionsContainer').html(
+                    `<div class="alert alert-danger">${window.app.mostRecentFailedMessage}</div>`
+                );
+            }
+        });
         
         $.ajax({
             url: `${window.app.rankingPluginApiBaseUrl}/mostCitedSubmissions`,
             method: 'GET',
             dataType: 'json',
             success: function(data) {
-                renderMostCitedSubmissions(data['mostCitedSubmissions']);
+                renderSubmissions(data['mostCitedSubmissions'], $('#mostCitedSubmissionsContainer'));
             },
             error: function(xhr, status, error) {
                 console.error(window.app.mostCitedFailedMessage, error);
@@ -48,8 +63,7 @@
             }
         });
         
-        function renderMostCitedSubmissions(submissions) {
-            const container = $('#mostCitedSubmissionsContainer');
+        function renderSubmissions(submissions, container) {
             container.empty();
             if (!submissions || !Array.isArray(submissions) || submissions.length === 0) {
                 container.html(`<p>${window.app.noPublicationsFoundMessage}</p>`);
