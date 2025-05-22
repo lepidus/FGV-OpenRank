@@ -22,6 +22,12 @@ msgstr "Most read"
 msgid "plugins.generic.rankingPlugin.tabs.mostRead.content.description"
 msgstr "Most read articles in this journal in the last six months."
 
+msgid "plugins.generic.rankingPlugin.tabs.mostReadFailed"
+msgstr "Error while trying to fetch most read submissions."
+
+msgid "plugins.generic.rankingPlugin.tabs.mostRecentFailed"
+msgstr "Error while trying to fetch most recent submissions."
+
 msgid "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
 msgstr "Most cited"
 

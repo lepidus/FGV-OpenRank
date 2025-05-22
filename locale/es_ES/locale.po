@@ -16,11 +16,17 @@ msgstr "Más recientes"
 msgid "plugins.generic.rankingPlugin.tabs.mostRecent.content.description"
 msgstr "Artigos publicados mais recentemente nesta revista."
 
+msgid "plugins.generic.rankingPlugin.tabs.mostRecentFailed"
+msgstr "Error al intentar obtener las presentaciones más recientes."
+
 msgid "plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"
 msgstr "Más leídos"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostRead.content.description"
 msgstr "Artículos más leídos en esta revista en los últimos seis meses."
+
+msgid "plugins.generic.rankingPlugin.tabs.mostReadFailed"
+msgstr "Error al intentar obtener las presentaciones más leídas."
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
 msgstr "Más citados"

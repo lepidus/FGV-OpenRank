@@ -1,7 +1,5 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
-
 class HookCallback
 {
     private $plugin;
@@ -43,14 +41,6 @@ class HookCallback
         $templateMgr = $args[0];
         $request = Application::get()->getRequest();
         $context = $request->getContext();
-        $contextId = $context ? $context->getId() : CONTEXT_ID_NONE;
-        $rankingSubmissionService = new RankingSubmissionService($contextId, $context->getPath());
-
-        $templateMgr->assign([
-            'mostRecentSubmissions' => $rankingSubmissionService->getMostRecent(),
-            'mostViewedSubmissions' => $rankingSubmissionService->getMostViewed(),
-            'context' => $context
-        ]);
 
         $rankingPluginApiBaseUrl = $request->getDispatcher()->url(
             $request,
@@ -62,6 +52,8 @@ class HookCallback
         $rankingPluginJavaScriptVariables = [
             'rankingTemplate' => $templateMgr->fetch($this->plugin->getTemplateResource('ranking.tpl')),
             'rankingPluginApiBaseUrl' => $rankingPluginApiBaseUrl,
+            'mostRecentFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostRecentFailed'),
+            'mostReadFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostReadFailed'),
             'mostCitedFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostCitedFailed'),
             'trendingFailedMessage' => __('plugins.generic.rankingPlugin.tabs.trendingFailed'),
             'noPublicationsFoundMessage' => __('plugins.generic.rankingPlugin.NoPublicationsFound'),
