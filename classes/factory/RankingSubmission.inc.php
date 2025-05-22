@@ -19,13 +19,30 @@ class RankingSubmission
 
     public static function getMostRecent($params)
     {
-        return Services::get('submission')->getMany([
-            'contextId' => $params['contextId'],
+        $request = $params['request'];
+        $contextId = $params['contextId'];
+        $contextPath = $params['contextPath'];
+        $limit = $params['limit'];
+
+        $submissions = Services::get('submission')->getMany([
+            'contextId' => $contextId,
             'status' => STATUS_PUBLISHED,
             'orderBy' => 'datePublished',
             'orderDirection' => 'DESC',
-            'count' => $params['limit']
+            'count' => $limit
         ]);
+        $mostRecentSubmissionsData = [];
+        foreach ($submissions as $submission) {
+            $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
+            $mostRecentSubmissionsData[] = [
+                'submissionUrl' => $submissionUrl,
+                'title' => $submission->getLocalizedTitle(),
+                'authorString' => $submission->getAuthorString(),
+                'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
+            ];
+        }
+
+        return $mostRecentSubmissionsData;
     }
 
     public static function getMostViewed($params)

@@ -15,9 +15,9 @@ class RankingSubmissionService
         $this->contextPath = $contextPath;
     }
 
-    public function getMostRecent()
+    public function getMostRecent($request)
     {
-        return RankingSubmission::get('mostRecent', ['contextId' => $this->contextId, 'limit' => self::LIMIT]);
+        return RankingSubmission::get('mostRecent', ['contextId' => $this->contextId, 'limit' => self::LIMIT, 'request' => $request]);
     }
 
     public function getMostViewed()

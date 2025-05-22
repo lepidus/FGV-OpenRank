@@ -3,6 +3,7 @@
 import('lib.pkp.classes.handler.APIHandler');
 import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
 import('plugins.generic.rankingPlugin.classes.cache.TrendingSubmissions');
+import('plugins.generic.rankingPlugin.classes.cache.MostRecent');
 import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
 
 define('SESSION_DISABLE_INIT', true);
@@ -16,6 +17,10 @@ class RankingPluginHandler extends APIHandler
         $this->_handlerPath = 'rankingPlugin';
         $this->_endpoints = array(
             'GET' => array(
+                array(
+                    'pattern' => $this->getEndpointPattern() . '/mostRecent',
+                    'handler' => array($this, 'getMostRecentSubmissions')
+                ),
                 array(
                     'pattern' => $this->getEndpointPattern() . '/mostCitedSubmissions',
                     'handler' => array($this, 'getMostCited')
@@ -32,6 +37,20 @@ class RankingPluginHandler extends APIHandler
     public function authorize($request, &$args, $roleAssignments)
     {
         return parent::authorize($request, $args, $roleAssignments);
+    }
+
+    public function getMostRecentSubmissions($slimRequest, $response, $args)
+    {
+        $request = $this->getRequest();
+        $context = $request->getContext();
+        $mostRecent = new MostRecent();
+        try {
+            $mostRecentSubmissions = $mostRecent->getMostRecentSubmissions($context, $request);
+        } catch (\Exception $e) {
+            return $response->withJson(['errorMessage' => $e->getMessage()], 500);
+        }
+
+        return $response->withJson(['mostRecentSubmissions' => $mostRecentSubmissions], 200);
     }
 
     public function getMostCited($slimRequest, $response, $args)
