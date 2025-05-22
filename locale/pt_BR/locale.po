@@ -16,6 +16,9 @@ msgstr "Mais recentes"
 msgid "plugins.generic.rankingPlugin.tabs.mostRecent.content.description"
 msgstr "Artigos publicados mais recentemente nesta revista."
 
+msgid "plugins.generic.rankingPlugin.tabs.mostRecentFailed"
+msgstr "Erro ao tentar buscar submissões mais recentes."
+
 msgid "plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"
 msgstr "Mais lidos"
 
