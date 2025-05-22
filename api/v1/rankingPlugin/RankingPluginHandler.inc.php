@@ -81,13 +81,17 @@ class RankingPluginHandler extends APIHandler
         $issn = $context->getData('onlineIssn') ?: $context->getData('printIssn');
         if ($issn) {
             $mostCitedDoisCache = new MostCitedDois();
-            $mostCitedDois = $mostCitedDoisCache->getMostCitedSubmissionsDois(
-                $context->getId(),
-                $issn,
-                self::LIMIT
-            );
-            $submissions = $rankingSubmissionService->getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $request);
-            return $response->withJson(['mostCitedSubmissions' => $submissions], 200);
+            try {
+                $mostCitedDois = $mostCitedDoisCache->getMostCitedSubmissionsDois(
+                    $context->getId(),
+                    $issn,
+                    self::LIMIT
+                );
+                $submissions = $rankingSubmissionService->getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $request);
+                return $response->withJson(['mostCitedSubmissions' => $submissions], 200);
+            } catch (\Exception $e) {
+                return $response->withJson(['errorMessage' => $e->getMessage()], 500);
+            }
         }
     }
 
