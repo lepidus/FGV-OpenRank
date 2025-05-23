@@ -17,12 +17,22 @@ class RankingSubmissionService
 
     public function getMostRecent($request)
     {
-        return RankingSubmission::get('mostRecent', ['contextId' => $this->contextId, 'limit' => self::LIMIT, 'request' => $request]);
+        return RankingSubmission::get('mostRecent', [
+            'contextId' => $this->contextId,
+            'limit' => self::LIMIT,
+            'request' => $request,
+            'contextPath' => $this->contextPath
+        ]);
     }
 
     public function getMostRead($request)
     {
-        return RankingSubmission::get('mostRead', ['contextId' => $this->contextId, 'limit' => self::LIMIT, 'request' => $request]);
+        return RankingSubmission::get('mostRead', [
+            'contextId' => $this->contextId,
+            'limit' => self::LIMIT,
+            'request' => $request,
+            'contextPath' => $this->contextPath
+        ]);
     }
 
     public function getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $request)
@@ -31,7 +41,8 @@ class RankingSubmissionService
             'contextId' => $this->contextId,
             'contextPath' => $this->contextPath,
             'mostCitedDois' => $mostCitedDois,
-            'request' => $request
+            'request' => $request,
+            'contextPath' => $this->contextPath
         ]);
     }
 

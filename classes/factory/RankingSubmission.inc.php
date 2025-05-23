@@ -42,11 +42,18 @@ class RankingSubmission
             ];
             $publication = $submission->getCurrentPublication();
             $issueDao = DAORegistry::getDAO('IssueDAO');
-            $issue = $issueDao->getBySubmissionId($submission->getId());
+            $issue = $issueDao->getBySubmissionId($submission->getId(), $contextId);
 
             if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
-                $submissionData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
-                $submissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+                if ($publication->getLocalizedData('coverImage')) {
+                    $submissionData['coverImage'] = $publication->getLocalizedData('coverImage');
+                    $submissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+                } elseif ($issue && $issue->getLocalizedCoverImage()) {
+                    $submissionData['coverImage'] = [
+                        'name' => $issue->getLocalizedCoverImage(),
+                        'coverImageUrl' => $issue->getLocalizedCoverImageUrl()
+                    ];
+                }
             }
             $mostRecentSubmissionsData[] = $submissionData;
         }
@@ -59,6 +66,7 @@ class RankingSubmission
         $request = $params['request'];
         $contextId = $params['contextId'];
         $limit = $params['limit'];
+        $contextPath = $params['contextPath'];
         $topSubmissions = Services::get('stats')->getOrderedObjects(
             STATISTICS_DIMENSION_SUBMISSION_ID,
             STATISTICS_ORDER_DESC,
@@ -85,8 +93,15 @@ class RankingSubmission
                 $issue = $issueDao->getBySubmissionId($submission->getId());
 
                 if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
-                    $mostReadSubmissionsData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
-                    $mostReadSubmissionsData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+                    if ($publication->getLocalizedData('coverImage')) {
+                        $mostReadSubmissionsData['coverImage'] = $publication->getLocalizedData('coverImage');
+                        $mostReadSubmissionsData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+                    } elseif ($issue && $issue->getLocalizedCoverImage()) {
+                        $mostReadSubmissionsData['coverImage'] = [
+                            'name' => $issue->getLocalizedCoverImage(),
+                            'coverImageUrl' => $issue->getLocalizedCoverImageUrl()
+                        ];
+                    }
                 }
                 $mostReadSubmissions[] = $mostReadSubmissionsData;
             }
@@ -118,8 +133,15 @@ class RankingSubmission
                 $issue = $issueDao->getBySubmissionId($submission->getId());
 
                 if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
-                    $mostCitedSubmissionData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
-                    $mostCitedSubmissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+                    if ($publication->getLocalizedData('coverImage')) {
+                        $mostCitedSubmissionData['coverImage'] = $publication->getLocalizedData('coverImage');
+                        $mostCitedSubmissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+                    } elseif ($issue && $issue->getLocalizedCoverImage()) {
+                        $mostCitedSubmissionData['coverImage'] = [
+                            'name' => $issue->getLocalizedCoverImage(),
+                            'coverImageUrl' => $issue->getLocalizedCoverImageUrl()
+                        ];
+                    }
                 }
                 $mostCitedSubmissions[] = $mostCitedSubmissionData;
             }
@@ -169,14 +191,7 @@ class RankingSubmission
                 'altmetricsScore' => $submission->getData('altmetricsScore'),
                 'doi' => $submission->getCurrentPublication()->getData('pub-id::doi'),
             ];
-            $publication = $submission->getCurrentPublication();
-            $issueDao = DAORegistry::getDAO('IssueDAO');
-            $issue = $issueDao->getBySubmissionId($submission->getId());
 
-            if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
-                $trendingSubmissionData['coverImage'] = $publication->getLocalizedData('coverImage') ?: $issue->getLocalizedCoverImage();
-                $trendingSubmissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
-            }
             $trendingSubmissions[] = $trendingSubmissionData;
         }
 
