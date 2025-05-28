@@ -77,6 +77,16 @@ class HookCallback
         return false;
     }
 
+    public function setupRankingConfigurationGridHandler($hookName, $params)
+    {
+        $component = &$params[0];
+        if ($component == 'plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridHandler') {
+            return true;
+        }
+        return false;
+    }
+
+
     private function loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables)
     {
         $templateMgr->addJavaScript(
