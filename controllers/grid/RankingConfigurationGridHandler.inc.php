@@ -67,6 +67,15 @@ class RankingConfigurationGridHandler extends GridHandler
 
     public function editTab($args, $request)
     {
+        $tab = isset($args['tab']) ? $args['tab'] : null;
+        $context = $request->getContext();
+        $this->setupTemplate($request);
+
+        import('plugins.generic.rankingPlugin.controllers.grid.form.RankingCustomizationForm');
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $rankingCustomizationForm = new RankingCustomizationForm($plugin, $context->getId());
+        $rankingCustomizationForm->initData();
+        return new JSONMessage(true, $rankingCustomizationForm->fetch($request));
     }
 
     protected function loadData($request, $filter)
