@@ -1,6 +1,7 @@
 <?php
 
 import('lib.pkp.classes.controllers.grid.GridHandler');
+import('plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridCellProvider');
 
 class RankingConfigurationGridHandler extends GridHandler
 {
@@ -16,6 +17,7 @@ class RankingConfigurationGridHandler extends GridHandler
                 'fetchGrid',
                 'fetchCategory',
                 'fetchRow',
+                'editTab'
             )
         );
     }
@@ -42,6 +44,8 @@ class RankingConfigurationGridHandler extends GridHandler
             LOCALE_COMPONENT_PKP_SUBMISSION
         );
 
+        $cellProvider = new RankingConfigurationGridCellProvider();
+
         $columnsInfo = [
             1 => ['id' => 'defaultTitle', 'title' => 'plugins.generic.rankingPlugin.configuration.grid.column.defaultTitle', 'template' => null],
             2 => ['id' => 'customTitle', 'title' => 'plugins.generic.rankingPlugin.configuration.grid.column.customTitle', 'template' => null],
@@ -60,6 +64,29 @@ class RankingConfigurationGridHandler extends GridHandler
             );
         }
     }
+
+    public function editTab($args, $request)
+    {
+    }
+
+    protected function loadData($request, $filter)
+    {
+        $defaultTabs = [
+            __("plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"),
+            __("plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"),
+            __("plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"),
+            __("plugins.generic.rankingPlugin.tabs.trending.defaultTitle"),
+            __("plugins.generic.rankingPlugin.tabs.highlight.defaultTitle")
+        ];
+        return $defaultTabs;
+    }
+
+    protected function getRowInstance()
+    {
+        import('plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridRow');
+        return new RankingConfigurationGridRow();
+    }
+
 
     private function getContextId()
     {
