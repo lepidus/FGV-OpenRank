@@ -2,6 +2,7 @@
 
 import('lib.pkp.classes.controllers.grid.GridHandler');
 import('plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridCellProvider');
+import('plugins.generic.rankingPlugin.controllers.grid.form.RankingCustomizationForm');
 
 class RankingConfigurationGridHandler extends GridHandler
 {
@@ -17,7 +18,8 @@ class RankingConfigurationGridHandler extends GridHandler
                 'fetchGrid',
                 'fetchCategory',
                 'fetchRow',
-                'editTab'
+                'editTab',
+                'updateTab',
             )
         );
     }
@@ -71,11 +73,24 @@ class RankingConfigurationGridHandler extends GridHandler
         $context = $request->getContext();
         $this->setupTemplate($request);
 
-        import('plugins.generic.rankingPlugin.controllers.grid.form.RankingCustomizationForm');
         $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
         $rankingCustomizationForm = new RankingCustomizationForm($plugin, $context->getId());
         $rankingCustomizationForm->initData();
         return new JSONMessage(true, $rankingCustomizationForm->fetch($request));
+    }
+
+    public function updateTab($args, $request)
+    {
+        $context = $request->getContext();
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $rankingCustomizationForm = new RankingCustomizationForm($plugin, $context->getId());
+        $rankingCustomizationForm->readInputData();
+        if ($rankingCustomizationForm->validate()) {
+            $rankingCustomizationForm->execute();
+            return new JSONMessage(true);
+        } else {
+            return new JSONMessage(false, $rankingCustomizationForm->fetch($request));
+        }
     }
 
     protected function loadData($request, $filter)
