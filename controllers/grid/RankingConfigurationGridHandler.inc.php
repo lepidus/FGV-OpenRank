@@ -69,21 +69,22 @@ class RankingConfigurationGridHandler extends GridHandler
 
     public function editTab($args, $request)
     {
-        $tab = isset($args['tab']) ? $args['tab'] : null;
+        $tabId = isset($args['tabId']) ? $args['tabId'] : null;
         $context = $request->getContext();
         $this->setupTemplate($request);
 
         $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
-        $rankingCustomizationForm = new RankingCustomizationForm($plugin, $context->getId());
+        $rankingCustomizationForm = new RankingCustomizationForm($plugin, $context->getId(), $tabId);
         $rankingCustomizationForm->initData();
         return new JSONMessage(true, $rankingCustomizationForm->fetch($request));
     }
 
     public function updateTab($args, $request)
     {
+        $tabId = isset($args['tabId']) ? $args['tabId'] : null;
         $context = $request->getContext();
         $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
-        $rankingCustomizationForm = new RankingCustomizationForm($plugin, $context->getId());
+        $rankingCustomizationForm = new RankingCustomizationForm($plugin, $context->getId(), $tabId);
         $rankingCustomizationForm->readInputData();
         if ($rankingCustomizationForm->validate()) {
             $rankingCustomizationForm->execute();
@@ -96,11 +97,26 @@ class RankingConfigurationGridHandler extends GridHandler
     protected function loadData($request, $filter)
     {
         $defaultTabs = [
-            __("plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"),
-            __("plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"),
-            __("plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"),
-            __("plugins.generic.rankingPlugin.tabs.trending.defaultTitle"),
-            __("plugins.generic.rankingPlugin.tabs.highlight.defaultTitle")
+            [
+                'id' => 'mostRecent',
+                'label' => __("plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle")
+            ],
+            [
+                'id' => 'mostRead',
+                'label' => __("plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle")
+            ],
+            [
+                'id' => 'mostCited',
+                'label' => __("plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle")
+            ],
+            [
+                'id' => 'trending',
+                'label' => __("plugins.generic.rankingPlugin.tabs.trending.defaultTitle")
+            ],
+            [
+                'id' => 'highlight',
+                'label' => __("plugins.generic.rankingPlugin.tabs.highlight.defaultTitle")
+            ]
         ];
         return $defaultTabs;
     }

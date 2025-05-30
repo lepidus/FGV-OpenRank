@@ -11,7 +11,7 @@ class RankingConfigurationGridCellProvider extends GridCellProvider
 
         switch ($columnId) {
             case 'defaultTitle':
-                return array('label' => $tab);
+                return array('label' => $tab['label']);
             case 'customTitle':
                 return array('label' => '');
             case 'customDescription':
