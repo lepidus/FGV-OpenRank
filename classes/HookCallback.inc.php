@@ -49,17 +49,52 @@ class HookCallback
             'rankingPlugin/'
         );
 
+        $contextId = $context->getId();
+        $customTitles = [];
+        $customDescriptions = [];
+
+        $tabs = ['highlight', 'mostRecent', 'mostRead', 'mostCited', 'trending'];
+        foreach ($tabs as $tabId) {
+            $customTitles[$tabId] = $this->plugin->getSetting(
+                $contextId,
+                "customTitle_{$tabId}"
+            );
+            $customDescriptions[$tabId] = $this->plugin->getSetting(
+                $contextId,
+                "customDescription_{$tabId}"
+            );
+        }
+
+        $templateMgr->assign('customTitles', $customTitles);
+        $templateMgr->assign('customDescriptions', $customDescriptions);
+
         $rankingPluginJavaScriptVariables = [
-            'rankingTemplate' => $templateMgr->fetch($this->plugin->getTemplateResource('ranking.tpl')),
+            'rankingTemplate' => $templateMgr->fetch(
+                $this->plugin->getTemplateResource('ranking.tpl')
+            ),
             'rankingPluginApiBaseUrl' => $rankingPluginApiBaseUrl,
-            'mostRecentFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostRecentFailed'),
-            'mostReadFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostReadFailed'),
-            'mostCitedFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostCitedFailed'),
-            'trendingFailedMessage' => __('plugins.generic.rankingPlugin.tabs.trendingFailed'),
-            'noPublicationsFoundMessage' => __('plugins.generic.rankingPlugin.NoPublicationsFound'),
+            'mostRecentFailedMessage' => __(
+                'plugins.generic.rankingPlugin.tabs.mostRecentFailed'
+            ),
+            'mostReadFailedMessage' => __(
+                'plugins.generic.rankingPlugin.tabs.mostReadFailed'
+            ),
+            'mostCitedFailedMessage' => __(
+                'plugins.generic.rankingPlugin.tabs.mostCitedFailed'
+            ),
+            'trendingFailedMessage' => __(
+                'plugins.generic.rankingPlugin.tabs.trendingFailed'
+            ),
+            'noPublicationsFoundMessage' => __(
+                'plugins.generic.rankingPlugin.NoPublicationsFound'
+            ),
         ];
 
-        $this->loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables);
+        $this->loadResources(
+            $templateMgr,
+            $request,
+            $rankingPluginJavaScriptVariables
+        );
 
         return false;
     }
