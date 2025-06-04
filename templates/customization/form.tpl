@@ -14,11 +14,11 @@
 
         {fbvFormArea id="customizationForm"}
             {fbvFormSection label="plugins.generic.rankingPlugin.configuration.grid.column.customTitle"}
-                {fbvElement type="text" id="customTitle" value=$customTitle|escape size=$fbvStyles.size.MEDIUM}
+                {fbvElement type="text" id="customTitle" value=$customTitle size=$fbvStyles.size.MEDIUM multilingual=true}
             {/fbvFormSection}
 
             {fbvFormSection label="plugins.generic.rankingPlugin.configuration.grid.column.customDescription"}
-                {fbvElement type="text" id="description" value=$description|escape size=$fbvStyles.size.MEDIUM}
+                {fbvElement type="textarea" id="description" value=$description size=$fbvStyles.size.MEDIUM multilingual=true}
             {/fbvFormSection}
 
             {fbvFormButtons submitText="common.save"}

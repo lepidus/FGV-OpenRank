@@ -19,7 +19,7 @@ class RankingCustomizationForm extends Form
         parent::__construct($plugin->getTemplateResource($template));
     }
 
-    private function addFormValidators(): void
+    public function addFormValidators()
     {
         $this->addCheck(new FormValidatorPost($this));
         $this->addCheck(new FormValidatorCSRF($this));
@@ -29,8 +29,7 @@ class RankingCustomizationForm extends Form
     {
         $templateMgr = TemplateManager::getManager();
         $templateMgr->assign('tabId', $this->tabId);
-        $templateMgr->assign('customTitle', $this->plugin->getSetting($this->contextId, "customTitle_{$this->tabId}"));
-        $templateMgr->assign('description', $this->plugin->getSetting($this->contextId, "customDescription_{$this->tabId}"));
+
         return parent::fetch($request);
     }
 
@@ -40,36 +39,45 @@ class RankingCustomizationForm extends Form
         parent::readInputData();
     }
 
+    public function initData()
+    {
+        if ($this->tabId) {
+            $customTitle = $this->plugin->getSetting(
+                $this->contextId,
+                "customTitle_{$this->tabId}"
+            );
+            $description = $this->plugin->getSetting(
+                $this->contextId,
+                "customDescription_{$this->tabId}"
+            );
+
+            $this->setData('customTitle', $customTitle);
+            $this->setData('description', $description);
+        }
+        parent::initData();
+    }
+
     public function execute(...$functionArgs)
     {
         $customTitle = $this->getData('customTitle');
         $description = $this->getData('description');
 
         if ($this->tabId) {
-            if ($customTitle) {
-                $this->plugin->updateSetting($this->contextId, "customTitle_{$this->tabId}", $customTitle);
-            } else {
-                $this->plugin->updateSetting($this->contextId, "customTitle_{$this->tabId}", null);
-            }
+            $this->plugin->updateSetting(
+                $this->contextId,
+                "customTitle_{$this->tabId}",
+                $customTitle,
+                'object'
+            );
 
-            if ($description) {
-                $this->plugin->updateSetting($this->contextId, "customDescription_{$this->tabId}", $description);
-            } else {
-                $this->plugin->updateSetting($this->contextId, "customDescription_{$this->tabId}", null);
-            }
+            $this->plugin->updateSetting(
+                $this->contextId,
+                "customDescription_{$this->tabId}",
+                $description,
+                'object'
+            );
         }
 
         parent::execute(...$functionArgs);
-    }
-
-    public function initData(): void
-    {
-        if ($this->tabId) {
-            $customTitle = $this->plugin->getSetting($this->contextId, "customTitle_{$this->tabId}");
-            $description = $this->plugin->getSetting($this->contextId, "customDescription_{$this->tabId}");
-
-            $this->setData('customTitle', $customTitle);
-            $this->setData('description', $description);
-        }
     }
 }

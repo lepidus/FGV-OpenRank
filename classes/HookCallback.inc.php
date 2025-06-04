@@ -53,15 +53,26 @@ class HookCallback
         $customTitles = [];
         $customDescriptions = [];
 
+        $locale = AppLocale::getLocale();
+
         $tabs = ['highlight', 'mostRecent', 'mostRead', 'mostCited', 'trending'];
         foreach ($tabs as $tabId) {
-            $customTitles[$tabId] = $this->plugin->getSetting(
+            $customTitleData = $this->plugin->getSetting(
                 $contextId,
                 "customTitle_{$tabId}"
             );
-            $customDescriptions[$tabId] = $this->plugin->getSetting(
+            $customDescriptionData = $this->plugin->getSetting(
                 $contextId,
                 "customDescription_{$tabId}"
+            );
+
+            $customTitles[$tabId] = $this->getLocalizedValue(
+                $customTitleData,
+                $locale
+            );
+            $customDescriptions[$tabId] = $this->getLocalizedValue(
+                $customDescriptionData,
+                $locale
             );
         }
 
@@ -141,5 +152,35 @@ class HookCallback
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/ranking.css',
             ['priority' => STYLE_SEQUENCE_LAST]
         );
+    }
+
+    private function getLocalizedValue($data, $locale)
+    {
+        if (empty($data)) {
+            return '';
+        }
+
+        if (is_string($data)) {
+            return $data;
+        }
+
+        if (is_array($data)) {
+            if (isset($data[$locale]) && !empty($data[$locale])) {
+                return $data[$locale];
+            }
+
+            $primaryLocale = AppLocale::getPrimaryLocale();
+            if (isset($data[$primaryLocale]) && !empty($data[$primaryLocale])) {
+                return $data[$primaryLocale];
+            }
+
+            foreach ($data as $value) {
+                if (!empty($value)) {
+                    return $value;
+                }
+            }
+        }
+
+        return '';
     }
 }
