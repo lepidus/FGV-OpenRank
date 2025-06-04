@@ -1,19 +1,49 @@
 <div role="tabpanel">
     <ul class="nav nav-tabs" role="tablist">
         <li class="active" role="presentation">
-            <a href="#highlight" aria-controls="highlight" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"}</a>
+            <a href="#highlight" aria-controls="highlight" role="tab" data-toggle="tab">
+                {if $customTitles.highlight}
+                    {$customTitles.highlight}
+                {else}
+                    {translate key="plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"}
+                {/if}
+            </a>
         </li>
         <li role="presentation">
-            <a href="#mostRecentSubmissions" aria-controls="mostRecentSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"}</a>
+            <a href="#mostRecentSubmissions" aria-controls="mostRecentSubmissions" role="tab" data-toggle="tab">
+                {if $customTitles.mostRecent}
+                    {$customTitles.mostRecent}
+                {else}
+                    {translate key="plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"}
+                {/if}
+            </a>
         </li>
         <li role="presentation">
-            <a href="#mostReadSubmissions" aria-controls="mostReadSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"}</a>
+            <a href="#mostReadSubmissions" aria-controls="mostReadSubmissions" role="tab" data-toggle="tab">
+                {if $customTitles.mostRead}
+                    {$customTitles.mostRead}
+                {else}
+                    {translate key="plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"}
+                {/if}
+            </a>
         </li>
         <li role="presentation">
-            <a href="#mostCitedSubmissions" aria-controls="mostCitedSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"}</a>
+            <a href="#mostCitedSubmissions" aria-controls="mostCitedSubmissions" role="tab" data-toggle="tab">
+                {if $customTitles.mostCited}
+                    {$customTitles.mostCited}
+                {else}
+                    {translate key="plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"}
+                {/if}
+            </a>
         </li>
         <li role="presentation">
-            <a href="#trendingSubmissions" aria-controls="trendingSubmissions" role="tab" data-toggle="tab">{translate key="plugins.generic.rankingPlugin.tabs.trending.defaultTitle"}</a>
+            <a href="#trendingSubmissions" aria-controls="trendingSubmissions" role="tab" data-toggle="tab">
+                {if $customTitles.trending}
+                    {$customTitles.trending}
+                {else}
+                    {translate key="plugins.generic.rankingPlugin.tabs.trending.defaultTitle"}
+                {/if}
+            </a>
         </li>
     </ul>
 
@@ -30,7 +60,13 @@
                     </div>
                     
                     <div class="article-details highlight">
-                        <p>{translate key="plugins.generic.rankingPlugin.tabs.highlight.content.videoDescription"}</p>
+                        <p>
+                            {if $customDescriptions.highlight}
+                                {$customDescriptions.highlight}
+                            {else}
+                                {translate key="plugins.generic.rankingPlugin.tabs.highlight.content.videoDescription"}
+                            {/if}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -38,7 +74,13 @@
         <div role="tabpanel" class="tab-pane" id="mostRecentSubmissions">
             <div>
                 <div>
-                    <p><em>{translate key="plugins.generic.rankingPlugin.tabs.mostRecent.content.description"}</a></em></p>
+                    <p><em>
+                        {if $customDescriptions.mostRecent}
+                            {$customDescriptions.mostRecent}
+                        {else}
+                            {translate key="plugins.generic.rankingPlugin.tabs.mostRecent.content.description"}
+                        {/if}
+                    </em></p>
                     <hr>
                 </div>
                 <div id="mostRecentSubmissionsContainer">
@@ -51,7 +93,13 @@
         <div role="tabpanel" class="tab-pane" id="mostReadSubmissions">
             <div>
                 <div>
-                    <p><em>{translate key="plugins.generic.rankingPlugin.tabs.mostRead.content.description"}</a></em></p>
+                    <p><em>
+                        {if $customDescriptions.mostRead}
+                            {$customDescriptions.mostRead}
+                        {else}
+                            {translate key="plugins.generic.rankingPlugin.tabs.mostRead.content.description"}
+                        {/if}
+                    </em></p>
                     <hr>
                 </div>
                 <div id="mostReadSubmissionsContainer">
@@ -64,7 +112,13 @@
         <div role="tabpanel" class="tab-pane" id="mostCitedSubmissions">
             <div>
                 <div>
-                    <p><em>{translate key="plugins.generic.rankingPlugin.tabs.mostCited.content.description"}</a></em></p>
+                    <p><em>
+                        {if $customDescriptions.mostCited}
+                            {$customDescriptions.mostCited}
+                        {else}
+                            {translate key="plugins.generic.rankingPlugin.tabs.mostCited.content.description"}
+                        {/if}
+                    </em></p>
                     <hr>
                 </div>
                 <div id="mostCitedSubmissionsContainer">
@@ -77,7 +131,13 @@
         <div role="tabpanel" class="tab-pane" id="trendingSubmissions">
             <div>
                 <div>
-                    <p><em>{translate key="plugins.generic.rankingPlugin.tabs.trending.content.description"}</em></p>
+                    <p><em>
+                        {if $customDescriptions.trending}
+                            {$customDescriptions.trending}
+                        {else}
+                            {translate key="plugins.generic.rankingPlugin.tabs.trending.content.description"}
+                        {/if}
+                    </em></p>
                     <hr>
                 </div>
                 <div id="trendingSubmissionsContainer">

@@ -10,6 +10,15 @@ msgstr "Destacado"
 msgid "plugins.generic.rankingPlugin.tabs.highlight.content.videoDescription"
 msgstr "Lanzada en 1961, RAE apoyó el desarrollo del pensamiento administrativo en Brasil y la consolidación de la profesión de administrador."
 
+msgid "plugins.generic.rankingPlugin.configuration.grid.column.defaultTitle"
+msgstr "Título predeterminado"
+
+msgid "plugins.generic.rankingPlugin.configuration.grid.column.customTitle"
+msgstr "Título personalizado"
+
+msgid "plugins.generic.rankingPlugin.configuration.grid.column.customDescription"
+msgstr "Descripción"
+
 msgid "plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"
 msgstr "Más recientes"
 

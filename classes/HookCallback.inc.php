@@ -49,17 +49,63 @@ class HookCallback
             'rankingPlugin/'
         );
 
+        $contextId = $context->getId();
+        $customTitles = [];
+        $customDescriptions = [];
+
+        $locale = AppLocale::getLocale();
+
+        $tabs = ['highlight', 'mostRecent', 'mostRead', 'mostCited', 'trending'];
+        foreach ($tabs as $tabId) {
+            $customTitleData = $this->plugin->getSetting(
+                $contextId,
+                "customTitle_{$tabId}"
+            );
+            $customDescriptionData = $this->plugin->getSetting(
+                $contextId,
+                "customDescription_{$tabId}"
+            );
+
+            $customTitles[$tabId] = $this->getLocalizedValue(
+                $customTitleData,
+                $locale
+            );
+            $customDescriptions[$tabId] = $this->getLocalizedValue(
+                $customDescriptionData,
+                $locale
+            );
+        }
+
+        $templateMgr->assign('customTitles', $customTitles);
+        $templateMgr->assign('customDescriptions', $customDescriptions);
+
         $rankingPluginJavaScriptVariables = [
-            'rankingTemplate' => $templateMgr->fetch($this->plugin->getTemplateResource('ranking.tpl')),
+            'rankingTemplate' => $templateMgr->fetch(
+                $this->plugin->getTemplateResource('ranking.tpl')
+            ),
             'rankingPluginApiBaseUrl' => $rankingPluginApiBaseUrl,
-            'mostRecentFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostRecentFailed'),
-            'mostReadFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostReadFailed'),
-            'mostCitedFailedMessage' => __('plugins.generic.rankingPlugin.tabs.mostCitedFailed'),
-            'trendingFailedMessage' => __('plugins.generic.rankingPlugin.tabs.trendingFailed'),
-            'noPublicationsFoundMessage' => __('plugins.generic.rankingPlugin.NoPublicationsFound'),
+            'mostRecentFailedMessage' => __(
+                'plugins.generic.rankingPlugin.tabs.mostRecentFailed'
+            ),
+            'mostReadFailedMessage' => __(
+                'plugins.generic.rankingPlugin.tabs.mostReadFailed'
+            ),
+            'mostCitedFailedMessage' => __(
+                'plugins.generic.rankingPlugin.tabs.mostCitedFailed'
+            ),
+            'trendingFailedMessage' => __(
+                'plugins.generic.rankingPlugin.tabs.trendingFailed'
+            ),
+            'noPublicationsFoundMessage' => __(
+                'plugins.generic.rankingPlugin.NoPublicationsFound'
+            ),
         ];
 
-        $this->loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables);
+        $this->loadResources(
+            $templateMgr,
+            $request,
+            $rankingPluginJavaScriptVariables
+        );
 
         return false;
     }
@@ -76,6 +122,16 @@ class HookCallback
 
         return false;
     }
+
+    public function setupRankingConfigurationGridHandler($hookName, $params)
+    {
+        $component = &$params[0];
+        if ($component == 'plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridHandler') {
+            return true;
+        }
+        return false;
+    }
+
 
     private function loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables)
     {
@@ -96,5 +152,35 @@ class HookCallback
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/ranking.css',
             ['priority' => STYLE_SEQUENCE_LAST]
         );
+    }
+
+    private function getLocalizedValue($data, $locale)
+    {
+        if (empty($data)) {
+            return '';
+        }
+
+        if (is_string($data)) {
+            return $data;
+        }
+
+        if (is_array($data)) {
+            if (isset($data[$locale]) && !empty($data[$locale])) {
+                return $data[$locale];
+            }
+
+            $primaryLocale = AppLocale::getPrimaryLocale();
+            if (isset($data[$primaryLocale]) && !empty($data[$primaryLocale])) {
+                return $data[$primaryLocale];
+            }
+
+            foreach ($data as $value) {
+                if (!empty($value)) {
+                    return $value;
+                }
+            }
+        }
+
+        return '';
     }
 }
