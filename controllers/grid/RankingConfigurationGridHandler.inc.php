@@ -96,26 +96,48 @@ class RankingConfigurationGridHandler extends GridHandler
 
     protected function loadData($request, $filter)
     {
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $locale = AppLocale::getLocale();
         $defaultTabs = [
             [
                 'id' => 'mostRecent',
-                'label' => __("plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle")
+                'label' => __("plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"),
+                'customTitle' => $plugin->getSetting(
+                    $this->getContextId(),
+                    'customTitle_mostRecent',
+                )[$locale],
             ],
             [
                 'id' => 'mostRead',
-                'label' => __("plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle")
+                'label' => __("plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"),
+                'customTitle' => $plugin->getSetting(
+                    $this->getContextId(),
+                    'customTitle_mostRead',
+                )[$locale],
             ],
             [
                 'id' => 'mostCited',
-                'label' => __("plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle")
+                'label' => __("plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"),
+                'customTitle' => $plugin->getSetting(
+                    $this->getContextId(),
+                    'customTitle_mostCited',
+                )[$locale],
             ],
             [
                 'id' => 'trending',
-                'label' => __("plugins.generic.rankingPlugin.tabs.trending.defaultTitle")
+                'label' => __("plugins.generic.rankingPlugin.tabs.trending.defaultTitle"),
+                'customTitle' => $plugin->getSetting(
+                    $this->getContextId(),
+                    'customTitle_trending',
+                )[$locale],
             ],
             [
                 'id' => 'highlight',
-                'label' => __("plugins.generic.rankingPlugin.tabs.highlight.defaultTitle")
+                'label' => __("plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"),
+                'customTitle' => $plugin->getSetting(
+                    $this->getContextId(),
+                    'customTitle_highlight',
+                )[$locale],
             ]
         ];
         return $defaultTabs;
