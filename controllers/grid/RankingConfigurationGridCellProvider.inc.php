@@ -15,7 +15,7 @@ class RankingConfigurationGridCellProvider extends GridCellProvider
             case 'customTitle':
                 return array('label' => $tab['customTitle']);
             case 'customDescription':
-                return array('label' => '');
+                return array('label' => $tab['customDescription']);
             default:
                 break;
         }

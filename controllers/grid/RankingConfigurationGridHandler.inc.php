@@ -106,6 +106,10 @@ class RankingConfigurationGridHandler extends GridHandler
                     $this->getContextId(),
                     'customTitle_mostRecent',
                 )[$locale],
+                'customDescription' => $plugin->getSetting(
+                    $this->getContextId(),
+                    'customDescription_mostRecent',
+                )[$locale],
             ],
             [
                 'id' => 'mostRead',
@@ -113,6 +117,10 @@ class RankingConfigurationGridHandler extends GridHandler
                 'customTitle' => $plugin->getSetting(
                     $this->getContextId(),
                     'customTitle_mostRead',
+                )[$locale],
+                'customDescription' => $plugin->getSetting(
+                    $this->getContextId(),
+                    'customDescription_mostRead',
                 )[$locale],
             ],
             [
@@ -122,6 +130,10 @@ class RankingConfigurationGridHandler extends GridHandler
                     $this->getContextId(),
                     'customTitle_mostCited',
                 )[$locale],
+                'customDescription' => $plugin->getSetting(
+                    $this->getContextId(),
+                    'customDescription_mostCited',
+                )[$locale],
             ],
             [
                 'id' => 'trending',
@@ -130,6 +142,10 @@ class RankingConfigurationGridHandler extends GridHandler
                     $this->getContextId(),
                     'customTitle_trending',
                 )[$locale],
+                'customDescription' => $plugin->getSetting(
+                    $this->getContextId(),
+                    'customDescription_trending',
+                )[$locale],
             ],
             [
                 'id' => 'highlight',
@@ -137,6 +153,10 @@ class RankingConfigurationGridHandler extends GridHandler
                 'customTitle' => $plugin->getSetting(
                     $this->getContextId(),
                     'customTitle_highlight',
+                )[$locale],
+                'customDescription' => $plugin->getSetting(
+                    $this->getContextId(),
+                    'customDescription_highlight',
                 )[$locale],
             ]
         ];
