@@ -1,6 +1,6 @@
 <?php
 
-import('lib.pkp.classes.controllers.grid.GridCategoryRow');
+import('lib.pkp.classes.controllers.grid.GridRow');
 import('lib.pkp.classes.linkAction.request.AjaxModal');
 
 class RankingConfigurationGridRow extends GridRow
@@ -8,15 +8,18 @@ class RankingConfigurationGridRow extends GridRow
     public function initialize($request, $template = null)
     {
         parent::initialize($request, $template);
-        $rowId = $this->getData()['id'];
-        $dispatcher = $request->getDispatcher();
+        $rowData = $this->getData();
+        $rowId = $this->getId();
+
+        $tabId = $rowData['id'];
+
         $router = $request->getRouter();
 
         $this->addAction(
             new LinkAction(
                 'editTab',
                 new AjaxModal(
-                    $router->url($request, null, null, 'editTab', null, array('tabId' => $rowId)),
+                    $router->url($request, null, null, 'editTab', null, array('tabId' => $tabId)),
                     __('grid.action.edit'),
                     'modal_edit',
                     true

@@ -55,7 +55,8 @@ class HookCallback
 
         $locale = AppLocale::getLocale();
 
-        $tabs = ['highlight', 'mostRecent', 'mostRead', 'mostCited', 'trending'];
+        $tabs = $this->getOrderedTabs($contextId);
+
         foreach ($tabs as $tabId) {
             $customTitleData = $this->plugin->getSetting(
                 $contextId,
@@ -78,6 +79,7 @@ class HookCallback
 
         $templateMgr->assign('customTitles', $customTitles);
         $templateMgr->assign('customDescriptions', $customDescriptions);
+        $templateMgr->assign('orderedTabs', $tabs);
 
         $rankingPluginJavaScriptVariables = [
             'rankingTemplate' => $templateMgr->fetch(
@@ -182,5 +184,27 @@ class HookCallback
         }
 
         return '';
+    }
+
+    private function getOrderedTabs($contextId)
+    {
+        $defaultTabs = ['mostRecent', 'mostRead', 'mostCited', 'trending', 'highlight'];
+
+        $tabsWithSequence = [];
+        foreach ($defaultTabs as $index => $tabId) {
+            $sequence = $this->plugin->getSetting($contextId, 'tabSequence_' . $index);
+            $tabsWithSequence[] = [
+                'id' => $tabId,
+                'sequence' => $sequence !== null ? $sequence : $index + 1
+            ];
+        }
+
+        usort($tabsWithSequence, function ($firstTab, $secondTab) {
+            return $firstTab['sequence'] - $secondTab['sequence'];
+        });
+
+        return array_map(function ($tab) {
+            return $tab['id'];
+        }, $tabsWithSequence);
     }
 }
