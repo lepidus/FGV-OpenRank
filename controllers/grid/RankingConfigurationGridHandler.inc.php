@@ -1,12 +1,15 @@
 <?php
 
 import('lib.pkp.classes.controllers.grid.GridHandler');
+import('lib.pkp.classes.core.JSONMessage');
 import('plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridCellProvider');
 import('plugins.generic.rankingPlugin.controllers.grid.form.RankingCustomizationForm');
 
 class RankingConfigurationGridHandler extends GridHandler
 {
     private $contextId;
+
+    private $currentGridData;
 
     public function __construct()
     {
@@ -20,6 +23,7 @@ class RankingConfigurationGridHandler extends GridHandler
                 'fetchRow',
                 'editTab',
                 'updateTab',
+                'saveSequence',
             )
         );
     }
@@ -49,9 +53,24 @@ class RankingConfigurationGridHandler extends GridHandler
         $cellProvider = new RankingConfigurationGridCellProvider();
 
         $columnsInfo = [
-            1 => ['id' => 'defaultTitle', 'title' => 'plugins.generic.rankingPlugin.configuration.grid.column.defaultTitle', 'template' => null],
-            2 => ['id' => 'customTitle', 'title' => 'plugins.generic.rankingPlugin.configuration.grid.column.customTitle', 'template' => null],
-            3 => ['id' => 'customDescription', 'title' => 'plugins.generic.rankingPlugin.configuration.grid.column.customDescription', 'template' => null],
+            1 => [
+                'id' => 'defaultTitle',
+                'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
+                    'column.defaultTitle',
+                'template' => null
+            ],
+            2 => [
+                'id' => 'customTitle',
+                'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
+                    'column.customTitle',
+                'template' => null
+            ],
+            3 => [
+                'id' => 'customDescription',
+                'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
+                    'column.customDescription',
+                'template' => null
+            ],
         ];
 
         foreach ($columnsInfo as $columnInfo) {
@@ -74,7 +93,11 @@ class RankingConfigurationGridHandler extends GridHandler
         $this->setupTemplate($request);
 
         $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
-        $rankingCustomizationForm = new RankingCustomizationForm($plugin, $context->getId(), $tabId);
+        $rankingCustomizationForm = new RankingCustomizationForm(
+            $plugin,
+            $context->getId(),
+            $tabId
+        );
         $rankingCustomizationForm->initData();
         return new JSONMessage(true, $rankingCustomizationForm->fetch($request));
     }
@@ -84,13 +107,20 @@ class RankingConfigurationGridHandler extends GridHandler
         $tabId = isset($args['tabId']) ? $args['tabId'] : null;
         $context = $request->getContext();
         $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
-        $rankingCustomizationForm = new RankingCustomizationForm($plugin, $context->getId(), $tabId);
+        $rankingCustomizationForm = new RankingCustomizationForm(
+            $plugin,
+            $context->getId(),
+            $tabId
+        );
         $rankingCustomizationForm->readInputData();
         if ($rankingCustomizationForm->validate()) {
             $rankingCustomizationForm->execute();
             return new JSONMessage(true);
         } else {
-            return new JSONMessage(false, $rankingCustomizationForm->fetch($request));
+            return new JSONMessage(
+                false,
+                $rankingCustomizationForm->fetch($request)
+            );
         }
     }
 
@@ -101,65 +131,90 @@ class RankingConfigurationGridHandler extends GridHandler
         $defaultTabs = [
             [
                 'id' => 'mostRecent',
-                'label' => __("plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"),
-                'customTitle' => $plugin->getSetting(
-                    $this->getContextId(),
+                'label' => __(
+                    "plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"
+                ),
+                'customTitle' => $this->getLocalizedSetting(
+                    $plugin,
                     'customTitle_mostRecent',
-                )[$locale],
-                'customDescription' => $plugin->getSetting(
-                    $this->getContextId(),
+                    $locale
+                ),
+                'customDescription' => $this->getLocalizedSetting(
+                    $plugin,
                     'customDescription_mostRecent',
-                )[$locale],
+                    $locale
+                ),
             ],
             [
                 'id' => 'mostRead',
-                'label' => __("plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"),
-                'customTitle' => $plugin->getSetting(
-                    $this->getContextId(),
+                'label' => __(
+                    "plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"
+                ),
+                'customTitle' => $this->getLocalizedSetting(
+                    $plugin,
                     'customTitle_mostRead',
-                )[$locale],
-                'customDescription' => $plugin->getSetting(
-                    $this->getContextId(),
+                    $locale
+                ),
+                'customDescription' => $this->getLocalizedSetting(
+                    $plugin,
                     'customDescription_mostRead',
-                )[$locale],
+                    $locale
+                ),
             ],
             [
                 'id' => 'mostCited',
-                'label' => __("plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"),
-                'customTitle' => $plugin->getSetting(
-                    $this->getContextId(),
+                'label' => __(
+                    "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
+                ),
+                'customTitle' => $this->getLocalizedSetting(
+                    $plugin,
                     'customTitle_mostCited',
-                )[$locale],
-                'customDescription' => $plugin->getSetting(
-                    $this->getContextId(),
+                    $locale
+                ),
+                'customDescription' => $this->getLocalizedSetting(
+                    $plugin,
                     'customDescription_mostCited',
-                )[$locale],
+                    $locale
+                ),
             ],
             [
                 'id' => 'trending',
-                'label' => __("plugins.generic.rankingPlugin.tabs.trending.defaultTitle"),
-                'customTitle' => $plugin->getSetting(
-                    $this->getContextId(),
+                'label' => __(
+                    "plugins.generic.rankingPlugin.tabs.trending.defaultTitle"
+                ),
+                'customTitle' => $this->getLocalizedSetting(
+                    $plugin,
                     'customTitle_trending',
-                )[$locale],
-                'customDescription' => $plugin->getSetting(
-                    $this->getContextId(),
+                    $locale
+                ),
+                'customDescription' => $this->getLocalizedSetting(
+                    $plugin,
                     'customDescription_trending',
-                )[$locale],
+                    $locale
+                ),
             ],
             [
                 'id' => 'highlight',
-                'label' => __("plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"),
-                'customTitle' => $plugin->getSetting(
-                    $this->getContextId(),
+                'label' => __(
+                    "plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"
+                ),
+                'customTitle' => $this->getLocalizedSetting(
+                    $plugin,
                     'customTitle_highlight',
-                )[$locale],
-                'customDescription' => $plugin->getSetting(
-                    $this->getContextId(),
+                    $locale
+                ),
+                'customDescription' => $this->getLocalizedSetting(
+                    $plugin,
                     'customDescription_highlight',
-                )[$locale],
+                    $locale
+                ),
             ]
         ];
+
+        usort($defaultTabs, [$this, 'compareTabsBySequence']);
+
+        $this->currentGridData = $defaultTabs;
+
         return $defaultTabs;
     }
 
@@ -169,9 +224,135 @@ class RankingConfigurationGridHandler extends GridHandler
         return new RankingConfigurationGridRow();
     }
 
+    public function initFeatures($request, $args)
+    {
+        import('lib.pkp.classes.controllers.grid.feature.OrderGridItemsFeature');
+        return array(new OrderGridItemsFeature());
+    }
+
+    public function getDataElementSequence($row)
+    {
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+
+        if (is_array($row) && isset($row['id'])) {
+            $tabIndex = $this->getTabIndex($row['id']);
+        } else {
+            $position = (int)$row;
+            if (isset($this->currentGridData[$position]['id'])) {
+                $tabIndex = $this->getTabIndex($this->currentGridData[$position]['id']);
+            } else {
+                $tabIndex = $position;
+            }
+        }
+
+        $sequence = $plugin->getSetting(
+            $this->getContextId(),
+            'tabSequence_' . $tabIndex
+        );
+
+        return $sequence !== null ? (int)$sequence : $tabIndex + 1;
+    }
+
+    public function setDataElementSequence($request, $rowId, $gridDataElement, $newSequence)
+    {
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+
+        $position = (int)$rowId;
+        if (isset($this->currentGridData[$position]['id'])) {
+            $tabIndex = $this->getTabIndex($this->currentGridData[$position]['id']);
+        } else {
+            $tabIndex = $position;
+        }
+
+        $normalizedSequence = max(1, min(5, (int)$newSequence));
+
+        $plugin->updateSetting(
+            $this->getContextId(),
+            'tabSequence_' . $tabIndex,
+            $normalizedSequence
+        );
+    }
+
+    public function saveSequence($args, $request)
+    {
+        $data = json_decode($request->getUserVar('data'));
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+
+        if (!$this->currentGridData) {
+            $this->loadData($request, array());
+        }
+
+        $gridElements = $this->getGridDataElements($request);
+
+        $firstSeqValue = $this->getDataElementSequence(reset($gridElements));
+
+        foreach ($gridElements as $rowId => $element) {
+            $rowPosition = array_search($rowId, $data);
+            if ($rowPosition !== false) {
+                $newSequence = $firstSeqValue + $rowPosition;
+
+                if (isset($this->currentGridData[(int)$rowId]['id'])) {
+                    $tabIndex = $this->getTabIndex($this->currentGridData[(int)$rowId]['id']);
+                } else {
+                    $tabIndex = (int)$rowId;
+                }
+
+                $normalizedSequence = max(1, min(5, (int)$newSequence));
+
+                $plugin->updateSetting(
+                    $this->getContextId(),
+                    'tabSequence_' . $tabIndex,
+                    $normalizedSequence
+                );
+
+                $saved = $plugin->getSetting($this->getContextId(), 'tabSequence_' . $tabIndex);
+            }
+        }
+
+        return new JSONMessage(true);
+    }
+
+    private function compareTabsBySequence($firstTab, $secondTab)
+    {
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+
+        $firstTabSequence = $this->getTabDisplaySequence($firstTab, $plugin);
+
+        $secondTabSequence = $this->getTabDisplaySequence($secondTab, $plugin);
+
+        return $firstTabSequence - $secondTabSequence;
+    }
+
+    private function getTabDisplaySequence($tab, $plugin)
+    {
+        $tabIndex = $this->getTabIndex($tab['id']);
+
+        $customSequence = $plugin->getSetting(
+            $this->getContextId(),
+            'tabSequence_' . $tabIndex
+        );
+
+        return $customSequence !== null ? (int)$customSequence : $tabIndex + 1;
+    }
 
     private function getContextId()
     {
         return $this->contextId;
+    }
+
+    private function getLocalizedSetting($plugin, $settingName, $locale)
+    {
+        $settings = $plugin->getSetting($this->getContextId(), $settingName);
+        if (is_array($settings) && isset($settings[$locale])) {
+            return $settings[$locale];
+        }
+        return null;
+    }
+
+    private function getTabIndex($tabId)
+    {
+        $tabIds = ['mostRecent', 'mostRead', 'mostCited', 'trending', 'highlight'];
+        $index = array_search($tabId, $tabIds);
+        return $index !== false ? $index : 0;
     }
 }
