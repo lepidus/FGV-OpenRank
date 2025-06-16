@@ -112,52 +112,56 @@
             let currentPage = 1;
             
             function showPage(page) {
-                container.empty();
-                const start = (page - 1) * itemsPerPage;
-                const end = Math.min(start + itemsPerPage, submissions.length);
-                const pageSubmissions = submissions.slice(start, end);
-                
-                pageSubmissions.forEach(function(submission) {
-                    const articleItem = $('<div class="article-item"></div>');
+                container.fadeOut(150, function() {
+                    container.empty();
+                    const start = (page - 1) * itemsPerPage;
+                    const end = Math.min(start + itemsPerPage, submissions.length);
+                    const pageSubmissions = submissions.slice(start, end);
                     
-                    if (submission.coverImage) {
-                        const coverHtml = `
-                            <div class="article-cover">
-                                <div class="item cover_image">
-                                    <div class="sub_item">
-                                        <img src="${submission.coverImage.coverImageUrl}" alt="${submission.altText || ''}">
+                    pageSubmissions.forEach(function(submission) {
+                        const articleItem = $('<div class="article-item"></div>');
+                        
+                        if (submission.coverImage) {
+                            const coverHtml = `
+                                <div class="article-cover">
+                                    <div class="item cover_image">
+                                        <div class="sub_item">
+                                            <img src="${submission.coverImage.coverImageUrl}" alt="${submission.altText || ''}">
+                                        </div>
                                     </div>
+                                </div>
+                            `;
+                            articleItem.append(coverHtml);
+                        }
+                        
+                        const detailsHtml = `
+                            <div class="article-details">
+                                <h3><a href="${submission.submissionUrl}">${submission.title}</a></h3>
+                                <div class="article-authors">
+                                    <div>${submission.authorString}</div>
+                                </div>
+                                <div class="article-date-published">
+                                    <p>${submission.datePublishedLabel}</p>
                                 </div>
                             </div>
                         `;
-                        articleItem.append(coverHtml);
-                    }
-                    
-                    const detailsHtml = `
-                        <div class="article-details">
-                            <h3><a href="${submission.submissionUrl}">${submission.title}</a></h3>
-                            <div class="article-authors">
-                                <div>${submission.authorString}</div>
-                            </div>
-                            <div class="article-date-published">
-                                <p>${submission.datePublishedLabel}</p>
-                            </div>
-                        </div>
-                    `;
-                    articleItem.append(detailsHtml);
+                        articleItem.append(detailsHtml);
 
-                    if (tabId === 'trending' && submission.altmetricsScore) {
-                        const altmetricsBadgeHtml = `
-                            <script type='text/javascript' src='https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js'></script>
-                            <div class="article-cover">
-                                <div class='altmetric-embed' data-badge-type='donut' data-doi="${submission.doi}"></div>
-                            </div>
-                        `;
-                        articleItem.append(altmetricsBadgeHtml);
-                    }
+                        if (tabId === 'trending' && submission.altmetricsScore) {
+                            const altmetricsBadgeHtml = `
+                                <script type='text/javascript' src='https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js'></script>
+                                <div class="article-cover">
+                                    <div class='altmetric-embed' data-badge-type='donut' data-doi="${submission.doi}"></div>
+                                </div>
+                            `;
+                            articleItem.append(altmetricsBadgeHtml);
+                        }
+                        
+                        container.append(articleItem);
+                        container.append('<hr>');
+                    });
                     
-                    container.append(articleItem);
-                    container.append('<hr>');
+                    container.fadeIn(150);
                 });
             }
             
@@ -168,48 +172,66 @@
                 }
                 
                 paginationContainer.empty();
-                const paginationUl = $('<ul class="pagination"></ul>');
+                const paginationUl = $('<ul></ul>');
+                
+                const prevLi = $('<li></li>');
+                const prevLink = $(`<a class="page-link" href="#" aria-label="${window.app.previousPageLabel || 'Previous'}">
+                    ${window.app.previousPageLabel || 'Previous'}
+                </a>`);
                 
                 if (currentPage > 1) {
-                    const prevLi = $(`<li class="page-item">
-                        <a class="page-link" href="#" aria-label="Previous">‹</a>
-                    </li>`);
-                    prevLi.find('a').on('click', function(e) {
+                    prevLink.on('click', function(e) {
                         e.preventDefault();
                         currentPage--;
                         showPage(currentPage);
                         renderPagination();
                     });
-                    paginationUl.append(prevLi);
+                } else {
+                    prevLi.addClass('disabled');
+                    prevLink.css('pointer-events', 'none');
                 }
                 
+                prevLi.append(prevLink);
+                paginationUl.append(prevLi);
+                
                 for (let i = 1; i <= totalPages; i++) {
-                    const pageLi = $(`<li class="page-item ${i === currentPage ? 'active' : ''}">
-                        <a class="page-link" href="#">${i}</a>
-                    </li>`);
+                    const pageLi = $(`<li class="page-item ${i === currentPage ? 'active' : ''}"></li>`);
+                    const pageLink = $(`<a class="page-link" href="#" aria-label="Page ${i}">${i}</a>`);
                     
-                    pageLi.find('a').on('click', function(e) {
-                        e.preventDefault();
-                        currentPage = i;
-                        showPage(currentPage);
-                        renderPagination();
-                    });
+                    if (i === currentPage) {
+                        pageLink.attr('aria-current', 'page');
+                    } else {
+                        pageLink.on('click', function(e) {
+                            e.preventDefault();
+                            currentPage = i;
+                            showPage(currentPage);
+                            renderPagination();
+                        });
+                    }
                     
+                    pageLi.append(pageLink);
                     paginationUl.append(pageLi);
                 }
                 
+                const nextLi = $('<li></li>');
+                const nextLink = $(`<a class="page-link" href="#" aria-label="${window.app.nextPageLabel || 'Next'}">
+                    ${window.app.nextPageLabel || 'Next'}
+                </a>`);
+                
                 if (currentPage < totalPages) {
-                    const nextLi = $(`<li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">›</a>
-                    </li>`);
-                    nextLi.find('a').on('click', function(e) {
+                    nextLink.on('click', function(e) {
                         e.preventDefault();
                         currentPage++;
                         showPage(currentPage);
                         renderPagination();
                     });
-                    paginationUl.append(nextLi);
+                } else {
+                    nextLi.addClass('disabled');
+                    nextLink.css('pointer-events', 'none');
                 }
+                
+                nextLi.append(nextLink);
+                paginationUl.append(nextLi);
                 
                 paginationContainer.append(paginationUl);
             }

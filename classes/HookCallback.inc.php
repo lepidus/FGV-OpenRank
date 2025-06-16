@@ -114,6 +114,8 @@ class HookCallback
             'itemsPerTab' => $itemsPerTab,
             'itemsPerPage' => $itemsPerPage,
             'tabSettings' => $tabSpecificSettings,
+            'previousPageLabel' => "<",
+            'nextPageLabel' => ">",
             'mostRecentFailedMessage' => __(
                 'plugins.generic.rankingPlugin.tabs.mostRecentFailed'
             ),
