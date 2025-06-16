@@ -81,11 +81,39 @@ class HookCallback
         $templateMgr->assign('customDescriptions', $customDescriptions);
         $templateMgr->assign('orderedTabs', $tabs);
 
+        $itemsPerTab = $this->plugin->getSetting($contextId, 'itemsPerTab') ?? 4;
+        $itemsPerPage = $this->plugin->getSetting($contextId, 'itemsPerPage') ?? 4;
+
+        $tabSpecificSettings = [];
+        foreach ($tabs as $tabId) {
+            $tabItemsPerTab = $this->plugin->getSetting(
+                $contextId,
+                "itemsPerTab_{$tabId}"
+            );
+
+            $tabItemsPerPage = $this->plugin->getSetting(
+                $contextId,
+                "itemsPerPage_{$tabId}"
+            );
+
+            $tabSpecificSettings[$tabId] = [
+                'itemsPerTab' => $tabItemsPerTab !== null
+                    ? (int)$tabItemsPerTab
+                    : (int)$itemsPerTab,
+                'itemsPerPage' => $tabItemsPerPage !== null
+                    ? (int)$tabItemsPerPage
+                    : (int)$itemsPerPage,
+            ];
+        }
+
         $rankingPluginJavaScriptVariables = [
             'rankingTemplate' => $templateMgr->fetch(
                 $this->plugin->getTemplateResource('ranking.tpl')
             ),
             'rankingPluginApiBaseUrl' => $rankingPluginApiBaseUrl,
+            'itemsPerTab' => $itemsPerTab,
+            'itemsPerPage' => $itemsPerPage,
+            'tabSettings' => $tabSpecificSettings,
             'mostRecentFailedMessage' => __(
                 'plugins.generic.rankingPlugin.tabs.mostRecentFailed'
             ),
@@ -152,6 +180,12 @@ class HookCallback
         $templateMgr->addStyleSheet(
             'rankingPluginStyles',
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/ranking.css',
+            ['priority' => STYLE_SEQUENCE_LAST]
+        );
+
+        $templateMgr->addStyleSheet(
+            'rankingPluginPaginationStyles',
+            $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/pagination.css',
             ['priority' => STYLE_SEQUENCE_LAST]
         );
     }

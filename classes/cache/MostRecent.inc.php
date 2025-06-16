@@ -4,7 +4,7 @@ import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
 
 class MostRecent
 {
-    public function getMostRecentSubmissions($context, $request)
+    public function getMostRecentSubmissions($context, $request, $limit = null)
     {
         $cacheManager = CacheManager::getManager();
         $cache = $cacheManager->getFileCache(
@@ -26,10 +26,12 @@ class MostRecent
         if ($currentCacheTime > ONE_DAY_SECONDS) {
             $cache->flush();
         }
-
-        $rankingSubmissionService = new RankingSubmissionService($context->getId(), $context->getPath());
+        $rankingSubmissionService = new RankingSubmissionService(
+            $context->getId(),
+            $context->getPath(),
+            $limit
+        );
         $mostRecentSubmissions = $rankingSubmissionService->getMostRecent($request);
-
         $cache->setEntireCache($mostRecentSubmissions);
         $mostRecentSubmissions = & $cache->getContents();
 

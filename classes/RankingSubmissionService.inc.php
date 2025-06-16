@@ -7,19 +7,21 @@ class RankingSubmissionService
 {
     private $contextId;
     private $contextPath;
-    private const LIMIT = 4;
+    private $limit;
+    private const DEFAULT_LIMIT = 4;
 
-    public function __construct($contextId, $contextPath)
+    public function __construct($contextId, $contextPath, $limit = null)
     {
         $this->contextId = $contextId;
         $this->contextPath = $contextPath;
+        $this->limit = $limit ?? self::DEFAULT_LIMIT;
     }
 
     public function getMostRecent($request)
     {
         return RankingSubmission::get('mostRecent', [
             'contextId' => $this->contextId,
-            'limit' => self::LIMIT,
+            'limit' => $this->limit,
             'request' => $request,
             'contextPath' => $this->contextPath
         ]);
@@ -29,7 +31,7 @@ class RankingSubmissionService
     {
         return RankingSubmission::get('mostRead', [
             'contextId' => $this->contextId,
-            'limit' => self::LIMIT,
+            'limit' => $this->limit,
             'request' => $request,
             'contextPath' => $this->contextPath
         ]);
@@ -42,7 +44,7 @@ class RankingSubmissionService
             'contextPath' => $this->contextPath,
             'mostCitedDois' => $mostCitedDois,
             'request' => $request,
-            'contextPath' => $this->contextPath
+            'limit' => $this->limit
         ]);
     }
 
@@ -52,7 +54,7 @@ class RankingSubmissionService
             'contextId' => $this->contextId,
             'contextPath' => $this->contextPath,
             'request' => $request,
-            'limit' => self::LIMIT
+            'limit' => $this->limit
         ]);
     }
 

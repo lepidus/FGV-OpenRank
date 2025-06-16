@@ -19,6 +19,12 @@ msgstr "Custom title"
 msgid "plugins.generic.rankingPlugin.configuration.grid.column.customDescription"
 msgstr "Description"
 
+msgid "plugins.generic.rankingPlugin.configuration.settings.itemsPerTab"
+msgstr "Items per tab"
+
+msgid "plugins.generic.rankingPlugin.configuration.settings.itemsPerPage"
+msgstr "Items per page"
+
 msgid "plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"
 msgstr "Most recent"
 
