@@ -36,12 +36,25 @@ class RankingCustomizationForm extends Form
         $templateMgr->assign('itemsPerTab', $this->getData('itemsPerTab'));
         $templateMgr->assign('itemsPerPage', $this->getData('itemsPerPage'));
 
+        if ($this->tabId === 'mostRead') {
+            $templateMgr->assign('mostReadDays', $this->getData('mostReadDays'));
+        }
+
         return parent::fetch($request);
     }
 
     public function readInputData()
     {
-        $this->readUserVars(array('customTitle', 'description', 'itemsPerTab', 'itemsPerPage'));
+        $userVars = array(
+            'customTitle',
+            'description',
+            'itemsPerTab',
+            'itemsPerPage'
+        );
+        if ($this->tabId === 'mostRead') {
+            $userVars[] = 'mostReadDays';
+        }
+        $this->readUserVars($userVars);
         parent::readInputData();
     }
 
@@ -69,6 +82,14 @@ class RankingCustomizationForm extends Form
             $this->setData('description', $description);
             $this->setData('itemsPerTab', $itemsPerTab);
             $this->setData('itemsPerPage', $itemsPerPage);
+
+            if ($this->tabId === 'mostRead') {
+                $mostReadDays = $this->plugin->getSetting(
+                    $this->contextId,
+                    "mostReadDays_{$this->tabId}"
+                ) ?? 120;
+                $this->setData('mostReadDays', $mostReadDays);
+            }
         }
         parent::initData();
     }
@@ -115,6 +136,19 @@ class RankingCustomizationForm extends Form
                 $itemsPerPage,
                 'int'
             );
+
+            if ($this->tabId === 'mostRead') {
+                $mostReadDays = (int) $this->getData('mostReadDays');
+                if ($mostReadDays < 1) {
+                    $mostReadDays = 120;
+                }
+                $this->plugin->updateSetting(
+                    $this->contextId,
+                    "mostReadDays_{$this->tabId}",
+                    $mostReadDays,
+                    'int'
+                );
+            }
         }
 
         parent::execute(...$functionArgs);
