@@ -4,9 +4,7 @@ import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
 
 class TrendingSubmissions
 {
-    private const LIMIT = 4;
-
-    public function getTrendingSubmissions($contextId, $contextPath)
+    public function getTrendingSubmissions($contextId, $contextPath, $limit = null)
     {
         $cacheManager = CacheManager::getManager();
         $cache = $cacheManager->getFileCache(
@@ -35,10 +33,18 @@ class TrendingSubmissions
         ]);
         $request = Application::get()->getRequest();
         $context = $request->getContext();
-        $rankingSubmissionService = new RankingSubmissionService($context->getId(), $context->getPath());
-        $rankingSubmissionService->updatePublishedSubmissionsAltmetricsScore($publishedSubmissions, $request);
+        $rankingSubmissionService = new RankingSubmissionService(
+            $context->getId(),
+            $context->getPath(),
+            $limit
+        );
+        $rankingSubmissionService->updatePublishedSubmissionsAltmetricsScore(
+            $publishedSubmissions,
+            $request
+        );
 
-        $trendingSubmissions = $rankingSubmissionService->retrieveTrendingSubmissions($request);
+        $trendingSubmissions = $rankingSubmissionService
+            ->retrieveTrendingSubmissions($request);
 
         $cache->setEntireCache($trendingSubmissions);
         $trendingSubmissions = & $cache->getContents();

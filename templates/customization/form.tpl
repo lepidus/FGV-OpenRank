@@ -21,6 +21,14 @@
                 {fbvElement type="textarea" id="description" value=$description size=$fbvStyles.size.MEDIUM multilingual=true}
             {/fbvFormSection}
 
+            {fbvFormSection label="plugins.generic.rankingPlugin.configuration.settings.itemsPerTab"}
+                {fbvElement type="text" id="itemsPerTab" value=$itemsPerTab size=$fbvStyles.size.SMALL}
+            {/fbvFormSection}
+
+            {fbvFormSection label="plugins.generic.rankingPlugin.configuration.settings.itemsPerPage"}
+                {fbvElement type="text" id="itemsPerPage" value=$itemsPerPage size=$fbvStyles.size.SMALL}
+            {/fbvFormSection}
+
             {fbvFormButtons submitText="common.save"}
 
         {/fbvFormArea}

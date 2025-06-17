@@ -4,7 +4,7 @@ import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
 
 class MostRead
 {
-    public function getMostReadSubmissions($context, $request)
+    public function getMostReadSubmissions($context, $request, $limit = null)
     {
         $cacheManager = CacheManager::getManager();
         $cache = $cacheManager->getFileCache(
@@ -27,7 +27,11 @@ class MostRead
             $cache->flush();
         }
 
-        $rankingSubmissionService = new RankingSubmissionService($context->getId(), $context->getPath());
+        $rankingSubmissionService = new RankingSubmissionService(
+            $context->getId(),
+            $context->getPath(),
+            $limit
+        );
         $mostReadSubmissions = $rankingSubmissionService->getMostRead($request);
 
         $cache->setEntireCache($mostReadSubmissions);

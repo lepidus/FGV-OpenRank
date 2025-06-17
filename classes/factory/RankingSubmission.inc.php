@@ -57,7 +57,6 @@ class RankingSubmission
             }
             $mostRecentSubmissionsData[] = $submissionData;
         }
-
         return $mostRecentSubmissionsData;
     }
 

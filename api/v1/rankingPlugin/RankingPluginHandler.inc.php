@@ -11,7 +11,7 @@ define('SESSION_DISABLE_INIT', true);
 
 class RankingPluginHandler extends APIHandler
 {
-    private const LIMIT = 4;
+    private const DEFAULT_LIMIT = 4;
 
     public function __construct()
     {
@@ -48,35 +48,71 @@ class RankingPluginHandler extends APIHandler
     {
         $request = $this->getRequest();
         $context = $request->getContext();
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+
+        $contextId = $context->getId();
+        $tabLimit = $plugin->getSetting($contextId, 'itemsPerTab_mostRecent') ??
+                   self::DEFAULT_LIMIT;
+
         $mostRecent = new MostRecent();
         try {
-            $mostRecentSubmissions = $mostRecent->getMostRecentSubmissions($context, $request);
+            $mostRecentSubmissions = $mostRecent->getMostRecentSubmissions(
+                $context,
+                $request,
+                $tabLimit
+            );
         } catch (\Exception $e) {
             return $response->withJson(['errorMessage' => $e->getMessage()], 500);
         }
 
-        return $response->withJson(['mostRecentSubmissions' => $mostRecentSubmissions], 200);
+        return $response->withJson(
+            ['mostRecentSubmissions' => $mostRecentSubmissions],
+            200
+        );
     }
 
     public function getMostReadSubmissions($slimRequest, $response, $args)
     {
         $request = $this->getRequest();
         $context = $request->getContext();
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+
+        $contextId = $context->getId();
+        $tabLimit = $plugin->getSetting($contextId, 'itemsPerTab_mostRead') ??
+                   self::DEFAULT_LIMIT;
+
         $mostRead = new MostRead();
         try {
-            $mostReadSubmissions = $mostRead->getMostReadSubmissions($context, $request);
+            $mostReadSubmissions = $mostRead->getMostReadSubmissions(
+                $context,
+                $request,
+                $tabLimit
+            );
         } catch (\Exception $e) {
             return $response->withJson(['errorMessage' => $e->getMessage()], 500);
         }
 
-        return $response->withJson(['mostReadSubmissions' => $mostReadSubmissions], 200);
+        return $response->withJson(
+            ['mostReadSubmissions' => $mostReadSubmissions],
+            200
+        );
     }
 
     public function getMostCited($slimRequest, $response, $args)
     {
         $request = $this->getRequest();
         $context = $request->getContext();
-        $rankingSubmissionService = new RankingSubmissionService($context->getId(), $context->getPath());
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+
+        $contextId = $context->getId();
+        $tabLimit = $plugin->getSetting($contextId, 'itemsPerTab_mostCited') ??
+                   self::DEFAULT_LIMIT;
+
+        $rankingSubmissionService = new RankingSubmissionService(
+            $context->getId(),
+            $context->getPath(),
+            $tabLimit
+        );
 
         $issn = $context->getData('onlineIssn') ?: $context->getData('printIssn');
         if ($issn) {
@@ -85,12 +121,22 @@ class RankingPluginHandler extends APIHandler
                 $mostCitedDois = $mostCitedDoisCache->getMostCitedSubmissionsDois(
                     $context->getId(),
                     $issn,
-                    self::LIMIT
+                    $tabLimit
                 );
-                $submissions = $rankingSubmissionService->getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $request);
-                return $response->withJson(['mostCitedSubmissions' => $submissions], 200);
+                $submissions = $rankingSubmissionService
+                    ->getAListOfMostCitedSubmissionsByCachedDois(
+                        $mostCitedDois,
+                        $request
+                    );
+                return $response->withJson(
+                    ['mostCitedSubmissions' => $submissions],
+                    200
+                );
             } catch (\Exception $e) {
-                return $response->withJson(['errorMessage' => $e->getMessage()], 500);
+                return $response->withJson(
+                    ['errorMessage' => $e->getMessage()],
+                    500
+                );
             }
         }
     }
@@ -99,13 +145,28 @@ class RankingPluginHandler extends APIHandler
     {
         $request = $this->getRequest();
         $context = $request->getContext();
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+
+        $contextId = $context->getId();
+        $tabLimit = $plugin->getSetting($contextId, 'itemsPerTab_trending') ??
+                   self::DEFAULT_LIMIT;
 
         $trendingSubmissions = new TrendingSubmissions();
         try {
-            $trendingSubmissions = $trendingSubmissions->getTrendingSubmissions($context->getId(), $context->getPath());
-            return $response->withJson(['trendingSubmissions' => $trendingSubmissions], 200);
+            $trendingSubmissions = $trendingSubmissions->getTrendingSubmissions(
+                $context->getId(),
+                $context->getPath(),
+                $tabLimit
+            );
+            return $response->withJson(
+                ['trendingSubmissions' => $trendingSubmissions],
+                200
+            );
         } catch (\Exception $e) {
-            return $response->withJson(['errorMessage' => $e->getMessage()], 500);
+            return $response->withJson(
+                ['errorMessage' => $e->getMessage()],
+                500
+            );
         }
     }
 }

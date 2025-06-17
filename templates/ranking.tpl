@@ -53,6 +53,7 @@
                                 <p>{translate key="plugins.generic.rankingPlugin.loading"}</p>
                             </div>
                         </div>
+                        <div id="{if $tabId == 'mostRecent'}mostRecentSubmissions{elseif $tabId == 'mostRead'}mostReadSubmissions{elseif $tabId == 'mostCited'}mostCitedSubmissions{elseif $tabId == 'trending'}trendingSubmissions{else}{$tabId}{/if}Pagination" class="ranking-pagination" role="navigation" aria-label="{translate key="common.pagination.label"}"></div>
                     {/if}
                 </div>
             </div>

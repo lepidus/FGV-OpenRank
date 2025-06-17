@@ -30,12 +30,18 @@ class RankingCustomizationForm extends Form
         $templateMgr = TemplateManager::getManager();
         $templateMgr->assign('tabId', $this->tabId);
 
+        $this->initData();
+        $templateMgr->assign('customTitle', $this->getData('customTitle'));
+        $templateMgr->assign('description', $this->getData('description'));
+        $templateMgr->assign('itemsPerTab', $this->getData('itemsPerTab'));
+        $templateMgr->assign('itemsPerPage', $this->getData('itemsPerPage'));
+
         return parent::fetch($request);
     }
 
     public function readInputData()
     {
-        $this->readUserVars(array('customTitle', 'description'));
+        $this->readUserVars(array('customTitle', 'description', 'itemsPerTab', 'itemsPerPage'));
         parent::readInputData();
     }
 
@@ -50,9 +56,19 @@ class RankingCustomizationForm extends Form
                 $this->contextId,
                 "customDescription_{$this->tabId}"
             );
+            $itemsPerTab = $this->plugin->getSetting(
+                $this->contextId,
+                "itemsPerTab_{$this->tabId}"
+            ) ?? 4;
+            $itemsPerPage = $this->plugin->getSetting(
+                $this->contextId,
+                "itemsPerPage_{$this->tabId}"
+            ) ?? 4;
 
             $this->setData('customTitle', $customTitle);
             $this->setData('description', $description);
+            $this->setData('itemsPerTab', $itemsPerTab);
+            $this->setData('itemsPerPage', $itemsPerPage);
         }
         parent::initData();
     }
@@ -61,6 +77,15 @@ class RankingCustomizationForm extends Form
     {
         $customTitle = $this->getData('customTitle');
         $description = $this->getData('description');
+        $itemsPerTab = (int) $this->getData('itemsPerTab');
+        $itemsPerPage = (int) $this->getData('itemsPerPage');
+
+        if ($itemsPerTab < 1) {
+            $itemsPerTab = 4;
+        }
+        if ($itemsPerPage < 1) {
+            $itemsPerPage = 4;
+        }
 
         if ($this->tabId) {
             $this->plugin->updateSetting(
@@ -75,6 +100,20 @@ class RankingCustomizationForm extends Form
                 "customDescription_{$this->tabId}",
                 $description,
                 'object'
+            );
+
+            $this->plugin->updateSetting(
+                $this->contextId,
+                "itemsPerTab_{$this->tabId}",
+                $itemsPerTab,
+                'int'
+            );
+
+            $this->plugin->updateSetting(
+                $this->contextId,
+                "itemsPerPage_{$this->tabId}",
+                $itemsPerPage,
+                'int'
             );
         }
 
