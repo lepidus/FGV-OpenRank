@@ -29,6 +29,12 @@
                 {fbvElement type="text" id="itemsPerPage" value=$itemsPerPage size=$fbvStyles.size.SMALL}
             {/fbvFormSection}
 
+            {if $tabId == 'mostRead'}
+                {fbvFormSection label="plugins.generic.rankingPlugin.configuration.settings.mostReadDays"}
+                    {fbvElement type="text" id="mostReadDays" value=$mostReadDays size=$fbvStyles.size.SMALL}
+                {/fbvFormSection}
+            {/if}
+
             {fbvFormButtons submitText="common.save"}
 
         {/fbvFormArea}

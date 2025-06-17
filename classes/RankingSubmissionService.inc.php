@@ -27,13 +27,14 @@ class RankingSubmissionService
         ]);
     }
 
-    public function getMostRead($request)
+    public function getMostRead($request, $mostReadDays = null)
     {
         return RankingSubmission::get('mostRead', [
             'contextId' => $this->contextId,
             'limit' => $this->limit,
             'request' => $request,
-            'contextPath' => $this->contextPath
+            'contextPath' => $this->contextPath,
+            'mostReadDays' => $mostReadDays
         ]);
     }
 

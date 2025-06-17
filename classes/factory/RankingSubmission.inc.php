@@ -66,27 +66,61 @@ class RankingSubmission
         $contextId = $params['contextId'];
         $limit = $params['limit'];
         $contextPath = $params['contextPath'];
-        $topSubmissions = Services::get('stats')->getOrderedObjects(
-            STATISTICS_DIMENSION_SUBMISSION_ID,
-            STATISTICS_ORDER_DESC,
-            [
-                'contextIds' => [$contextId],
-                'count' => $limit
-            ]
+        $mostReadDays = $params['mostReadDays'] ?? 120;
+
+        $dayString = "-" . $mostReadDays . " days";
+        $daysAgo = date('Ymd', strtotime($dayString));
+        $currentDate = date('Ymd');
+
+        $filter = array(
+            STATISTICS_DIMENSION_CONTEXT_ID => $contextId,
+            STATISTICS_DIMENSION_ASSOC_TYPE => ASSOC_TYPE_SUBMISSION_FILE,
+        );
+        $filter[STATISTICS_DIMENSION_DAY]['from'] = $daysAgo;
+        $filter[STATISTICS_DIMENSION_DAY]['to'] = $currentDate;
+
+        $orderBy = array(STATISTICS_METRIC => STATISTICS_ORDER_DESC);
+        $column = array(STATISTICS_DIMENSION_SUBMISSION_ID);
+
+        import('lib.pkp.classes.db.DBResultRange');
+        $dbResultRange = new DBResultRange($limit);
+
+        $metricsDao = DAORegistry::getDAO('MetricsDAO');
+        $result = $metricsDao->getMetrics(
+            OJS_METRIC_TYPE_COUNTER,
+            $column,
+            $filter,
+            $orderBy,
+            $dbResultRange
         );
 
+        $submissionDao = DAORegistry::getDAO('SubmissionDAO');
         $mostReadSubmissions = [];
-        foreach ($topSubmissions as $topSubmission) {
-            $submissionId = $topSubmission['id'];
-            $submission = Services::get('submission')->get($submissionId);
+
+        foreach ($result as $resultRecord) {
+            $submissionId = $resultRecord[STATISTICS_DIMENSION_SUBMISSION_ID];
+            $submission = $submissionDao->getById($submissionId);
+
             if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
-                $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
+                $submissionUrl = $request->getDispatcher()->url(
+                    $request,
+                    ROUTE_PAGE,
+                    $contextPath,
+                    'article',
+                    'view',
+                    $submission->getBestId()
+                );
                 $mostReadSubmissionsData = [
                     'submissionUrl' => $submissionUrl,
                     'title' => $submission->getLocalizedTitle(),
                     'authorString' => $submission->getAuthorString(),
-                    'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
+                    'datePublishedLabel' => __(
+                        "plugins.generic.rankingPlugin.tabs.content.publishedDate",
+                        ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]
+                    ),
+                    'metric' => $resultRecord[STATISTICS_METRIC],
                 ];
+
                 $publication = $submission->getCurrentPublication();
                 $issueDao = DAORegistry::getDAO('IssueDAO');
                 $issue = $issueDao->getBySubmissionId($submission->getId());

@@ -25,6 +25,9 @@ msgstr "Itens por aba"
 msgid "plugins.generic.rankingPlugin.configuration.settings.itemsPerPage"
 msgstr "Itens por página"
 
+msgid "plugins.generic.rankingPlugin.configuration.settings.mostReadDays"
+msgstr "Dias para mais lidos"
+
 msgid "plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"
 msgstr "Mais recentes"
 
