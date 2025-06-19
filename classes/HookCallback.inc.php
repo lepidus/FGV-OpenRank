@@ -52,6 +52,7 @@ class HookCallback
         $contextId = $context->getId();
         $customTitles = [];
         $customDescriptions = [];
+        $highlightCustomContent = [];
 
         $locale = AppLocale::getLocale();
 
@@ -75,10 +76,22 @@ class HookCallback
                 $customDescriptionData,
                 $locale
             );
+
+            if ($tabId === 'highlight') {
+                $highlightContentData = $this->plugin->getSetting(
+                    $contextId,
+                    "highlightContent_{$tabId}"
+                );
+                $highlightCustomContent[$tabId] = $this->getLocalizedValue(
+                    $highlightContentData,
+                    $locale
+                );
+            }
         }
 
         $templateMgr->assign('customTitles', $customTitles);
         $templateMgr->assign('customDescriptions', $customDescriptions);
+        $templateMgr->assign('highlightCustomContent', $highlightCustomContent);
         $templateMgr->assign('orderedTabs', $tabs);
 
         $itemsPerTab = $this->plugin->getSetting($contextId, 'itemsPerTab') ?? 4;
