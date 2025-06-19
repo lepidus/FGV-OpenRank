@@ -7,9 +7,6 @@ msgstr "Agrega un bloque de clasificación con métricas seleccionables."
 msgid "plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"
 msgstr "Destacado"
 
-msgid "plugins.generic.rankingPlugin.tabs.highlight.content.videoDescription"
-msgstr "Lanzada en 1961, RAE apoyó el desarrollo del pensamiento administrativo en Brasil y la consolidación de la profesión de administrador."
-
 msgid "plugins.generic.rankingPlugin.configuration.grid.column.defaultTitle"
 msgstr "Título predeterminado"
 
