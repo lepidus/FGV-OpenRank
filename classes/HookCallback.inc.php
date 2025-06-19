@@ -241,11 +241,14 @@ class HookCallback
 
         $tabsWithSequence = [];
         foreach ($defaultTabs as $index => $tabId) {
-            $sequence = $this->plugin->getSetting($contextId, 'tabSequence_' . $index);
-            $tabsWithSequence[] = [
-                'id' => $tabId,
-                'sequence' => $sequence !== null ? $sequence : $index + 1
-            ];
+            $enabled = $this->plugin->getSetting($contextId, 'tabEnabled_' . $index);
+            if ($enabled !== false) {
+                $sequence = $this->plugin->getSetting($contextId, 'tabSequence_' . $index);
+                $tabsWithSequence[] = [
+                    'id' => $tabId,
+                    'sequence' => $sequence !== null ? $sequence : $index + 1
+                ];
+            }
         }
 
         usort($tabsWithSequence, function ($firstTab, $secondTab) {

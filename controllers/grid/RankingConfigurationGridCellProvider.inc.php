@@ -10,6 +10,11 @@ class RankingConfigurationGridCellProvider extends GridCellProvider
         $columnId = $column->getId();
 
         switch ($columnId) {
+            case 'enabled':
+                return array(
+                    'selected' => $tab['enabled'],
+                    'disabled' => false
+                );
             case 'defaultTitle':
                 return array('label' => $tab['label']);
             case 'customTitle':
