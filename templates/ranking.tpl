@@ -28,13 +28,13 @@
                             </div>
                             
                             <div class="article-details highlight">
-                                <p>
-                                    {if $customDescriptions.highlight}
-                                        {$customDescriptions.highlight}
-                                    {else}
-                                        {translate key="plugins.generic.rankingPlugin.tabs.highlight.content.videoDescription"}
-                                    {/if}
-                                </p>
+                                {if $highlightCustomContent.highlight}
+                                    {$highlightCustomContent.highlight}
+                                {elseif $customDescriptions.highlight}
+                                    <p>{$customDescriptions.highlight}</p>
+                                {else}
+                                    <p>{translate key="plugins.generic.rankingPlugin.tabs.highlight.content.videoDescription"}</p>
+                                {/if}
                             </div>
                         </div>
                     {else}

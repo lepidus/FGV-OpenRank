@@ -40,6 +40,13 @@ class RankingCustomizationForm extends Form
             $templateMgr->assign('mostReadDays', $this->getData('mostReadDays'));
         }
 
+        if ($this->tabId === 'highlight') {
+            $templateMgr->assign(
+                'highlightContent',
+                $this->getData('highlightContent')
+            );
+        }
+
         return parent::fetch($request);
     }
 
@@ -53,6 +60,9 @@ class RankingCustomizationForm extends Form
         );
         if ($this->tabId === 'mostRead') {
             $userVars[] = 'mostReadDays';
+        }
+        if ($this->tabId === 'highlight') {
+            $userVars[] = 'highlightContent';
         }
         $this->readUserVars($userVars);
         parent::readInputData();
@@ -89,6 +99,14 @@ class RankingCustomizationForm extends Form
                     "mostReadDays_{$this->tabId}"
                 ) ?? 120;
                 $this->setData('mostReadDays', $mostReadDays);
+            }
+
+            if ($this->tabId === 'highlight') {
+                $highlightContent = $this->plugin->getSetting(
+                    $this->contextId,
+                    "highlightContent_{$this->tabId}"
+                );
+                $this->setData('highlightContent', $highlightContent);
             }
         }
         parent::initData();
@@ -147,6 +165,16 @@ class RankingCustomizationForm extends Form
                     "mostReadDays_{$this->tabId}",
                     $mostReadDays,
                     'int'
+                );
+            }
+
+            if ($this->tabId === 'highlight') {
+                $highlightContent = $this->getData('highlightContent');
+                $this->plugin->updateSetting(
+                    $this->contextId,
+                    "highlightContent_{$this->tabId}",
+                    $highlightContent,
+                    'object'
                 );
             }
         }

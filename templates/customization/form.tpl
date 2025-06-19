@@ -35,6 +35,12 @@
                 {/fbvFormSection}
             {/if}
 
+            {if $tabId == 'highlight'}
+                {fbvFormSection label="plugins.generic.rankingPlugin.configuration.settings.highlightContent"}
+                    {fbvElement type="textarea" id="highlightContent" value=$highlightContent size=$fbvStyles.size.MEDIUM multilingual=true rich=true height=$fbvStyles.height.TALL}
+                {/fbvFormSection}
+            {/if}
+
             {fbvFormButtons submitText="common.save"}
 
         {/fbvFormArea}

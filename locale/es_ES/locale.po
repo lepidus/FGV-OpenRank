@@ -28,6 +28,9 @@ msgstr "Elementos por página"
 msgid "plugins.generic.rankingPlugin.configuration.settings.mostReadDays"
 msgstr "Días para más leídos"
 
+msgid "plugins.generic.rankingPlugin.configuration.settings.highlightContent"
+msgstr "Contenido personalizado"
+
 msgid "plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"
 msgstr "Más recientes"
 
