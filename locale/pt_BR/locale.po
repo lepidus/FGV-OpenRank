@@ -19,12 +19,6 @@ msgstr "Descrição"
 msgid "plugins.generic.rankingPlugin.configuration.grid.column.enabled"
 msgstr "Habilitado"
 
-msgid "plugins.generic.rankingPlugin.configuration.enableTab"
-msgstr "Habilitar aba"
-
-msgid "plugins.generic.rankingPlugin.configuration.disableTab"
-msgstr "Desabilitar aba"
-
 msgid "plugins.generic.rankingPlugin.configuration.settings.itemsPerTab"
 msgstr "Itens por aba"
 

@@ -19,12 +19,6 @@ msgstr "Description"
 msgid "plugins.generic.rankingPlugin.configuration.grid.column.enabled"
 msgstr "Enabled"
 
-msgid "plugins.generic.rankingPlugin.configuration.enableTab"
-msgstr "Enable tab"
-
-msgid "plugins.generic.rankingPlugin.configuration.disableTab"
-msgstr "Disable tab"
-
 msgid "plugins.generic.rankingPlugin.configuration.settings.itemsPerTab"
 msgstr "Items per tab"
 
