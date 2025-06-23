@@ -19,6 +19,18 @@ msgstr "Descrição"
 msgid "plugins.generic.rankingPlugin.configuration.grid.column.enabled"
 msgstr "Habilitado"
 
+msgid "plugins.generic.rankingPlugin.configuration.clearCache"
+msgstr "Limpar Cache"
+
+msgid "plugins.generic.rankingPlugin.configuration.clearCacheConfirm"
+msgstr "Tem certeza de que deseja limpar o cache? Esta ação irá forçar a atualização de todos os dados de ranqueamento."
+
+msgid "plugins.generic.rankingPlugin.configuration.cacheCleared"
+msgstr "Cache limpo com sucesso. Os dados de ranqueamento serão atualizados na próxima visualização."
+
+msgid "plugins.generic.rankingPlugin.configuration.tabToggled"
+msgstr "Configuração da aba atualizada com sucesso."
+
 msgid "plugins.generic.rankingPlugin.configuration.settings.itemsPerTab"
 msgstr "Itens por aba"
 
