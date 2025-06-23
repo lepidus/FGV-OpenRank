@@ -1,6 +1,8 @@
 <?php
 
 import('lib.pkp.classes.controllers.grid.GridCellProvider');
+import('lib.pkp.classes.linkAction.LinkAction');
+import('lib.pkp.classes.linkAction.request.AjaxAction');
 
 class RankingConfigurationGridCellProvider extends GridCellProvider
 {
@@ -26,5 +28,44 @@ class RankingConfigurationGridCellProvider extends GridCellProvider
         }
 
         return parent::getTemplateVarsFromRowColumn($row, $column);
+    }
+
+    public function getCellActions(
+        $request,
+        $row,
+        $column,
+        $position = GRID_ACTION_POSITION_DEFAULT
+    ) {
+        $tab = $row->getData();
+        $router = $request->getRouter();
+        $actions = array();
+        $actionArgs = array('rowId' => $row->getId());
+
+        $action = null;
+        $actionRequest = null;
+
+        switch ($column->getId()) {
+            case 'enabled':
+                $action = 'setTabEnabled-' . $row->getId();
+                $actionArgs['value'] = !$tab['enabled'];
+                $actionRequest = new AjaxAction(
+                    $router->url(
+                        $request,
+                        null,
+                        null,
+                        'saveTabSetting',
+                        null,
+                        $actionArgs
+                    )
+                );
+                break;
+        }
+
+        if ($action && $actionRequest) {
+            $linkAction = new LinkAction($action, $actionRequest, null, null);
+            $actions = array($linkAction);
+        }
+
+        return $actions;
     }
 }

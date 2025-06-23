@@ -24,7 +24,7 @@ class RankingConfigurationGridHandler extends GridHandler
                 'editTab',
                 'updateTab',
                 'saveSequence',
-                'toggleTab',
+                'saveTabSetting'
             )
         );
     }
@@ -129,6 +129,52 @@ class RankingConfigurationGridHandler extends GridHandler
                 $rankingCustomizationForm->fetch($request)
             );
         }
+    }
+
+    public function saveTabSetting($args, $request)
+    {
+        if (!$request->checkCSRF()) {
+            return new JSONMessage(false);
+        }
+
+        $rowId = (string) $request->getUserVar('rowId');
+        $settingValue = (bool) $request->getUserVar('value');
+        $context = $request->getContext();
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+
+        if (!isset($rowId)) {
+            return new JSONMessage(false);
+        }
+
+        if (!$this->currentGridData) {
+            $this->loadData($request, array());
+        }
+
+        $rowIndex = (int) $rowId;
+        if (!isset($this->currentGridData[$rowIndex]['id'])) {
+            return new JSONMessage(false);
+        }
+
+        $tabId = $this->currentGridData[$rowIndex]['id'];
+        $tabIndex = $this->getTabIndex($tabId);
+        $settingName = 'tabEnabled_' . $tabIndex;
+
+        $plugin->updateSetting($context->getId(), $settingName, $settingValue);
+
+        import('classes.notification.NotificationManager');
+        $notificationManager = new NotificationManager();
+        $user = $request->getUser();
+        $notificationManager->createTrivialNotification(
+            $user->getId(),
+            NOTIFICATION_TYPE_SUCCESS,
+            array(
+                'contents' => __(
+                    'form.saved'
+                )
+            )
+        );
+
+        return DAO::getDataChangedEvent($rowId);
     }
 
     protected function loadData($request, $filter)
@@ -320,28 +366,6 @@ class RankingConfigurationGridHandler extends GridHandler
                 $saved = $plugin->getSetting($this->getContextId(), 'tabSequence_' . $tabIndex);
             }
         }
-
-        return new JSONMessage(true);
-    }
-
-    public function toggleTab($args, $request)
-    {
-        $tabId = isset($args['tabId']) ? $args['tabId'] : null;
-        if (!$tabId) {
-            return new JSONMessage(false);
-        }
-
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
-        $context = $request->getContext();
-        $contextId = $context->getId();
-
-        $tabIndex = $this->getTabIndex($tabId);
-        $settingName = 'tabEnabled_' . $tabIndex;
-
-        $currentStatus = $plugin->getSetting($contextId, $settingName);
-        $newStatus = $currentStatus === false ? true : false;
-
-        $plugin->updateSetting($contextId, $settingName, $newStatus);
 
         return new JSONMessage(true);
     }
