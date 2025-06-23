@@ -16,6 +16,9 @@ msgstr "Título personalizado"
 msgid "plugins.generic.rankingPlugin.configuration.grid.column.customDescription"
 msgstr "Descrição"
 
+msgid "plugins.generic.rankingPlugin.configuration.grid.column.enabled"
+msgstr "Habilitado"
+
 msgid "plugins.generic.rankingPlugin.configuration.settings.itemsPerTab"
 msgstr "Itens por aba"
 

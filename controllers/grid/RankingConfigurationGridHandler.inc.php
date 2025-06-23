@@ -24,6 +24,7 @@ class RankingConfigurationGridHandler extends GridHandler
                 'editTab',
                 'updateTab',
                 'saveSequence',
+                'saveTabSetting'
             )
         );
     }
@@ -54,18 +55,24 @@ class RankingConfigurationGridHandler extends GridHandler
 
         $columnsInfo = [
             1 => [
+                'id' => 'enabled',
+                'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
+                    'column.enabled',
+                'template' => 'controllers/grid/common/cell/selectStatusCell.tpl'
+            ],
+            2 => [
                 'id' => 'defaultTitle',
                 'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
                     'column.defaultTitle',
                 'template' => null
             ],
-            2 => [
+            3 => [
                 'id' => 'customTitle',
                 'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
                     'column.customTitle',
                 'template' => null
             ],
-            3 => [
+            4 => [
                 'id' => 'customDescription',
                 'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
                     'column.customDescription',
@@ -124,6 +131,52 @@ class RankingConfigurationGridHandler extends GridHandler
         }
     }
 
+    public function saveTabSetting($args, $request)
+    {
+        if (!$request->checkCSRF()) {
+            return new JSONMessage(false);
+        }
+
+        $rowId = (string) $request->getUserVar('rowId');
+        $settingValue = (bool) $request->getUserVar('value');
+        $context = $request->getContext();
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+
+        if (!isset($rowId)) {
+            return new JSONMessage(false);
+        }
+
+        if (!$this->currentGridData) {
+            $this->loadData($request, array());
+        }
+
+        $rowIndex = (int) $rowId;
+        if (!isset($this->currentGridData[$rowIndex]['id'])) {
+            return new JSONMessage(false);
+        }
+
+        $tabId = $this->currentGridData[$rowIndex]['id'];
+        $tabIndex = $this->getTabIndex($tabId);
+        $settingName = 'tabEnabled_' . $tabIndex;
+
+        $plugin->updateSetting($context->getId(), $settingName, $settingValue);
+
+        import('classes.notification.NotificationManager');
+        $notificationManager = new NotificationManager();
+        $user = $request->getUser();
+        $notificationManager->createTrivialNotification(
+            $user->getId(),
+            NOTIFICATION_TYPE_SUCCESS,
+            array(
+                'contents' => __(
+                    'form.saved'
+                )
+            )
+        );
+
+        return DAO::getDataChangedEvent($rowId);
+    }
+
     protected function loadData($request, $filter)
     {
         $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
@@ -144,6 +197,7 @@ class RankingConfigurationGridHandler extends GridHandler
                     'customDescription_mostRecent',
                     $locale
                 ),
+                'enabled' => $plugin->getSetting($this->contextId, 'tabEnabled_0') !== false,
             ],
             [
                 'id' => 'mostRead',
@@ -160,6 +214,7 @@ class RankingConfigurationGridHandler extends GridHandler
                     'customDescription_mostRead',
                     $locale
                 ),
+                'enabled' => $plugin->getSetting($this->contextId, 'tabEnabled_1') !== false,
             ],
             [
                 'id' => 'mostCited',
@@ -176,6 +231,7 @@ class RankingConfigurationGridHandler extends GridHandler
                     'customDescription_mostCited',
                     $locale
                 ),
+                'enabled' => $plugin->getSetting($this->contextId, 'tabEnabled_2') !== false,
             ],
             [
                 'id' => 'trending',
@@ -192,6 +248,7 @@ class RankingConfigurationGridHandler extends GridHandler
                     'customDescription_trending',
                     $locale
                 ),
+                'enabled' => $plugin->getSetting($this->contextId, 'tabEnabled_3') !== false,
             ],
             [
                 'id' => 'highlight',
@@ -208,6 +265,7 @@ class RankingConfigurationGridHandler extends GridHandler
                     'customDescription_highlight',
                     $locale
                 ),
+                'enabled' => $plugin->getSetting($this->contextId, 'tabEnabled_4') !== false,
             ]
         ];
 

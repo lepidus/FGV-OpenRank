@@ -16,6 +16,9 @@ msgstr "Custom title"
 msgid "plugins.generic.rankingPlugin.configuration.grid.column.customDescription"
 msgstr "Description"
 
+msgid "plugins.generic.rankingPlugin.configuration.grid.column.enabled"
+msgstr "Enabled"
+
 msgid "plugins.generic.rankingPlugin.configuration.settings.itemsPerTab"
 msgstr "Items per tab"
 

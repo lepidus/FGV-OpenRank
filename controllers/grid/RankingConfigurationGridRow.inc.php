@@ -9,17 +9,22 @@ class RankingConfigurationGridRow extends GridRow
     {
         parent::initialize($request, $template);
         $rowData = $this->getData();
-        $rowId = $this->getId();
 
         $tabId = $rowData['id'];
-
         $router = $request->getRouter();
 
         $this->addAction(
             new LinkAction(
                 'editTab',
                 new AjaxModal(
-                    $router->url($request, null, null, 'editTab', null, array('tabId' => $tabId)),
+                    $router->url(
+                        $request,
+                        null,
+                        null,
+                        'editTab',
+                        null,
+                        array('tabId' => $tabId)
+                    ),
                     __('grid.action.edit'),
                     'modal_edit',
                     true
