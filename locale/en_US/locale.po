@@ -19,18 +19,6 @@ msgstr "Description"
 msgid "plugins.generic.rankingPlugin.configuration.grid.column.enabled"
 msgstr "Enabled"
 
-msgid "plugins.generic.rankingPlugin.configuration.clearCache"
-msgstr "Clear Cache"
-
-msgid "plugins.generic.rankingPlugin.configuration.clearCacheConfirm"
-msgstr "Are you sure you want to clear the cache? This action will force an update of all ranking data."
-
-msgid "plugins.generic.rankingPlugin.configuration.cacheCleared"
-msgstr "Cache cleared successfully. Ranking data will be updated on next view."
-
-msgid "plugins.generic.rankingPlugin.configuration.tabToggled"
-msgstr "Tab configuration updated successfully."
-
 msgid "plugins.generic.rankingPlugin.configuration.settings.itemsPerTab"
 msgstr "Items per tab"
 

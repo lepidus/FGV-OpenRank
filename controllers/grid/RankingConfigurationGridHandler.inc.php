@@ -24,8 +24,7 @@ class RankingConfigurationGridHandler extends GridHandler
                 'editTab',
                 'updateTab',
                 'saveSequence',
-                'saveTabSetting',
-                'clearCache'
+                'saveTabSetting'
             )
         );
     }
@@ -92,26 +91,6 @@ class RankingConfigurationGridHandler extends GridHandler
                 )
             );
         }
-
-        $router = $request->getRouter();
-        import('lib.pkp.classes.linkAction.LinkAction');
-        import('lib.pkp.classes.linkAction.request.RemoteActionConfirmationModal');
-
-        $this->addAction(
-            new LinkAction(
-                'clearCache',
-                new RemoteActionConfirmationModal(
-                    $request->getSession(),
-                    __('plugins.generic.rankingPlugin.configuration.clearCacheConfirm'),
-                    __('plugins.generic.rankingPlugin.configuration.clearCache'),
-                    $request->url(null, null, 'clearCache', null, array(
-                        'csrfToken' => $request->getSession()->getCSRFToken()
-                    ))
-                ),
-                __('plugins.generic.rankingPlugin.configuration.clearCache'),
-                'delete'
-            )
-        );
     }
 
     public function editTab($args, $request)
@@ -196,31 +175,6 @@ class RankingConfigurationGridHandler extends GridHandler
         );
 
         return DAO::getDataChangedEvent($rowId);
-    }
-
-    public function clearCache($args, $request)
-    {
-        if (!$request->checkCSRF()) {
-            return new JSONMessage(false);
-        }
-
-        $context = $request->getContext();
-        $contextId = $context->getId();
-
-        $cacheManager = CacheManager::getManager();
-
-        $caches = [
-            $cacheManager->getFileCache($contextId, 'most_recent_submissions', [$this, 'cacheDismiss']),
-            $cacheManager->getFileCache($contextId, 'most_read_submissions', [$this, 'cacheDismiss']),
-            $cacheManager->getFileCache($contextId, 'most_cited_dois', [$this, 'cacheDismiss']),
-            $cacheManager->getFileCache($contextId, 'trending_submissions', [$this, 'cacheDismiss'])
-        ];
-
-        foreach ($caches as $cache) {
-            $cache->flush();
-        }
-
-        return new JSONMessage(true);
     }
 
     protected function loadData($request, $filter)
@@ -458,10 +412,5 @@ class RankingConfigurationGridHandler extends GridHandler
         $tabIds = ['mostRecent', 'mostRead', 'mostCited', 'trending', 'highlight'];
         $index = array_search($tabId, $tabIds);
         return $index !== false ? $index : 0;
-    }
-
-    public function cacheDismiss()
-    {
-        return null;
     }
 }
