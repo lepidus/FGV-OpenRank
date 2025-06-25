@@ -93,3 +93,15 @@ msgstr "Error while trying to retrieve the Altmetrics Score. The Altmetrics API 
 
 msgid "plugins.generic.rankingPlugin.client.altmetrics.transferError"
 msgstr "Error while trying to retrieve the Altmetrics Score. The Altmetrics API returned a transfer error."
+
+msgid "plugins.generic.rankingPlugin.scheduledTask.name"
+msgstr "Ranking Plugin Cache Update"
+
+msgid "plugins.generic.rankingPlugin.scheduledTask.updateStart"
+msgstr "Starting cache update for context: {$contextName}"
+
+msgid "plugins.generic.rankingPlugin.scheduledTask.updateComplete"
+msgstr "Cache update completed successfully for context: {$contextName}"
+
+msgid "plugins.generic.rankingPlugin.scheduledTask.updateError"
+msgstr "Error updating cache for context {$contextName}: {$error}"

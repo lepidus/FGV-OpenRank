@@ -14,18 +14,23 @@ class MostRecent
         );
 
         $mostRecentSubmissions = & $cache->getContents();
-        $currentCacheTime = time() - $cache->getCacheTime();
 
-        if (
-            ($mostRecentSubmissions && $mostRecentSubmissions != '[]')
-            && $currentCacheTime < ONE_DAY_SECONDS
-        ) {
+        if ($mostRecentSubmissions && $mostRecentSubmissions != '[]') {
             return $mostRecentSubmissions;
         }
 
-        if ($currentCacheTime > ONE_DAY_SECONDS) {
-            $cache->flush();
-        }
+        return [];
+    }
+
+    public function refreshCache($context, $request, $limit = null)
+    {
+        $cacheManager = CacheManager::getManager();
+        $cache = $cacheManager->getFileCache(
+            $context->getId(),
+            'most_recent_submissions',
+            [$this, 'cacheDismiss']
+        );
+
         $rankingSubmissionService = new RankingSubmissionService(
             $context->getId(),
             $context->getPath(),
@@ -33,7 +38,6 @@ class MostRecent
         );
         $mostRecentSubmissions = $rankingSubmissionService->getMostRecent($request);
         $cache->setEntireCache($mostRecentSubmissions);
-        $mostRecentSubmissions = & $cache->getContents();
 
         return $mostRecentSubmissions;
     }

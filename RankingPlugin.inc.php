@@ -18,6 +18,7 @@ class RankingPlugin extends GenericPlugin
             HookRegistry::register('TemplateManager::display', [$hookCallback, 'handleMetricsData']);
             HookRegistry::register('Schema::get::submission', array($hookCallback, 'addScoreFieldToSubmissionSchema'));
             HookRegistry::register('LoadComponentHandler', array($hookCallback, 'setupRankingConfigurationGridHandler'));
+            HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'parseCrontab'));
         }
         return $success;
     }
@@ -54,5 +55,12 @@ class RankingPlugin extends GenericPlugin
     {
         $request = Application::get()->getRequest();
         return $request->getContext() !== null;
+    }
+
+    public function parseCrontab($hookName, $args)
+    {
+        $taskFilesPath = &$args[0];
+        $taskFilesPath[] = $this->getPluginPath() . DIRECTORY_SEPARATOR . 'scheduledTasks.xml';
+        return false;
     }
 }
