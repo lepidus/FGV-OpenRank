@@ -14,28 +14,37 @@ class TrendingSubmissions
         );
 
         $trendingSubmissions = & $cache->getContents();
-        $currentCacheTime = time() - $cache->getCacheTime();
 
-        if (
-            ($trendingSubmissions && $trendingSubmissions != '[]')
-            && $currentCacheTime < ONE_DAY_SECONDS
-        ) {
+        if ($trendingSubmissions && $trendingSubmissions != '[]') {
             return $trendingSubmissions;
         }
 
-        if ($currentCacheTime > ONE_DAY_SECONDS) {
-            $cache->flush();
-        }
+        return [];
+    }
+
+    public function refreshCache($contextId, $contextPath, $limit = null)
+    {
+        $cacheManager = CacheManager::getManager();
+        $cache = $cacheManager->getFileCache(
+            $contextId,
+            'trending_submissions',
+            [$this, 'cacheDismiss']
+        );
+
+        $cache->flush();
 
         $publishedSubmissions = Services::get('submission')->getMany([
             'contextId' => $contextId,
             'status' => STATUS_PUBLISHED
         ]);
+        
         $request = Application::get()->getRequest();
-        $context = $request->getContext();
+        $contextDao = Application::getContextDAO();
+        $context = $contextDao->getById($contextId);
+        
         $rankingSubmissionService = new RankingSubmissionService(
-            $context->getId(),
-            $context->getPath(),
+            $contextId,
+            $contextPath,
             $limit
         );
         $rankingSubmissionService->updatePublishedSubmissionsAltmetricsScore(

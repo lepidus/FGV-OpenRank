@@ -21,18 +21,22 @@ class MostRead
         );
 
         $mostReadSubmissions = & $cache->getContents();
-        $currentCacheTime = time() - $cache->getCacheTime();
 
-        if (
-            ($mostReadSubmissions && $mostReadSubmissions != '[]')
-            && $currentCacheTime < ONE_DAY_SECONDS
-        ) {
+        if ($mostReadSubmissions && $mostReadSubmissions != '[]') {
             return $mostReadSubmissions;
         }
 
-        if ($currentCacheTime > ONE_DAY_SECONDS) {
-            $cache->flush();
-        }
+        return [];
+    }
+
+    public function refreshCache($context, $request, $limit = null)
+    {
+        $cacheManager = CacheManager::getManager();
+        $cache = $cacheManager->getFileCache(
+            $context->getId(),
+            'most_read_submissions',
+            [$this, 'cacheDismiss']
+        );
 
         $mostReadDays = 120;
         if ($this->plugin) {
@@ -51,7 +55,6 @@ class MostRead
         $mostReadSubmissions = $rankingSubmissionService->getMostRead($request, $mostReadDays);
 
         $cache->setEntireCache($mostReadSubmissions);
-        $mostReadSubmissions = & $cache->getContents();
 
         return $mostReadSubmissions;
     }

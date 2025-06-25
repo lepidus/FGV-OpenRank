@@ -21,20 +21,27 @@ class MostCitedDois
         );
 
         $mostCitedDois = & $cache->getContents();
-        $currentCacheTime = time() - $cache->getCacheTime();
 
-        if (
-            ($mostCitedDois && $mostCitedDois != '[]')
-            && $currentCacheTime < ONE_DAY_SECONDS
-        ) {
+        if ($mostCitedDois && $mostCitedDois != '[]') {
             return $mostCitedDois;
         }
 
-        if ($currentCacheTime > ONE_DAY_SECONDS) {
-            $cache->flush();
-        }
+        return [];
+    }
 
-        $mostCitedSubmissions = $this->crossrefClient->fetchMostCitedSubmissions($issn, $limit);
+    public function refreshCache(int $contextId, string $issn, int $limit): array
+    {
+        $cacheManager = CacheManager::getManager();
+        $cache = $cacheManager->getFileCache(
+            $contextId,
+            'most_cited_dois',
+            [$this, 'cacheDismiss']
+        );
+
+        $cache->flush();
+
+        $mostCitedSubmissions = $this->crossrefClient
+            ->fetchMostCitedSubmissions($issn, $limit);
         $submissionDois = [];
 
         foreach ($mostCitedSubmissions['message']['items'] as $item) {
