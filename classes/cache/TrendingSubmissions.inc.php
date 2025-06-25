@@ -37,11 +37,11 @@ class TrendingSubmissions
             'contextId' => $contextId,
             'status' => STATUS_PUBLISHED
         ]);
-        
+
         $request = Application::get()->getRequest();
         $contextDao = Application::getContextDAO();
         $context = $contextDao->getById($contextId);
-        
+
         $rankingSubmissionService = new RankingSubmissionService(
             $contextId,
             $contextPath,
