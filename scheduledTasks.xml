@@ -12,6 +12,7 @@
 
 <scheduled_tasks>
 	<task class="plugins.generic.rankingPlugin.classes.tasks.RankingCacheUpdateTask">
-    <frequency minute="06"/>
+    <description>Update the ranking cache for the Ranking Plugin.</description>
+    <frequency day="1"/>
   </task>
 </scheduled_tasks>
