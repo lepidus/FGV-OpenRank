@@ -72,15 +72,22 @@ class RankingCacheUpdateTask extends ScheduledTask
 
     private function updateMostRecentCache($context, $request)
     {
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $contextId = $context->getId();
+        $limit = $plugin->getSetting($contextId, 'itemsPerTab_mostRecent') ?? 4;
+
         $mostRecent = new MostRecent();
-        $mostRecent->refreshCache($context, $request);
+        $mostRecent->refreshCache($context, $request, $limit);
     }
 
     private function updateMostReadCache($context, $request)
     {
         $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $contextId = $context->getId();
+        $limit = $plugin->getSetting($contextId, 'itemsPerTab_mostRead') ?? 4;
+
         $mostRead = new MostRead($plugin);
-        $mostRead->refreshCache($context, $request);
+        $mostRead->refreshCache($context, $request, $limit);
     }
 
     private function updateMostCitedCache($context)
@@ -90,13 +97,21 @@ class RankingCacheUpdateTask extends ScheduledTask
             return;
         }
 
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $contextId = $context->getId();
+        $limit = $plugin->getSetting($contextId, 'itemsPerTab_mostCited') ?? 4;
+
         $mostCited = new MostCitedDois();
-        $mostCited->refreshCache($context->getId(), $issn, 10);
+        $mostCited->refreshCache($contextId, $issn, $limit);
     }
 
     private function updateTrendingCache($context)
     {
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $contextId = $context->getId();
+        $limit = $plugin->getSetting($contextId, 'itemsPerTab_trending') ?? 4;
+
         $trending = new TrendingSubmissions();
-        $trending->refreshCache($context->getId(), $context->getPath(), 10);
+        $trending->refreshCache($contextId, $context->getPath(), $limit);
     }
 }
