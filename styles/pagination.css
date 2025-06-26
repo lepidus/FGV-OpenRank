@@ -59,3 +59,8 @@
 .article-item {
     transition: opacity 0.15s ease-in-out;
 }
+
+.article-cover .altmetric-embed a img {
+    width: auto;
+    height: auto;
+}
