@@ -62,22 +62,30 @@ class RankingSubmissionService
     public function updatePublishedSubmissionsAltmetricsScore($publishedSubmissions, $request)
     {
         $altmetricsClient = new Altmetrics(Application::get()->getHttpClient());
-        foreach ($publishedSubmissions as $submission) {
-            $publication = $submission->getCurrentPublication();
-            if (!empty($publication->getData('pub-id::doi'))) {
-                $submissionDoi = $publication->getData('pub-id::doi');
-                $submissionMetrics = [];
-                try {
-                    $submissionMetrics = $altmetricsClient->fetchAltmetrics($submissionDoi);
-                } catch (Exception $e) {
-                    error_log($e->getMessage());
-                }
-                if (isset($submissionMetrics["score"])) {
-                    $score = (float) $submissionMetrics["score"];
-                    Services::get('submission')->edit($submission, ['altmetricsScore' => $score], $request);
-                }
+        $submissionsArray = iterator_to_array($publishedSubmissions);
+        $batchSize = 50;
+        $delayInSeconds = 1;
 
+        $submissionChunks = array_chunk($submissionsArray, $batchSize);
+
+        foreach ($submissionChunks as $chunk) {
+            foreach ($chunk as $submission) {
+                $publication = $submission->getCurrentPublication();
+                if (!empty($publication->getData('pub-id::doi'))) {
+                    $submissionDoi = $publication->getData('pub-id::doi');
+                    $submissionMetrics = [];
+                    try {
+                        $submissionMetrics = $altmetricsClient->fetchAltmetrics($submissionDoi);
+                    } catch (Exception $e) {
+                        error_log($e->getMessage());
+                    }
+                    if (isset($submissionMetrics["score"])) {
+                        $score = (float) $submissionMetrics["score"];
+                        Services::get('submission')->edit($submission, ['altmetricsScore' => $score], $request);
+                    }
+                }
             }
+            sleep($delayInSeconds);
         }
     }
 }
