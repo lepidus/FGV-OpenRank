@@ -11,8 +11,8 @@
 <version>
 	<application>rankingPlugin</application>
 	<type>plugins.generic</type>
-	<release>0.0.0.25</release>
-	<date>2025-06-27</date>
+	<release>0.0.0.26</release>
+	<date>2025-07-01</date>
 	<lazy-load>1</lazy-load>
 	<class>RankingPlugin</class>
 </version>
