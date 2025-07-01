@@ -49,35 +49,14 @@ class RankingSubmissionService
         ]);
     }
 
-    public function retrieveTrendingSubmissions($request)
+    public function getBestAltmetricsScoreSubmissions($bestScoreDois, $request)
     {
         return RankingSubmission::get('trending', [
             'contextId' => $this->contextId,
             'contextPath' => $this->contextPath,
+            'bestScoreDois' => $bestScoreDois,
             'request' => $request,
             'limit' => $this->limit
         ]);
-    }
-
-    public function updatePublishedSubmissionsAltmetricsScore($publishedSubmissions, $request)
-    {
-        $altmetricsClient = new Altmetrics(Application::get()->getHttpClient());
-        foreach ($publishedSubmissions as $submission) {
-            $publication = $submission->getCurrentPublication();
-            if (!empty($publication->getData('pub-id::doi'))) {
-                $submissionDoi = $publication->getData('pub-id::doi');
-                $submissionMetrics = [];
-                try {
-                    $submissionMetrics = $altmetricsClient->fetchAltmetrics($submissionDoi);
-                } catch (Exception $e) {
-                    error_log($e->getMessage());
-                }
-                if (isset($submissionMetrics["score"])) {
-                    $score = (float) $submissionMetrics["score"];
-                    Services::get('submission')->edit($submission, ['altmetricsScore' => $score], $request);
-                }
-
-            }
-        }
     }
 }

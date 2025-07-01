@@ -8,34 +8,52 @@ use GuzzleHttp\Exception\TransferException;
 class Altmetrics
 {
     private const BASE_URL = 'https://api.altmetric.com/v1/';
-    private const ALTMETRICS_ENDPOINT = 'doi';
-    private $httpClient;
+    private const CITATIONS_ENDPOINT = 'citations/at';
+    private $_httpClient;
 
     public function __construct($httpClient)
     {
-        $this->httpClient = $httpClient;
+        $this->_httpClient = $httpClient;
     }
 
-    public function fetchAltmetrics(string $doi): array
+
+    public function fetchBestScoreSubmissions(string $issn, int $limit): array
     {
-        $uri = self::BASE_URL . self::ALTMETRICS_ENDPOINT . '/' . $doi;
+        $uri = self::BASE_URL . self::CITATIONS_ENDPOINT;
         try {
-            $response = $this->httpClient->request(
+            $response = $this->_httpClient->request(
                 'GET',
-                $uri
+                $uri,
+                [
+                    'query' => [
+                        'num_results' => $limit,
+                        'issns' => $issn,
+                        'order_by' => 'score'
+                    ]
+                ]
             );
             return json_decode($response->getBody()->getContents(), true);
         } catch (ServerException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("plugins.generic.rankingPlugin.client.altmetrics.serverError"));
+            throw new \Exception(
+                __("plugins.generic.rankingPlugin.client.altmetrics.serverError")
+            );
         } catch (ClientException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("plugins.generic.rankingPlugin.client.altmetrics.clientError"));
+            throw new \Exception(
+                __("plugins.generic.rankingPlugin.client.altmetrics.clientError")
+            );
         } catch (TransferException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("plugins.generic.rankingPlugin.client.altmetrics.transferError"));
+            throw new \Exception(
+                __("plugins.generic.rankingPlugin.client.altmetrics.transferError")
+            );
         } catch (GuzzleException $error) {
-            throw new \Exception("Altmetrics Error: " . $error->getMessage(), 0, $error);
+            throw new \Exception(
+                "Altmetrics Error: " . $error->getMessage(),
+                0,
+                $error
+            );
         }
     }
 }

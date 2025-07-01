@@ -5,6 +5,7 @@ import('plugins.generic.rankingPlugin.classes.cache.MostRecent');
 import('plugins.generic.rankingPlugin.classes.cache.MostRead');
 import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
 import('plugins.generic.rankingPlugin.classes.cache.TrendingSubmissions');
+import('plugins.generic.rankingPlugin.classes.cache.BestAltmetricsScoreDois');
 
 class RankingCacheUpdateTask extends ScheduledTask
 {
@@ -107,6 +108,11 @@ class RankingCacheUpdateTask extends ScheduledTask
 
     private function updateTrendingCache($context)
     {
+        $issn = $context->getSetting('onlineIssn') ?: $context->getSetting('printIssn');
+        if (!$issn) {
+            return;
+        }
+
         $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
         $contextId = $context->getId();
         $limit = $plugin->getSetting($contextId, 'itemsPerTab_trending') ?? 4;

@@ -12,46 +12,47 @@ use GuzzleHttp\Psr7\Request;
 
 class AltmetricsApiClientTest extends PKPTestCase
 {
-    private const DOI = 'xxxxxxxxxxxxxxxx';
+    private const ISSN = '1234-5678';
+    private const LIMIT = 4;
 
     /**
      * @test
-    */
-    public function itShoudReturnServerErrorWhenTryToRetrieveAltmetrics()
+     */
+    public function itShouldReturnServerErrorWhenTryToRetrieveBestScoreSubmissions()
     {
         $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
         $httpClientMock->method('request')
-            ->willThrowException(new ServerException('Server error', new Request('GET', 'https://api.crossref.org/works')));
+            ->willThrowException(new ServerException('Server error', new Request('GET', 'https://api.altmetric.com/v1/citations/at')));
 
         $apiClient = new Altmetrics($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "##plugins.generic.rankingPlugin.client.altmetrics.serverError##"
+            __("plugins.generic.rankingPlugin.client.altmetrics.serverError")
         );
-        $statusCode = $apiClient->fetchAltmetrics(self::DOI);
+        $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
     }
 
     /**
      * @test
-    */
-    public function itShouldReturnClientErrorWhenTryToRetrieveAltmetrics()
+     */
+    public function itShouldReturnClientErrorWhenTryToRetrieveBestScoreSubmissions()
     {
         $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
         $httpClientMock->method('request')
-            ->willThrowException(new ClientException('Client error', new Request('GET', 'https://api.crossref.org/works')));
+            ->willThrowException(new ClientException('Client error', new Request('GET', 'https://api.altmetric.com/v1/citations/at')));
 
         $apiClient = new Altmetrics($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "##plugins.generic.rankingPlugin.client.altmetrics.clientError##"
+            __("plugins.generic.rankingPlugin.client.altmetrics.clientError")
         );
-        $statusCode = $apiClient->fetchAltmetrics(self::DOI);
+        $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
     }
 
     /**
      * @test
-    */
-    public function itShouldReturnTransferErrorWhenTryToRetrieveAltmetrics()
+     */
+    public function itShouldReturnTransferErrorWhenTryToRetrieveBestScoreSubmissions()
     {
         $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
         $httpClientMock->method('request')
@@ -60,8 +61,8 @@ class AltmetricsApiClientTest extends PKPTestCase
         $apiClient = new Altmetrics($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "##plugins.generic.rankingPlugin.client.altmetrics.transferError##"
+            __("plugins.generic.rankingPlugin.client.altmetrics.transferError")
         );
-        $statusCode = $apiClient->fetchAltmetrics(self::DOI);
+        $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
     }
 }

@@ -147,7 +147,7 @@
                         `;
                         articleItem.append(detailsHtml);
 
-                        if (tabId === 'trending' && submission.altmetricsScore) {
+                        if (tabId === 'trending') {
                             const altmetricsBadgeHtml = `
                                 <script type='text/javascript' src='https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js'></script>
                                 <div class="article-cover">
