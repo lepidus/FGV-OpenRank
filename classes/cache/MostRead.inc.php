@@ -1,32 +1,25 @@
 <?php
 
 import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
+import('plugins.generic.rankingPlugin.classes.cache.CacheOperator');
 
 class MostRead
 {
     private $plugin;
+    private $cacheOperator;
 
     public function __construct($plugin = null)
     {
         $this->plugin = $plugin;
+        $this->cacheOperator = new CacheOperator();
     }
 
     public function getMostReadSubmissions($context, $request, $limit = null)
     {
-        $cacheManager = CacheManager::getManager();
-        $cache = $cacheManager->getFileCache(
+        return $this->cacheOperator->getCacheContents(
             $context->getId(),
-            'most_read_submissions',
-            [$this, 'cacheDismiss']
+            'most_read_submissions'
         );
-
-        $mostReadSubmissions = & $cache->getContents();
-
-        if ($mostReadSubmissions && $mostReadSubmissions != '[]') {
-            return $mostReadSubmissions;
-        }
-
-        return [];
     }
 
     public function refreshCache($context, $request, $limit = null)

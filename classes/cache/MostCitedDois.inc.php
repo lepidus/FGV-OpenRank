@@ -1,32 +1,22 @@
 <?php
 
 import('plugins.generic.rankingPlugin.classes.clients.Crossref');
+import('plugins.generic.rankingPlugin.classes.cache.CacheOperator');
 
 class MostCitedDois
 {
     private $crossrefClient;
+    private $cacheOperator;
 
     public function __construct()
     {
         $this->crossrefClient = new Crossref(Application::get()->getHttpClient());
+        $this->cacheOperator = new CacheOperator();
     }
 
     public function getMostCitedSubmissionsDois(int $contextId, string $issn, int $limit): array
     {
-        $cacheManager = CacheManager::getManager();
-        $cache = $cacheManager->getFileCache(
-            $contextId,
-            'most_cited_dois',
-            [$this, 'cacheDismiss']
-        );
-
-        $mostCitedDois = & $cache->getContents();
-
-        if ($mostCitedDois && $mostCitedDois != '[]') {
-            return $mostCitedDois;
-        }
-
-        return [];
+        return $this->cacheOperator->getCacheContents($contextId, 'most_cited_dois');
     }
 
     public function refreshCache(int $contextId, string $issn, int $limit): array

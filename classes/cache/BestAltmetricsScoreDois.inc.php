@@ -1,32 +1,22 @@
 <?php
 
 import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
+import('plugins.generic.rankingPlugin.classes.cache.CacheOperator');
 
 class BestAltmetricsScoreDois
 {
     private $altmetricsClient;
+    private $cacheOperator;
 
     public function __construct()
     {
         $this->altmetricsClient = new Altmetrics(Application::get()->getHttpClient());
+        $this->cacheOperator = new CacheOperator();
     }
 
     public function getBestAltmetricsScoreSubmissionsDois(int $contextId, string $issn, int $limit): array
     {
-        $cacheManager = CacheManager::getManager();
-        $cache = $cacheManager->getFileCache(
-            $contextId,
-            'best_altmetrics_score_dois',
-            [$this, 'cacheDismiss']
-        );
-
-        $bestScoreDois = & $cache->getContents();
-
-        if ($bestScoreDois && $bestScoreDois != '[]') {
-            return $bestScoreDois;
-        }
-
-        return [];
+        return $this->cacheOperator->getCacheContents($contextId, 'best_altmetrics_score_dois');
     }
 
     public function refreshCache(int $contextId, string $issn, int $limit): array
