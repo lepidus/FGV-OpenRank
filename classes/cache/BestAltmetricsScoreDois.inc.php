@@ -14,11 +14,6 @@ class BestAltmetricsScoreDois
         $this->cacheOperator = new CacheOperator();
     }
 
-    public function getBestAltmetricsScoreSubmissionsDois(int $contextId, string $issn, int $limit): array
-    {
-        return $this->cacheOperator->getCacheContents($contextId, 'best_altmetrics_score_dois');
-    }
-
     public function refreshCache(int $contextId, string $issn, int $limit): array
     {
         $cacheManager = CacheManager::getManager();
