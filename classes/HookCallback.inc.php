@@ -242,7 +242,7 @@ class HookCallback
         $tabsWithSequence = [];
         foreach ($defaultTabs as $index => $tabId) {
             $enabled = $this->plugin->getSetting($contextId, 'tabEnabled_' . $index);
-            if ($enabled !== false) {
+            if ($enabled) {
                 $sequence = $this->plugin->getSetting($contextId, 'tabSequence_' . $index);
                 $tabsWithSequence[] = [
                     'id' => $tabId,
