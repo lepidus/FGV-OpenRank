@@ -7,6 +7,7 @@ class MostRead
 {
     private $plugin;
     private $cacheOperator;
+    public const DEFAULT_MOST_READ_DAYS = 120;
 
     public function __construct($plugin = null)
     {
@@ -31,13 +32,12 @@ class MostRead
             [$this, 'cacheDismiss']
         );
 
-        $mostReadDays = 120;
         if ($this->plugin) {
             $contextId = $context->getId();
             $mostReadDays = $this->plugin->getSetting(
                 $contextId,
                 "mostReadDays_mostRead"
-            ) ?? 120;
+            ) ?? self::DEFAULT_MOST_READ_DAYS;
         }
 
         $rankingSubmissionService = new RankingSubmissionService(
