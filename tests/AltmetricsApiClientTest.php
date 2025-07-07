@@ -18,7 +18,7 @@ class AltmetricsApiClientTest extends PKPTestCase
     /**
      * @test
      */
-    public function itShouldReturnServerErrorWhenTryToRetrieveBestScoreSubmissions()
+    public function itShouldReturnServerErrorMessageOnBestScoreSubmissionFetching()
     {
         $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
         $httpClientMock->method('request')
