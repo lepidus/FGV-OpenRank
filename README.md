@@ -16,8 +16,18 @@ Para baixar o plugin, já até a [página de lançamentos](https://gitlab.lepidu
 
 ## Requerimentos
 
-Adicione o Host na opção *allowed_hosts* no arquivo de configuração `config.inc.php`.
+### allowed_hosts
+
+Adicione o Host atual na opção *allowed_hosts* no arquivo de configuração `config.inc.php`.
 Exemplo: `allowed_hosts = '["127.0.0.1", "localhost"]'`
+
+### Conteúdo Adicional
+
+Em `Configurações` > `Website` > `Aparência` > `Avançado`, adicione o seguinte código em **Conteúdo Adicional**:
+
+```html
+<div class="rankingTabs"></div>
+```
 
 ## Créditos
 
