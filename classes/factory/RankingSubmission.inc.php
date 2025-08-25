@@ -33,29 +33,7 @@ class RankingSubmission
         ]);
         $mostRecentSubmissionsData = [];
         foreach ($submissions as $submission) {
-            $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
-            $submissionData = [
-                'submissionUrl' => $submissionUrl,
-                'title' => $submission->getLocalizedTitle(),
-                'authorString' => $submission->getAuthorString(),
-                'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
-            ];
-            $publication = $submission->getCurrentPublication();
-            $issueDao = DAORegistry::getDAO('IssueDAO');
-            $issue = $issueDao->getBySubmissionId($submission->getId(), $contextId);
-
-            if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
-                if ($publication->getLocalizedData('coverImage')) {
-                    $submissionData['coverImage'] = $publication->getLocalizedData('coverImage');
-                    $submissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
-                } elseif ($issue && $issue->getLocalizedCoverImage()) {
-                    $submissionData['coverImage'] = [
-                        'name' => $issue->getLocalizedCoverImage(),
-                        'coverImageUrl' => $issue->getLocalizedCoverImageUrl()
-                    ];
-                }
-            }
-            $mostRecentSubmissionsData[] = $submissionData;
+            $mostRecentSubmissionsData[] = self::formatSubmissionData($submission, $request, $contextId, $contextPath);
         }
         return $mostRecentSubmissionsData;
     }
@@ -72,15 +50,14 @@ class RankingSubmission
         $daysAgo = date('Ymd', strtotime($dayString));
         $currentDate = date('Ymd');
 
-        $filter = array(
+        $filter = [
             STATISTICS_DIMENSION_CONTEXT_ID => $contextId,
             STATISTICS_DIMENSION_ASSOC_TYPE => ASSOC_TYPE_SUBMISSION_FILE,
-        );
-        $filter[STATISTICS_DIMENSION_DAY]['from'] = $daysAgo;
-        $filter[STATISTICS_DIMENSION_DAY]['to'] = $currentDate;
+            STATISTICS_DIMENSION_DAY => ['from' => $daysAgo, 'to' => $currentDate],
+        ];
 
-        $orderBy = array(STATISTICS_METRIC => STATISTICS_ORDER_DESC);
-        $column = array(STATISTICS_DIMENSION_SUBMISSION_ID);
+        $orderBy = [STATISTICS_METRIC => STATISTICS_ORDER_DESC];
+        $column = [STATISTICS_DIMENSION_SUBMISSION_ID];
 
         import('lib.pkp.classes.db.DBResultRange');
         $dbResultRange = new DBResultRange($limit);
@@ -102,41 +79,13 @@ class RankingSubmission
             $submission = $submissionDao->getById($submissionId);
 
             if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
-                $submissionUrl = $request->getDispatcher()->url(
+                $mostReadSubmissions[] = self::formatSubmissionData(
+                    $submission,
                     $request,
-                    ROUTE_PAGE,
+                    $contextId,
                     $contextPath,
-                    'article',
-                    'view',
-                    $submission->getBestId()
+                    ['metric' => $resultRecord[STATISTICS_METRIC]]
                 );
-                $mostReadSubmissionsData = [
-                    'submissionUrl' => $submissionUrl,
-                    'title' => $submission->getLocalizedTitle(),
-                    'authorString' => $submission->getAuthorString(),
-                    'datePublishedLabel' => __(
-                        "plugins.generic.rankingPlugin.tabs.content.publishedDate",
-                        ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]
-                    ),
-                    'metric' => $resultRecord[STATISTICS_METRIC],
-                ];
-
-                $publication = $submission->getCurrentPublication();
-                $issueDao = DAORegistry::getDAO('IssueDAO');
-                $issue = $issueDao->getBySubmissionId($submission->getId());
-
-                if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
-                    if ($publication->getLocalizedData('coverImage')) {
-                        $mostReadSubmissionsData['coverImage'] = $publication->getLocalizedData('coverImage');
-                        $mostReadSubmissionsData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
-                    } elseif ($issue && $issue->getLocalizedCoverImage()) {
-                        $mostReadSubmissionsData['coverImage'] = [
-                            'name' => $issue->getLocalizedCoverImage(),
-                            'coverImageUrl' => $issue->getLocalizedCoverImageUrl()
-                        ];
-                    }
-                }
-                $mostReadSubmissions[] = $mostReadSubmissionsData;
             }
         }
 
@@ -154,29 +103,7 @@ class RankingSubmission
         foreach ($mostCitedDois as $doi) {
             $submission = $submissionDao->getByPubId('doi', $doi, $contextId);
             if ($submission) {
-                $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
-                $mostCitedSubmissionData = [
-                    'submissionUrl' => $submissionUrl,
-                    'title' => $submission->getLocalizedTitle(),
-                    'authorString' => $submission->getAuthorString(),
-                    'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
-                ];
-                $publication = $submission->getCurrentPublication();
-                $issueDao = DAORegistry::getDAO('IssueDAO');
-                $issue = $issueDao->getBySubmissionId($submission->getId());
-
-                if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
-                    if ($publication->getLocalizedData('coverImage')) {
-                        $mostCitedSubmissionData['coverImage'] = $publication->getLocalizedData('coverImage');
-                        $mostCitedSubmissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
-                    } elseif ($issue && $issue->getLocalizedCoverImage()) {
-                        $mostCitedSubmissionData['coverImage'] = [
-                            'name' => $issue->getLocalizedCoverImage(),
-                            'coverImageUrl' => $issue->getLocalizedCoverImageUrl()
-                        ];
-                    }
-                }
-                $mostCitedSubmissions[] = $mostCitedSubmissionData;
+                $mostCitedSubmissions[] = self::formatSubmissionData($submission, $request, $contextId, $contextPath);
             }
         }
         return $mostCitedSubmissions;
@@ -194,45 +121,44 @@ class RankingSubmission
         foreach ($bestScoreDois as $doi) {
             $submission = $submissionDao->getByPubId('doi', $doi, $contextId);
             if ($submission) {
-                $submissionUrl = $request->getDispatcher()->url(
+                $trendingSubmissions[] = self::formatSubmissionData(
+                    $submission,
                     $request,
-                    ROUTE_PAGE,
+                    $contextId,
                     $contextPath,
-                    'article',
-                    'view',
-                    $submission->getBestId()
+                    ['doi' => $doi]
                 );
-                $trendingSubmissionData = [
-                    'submissionUrl' => $submissionUrl,
-                    'title' => $submission->getLocalizedTitle(),
-                    'authorString' => $submission->getAuthorString(),
-                    'datePublishedLabel' => __(
-                        "plugins.generic.rankingPlugin.tabs.content.publishedDate",
-                        ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]
-                    ),
-                    'doi' => $doi,
-                ];
-
-                $publication = $submission->getCurrentPublication();
-                $issueDao = DAORegistry::getDAO('IssueDAO');
-                $issue = $issueDao->getBySubmissionId($submission->getId());
-
-                if ($publication->getLocalizedData('coverImage') || ($issue && $issue->getLocalizedCoverImage())) {
-                    if ($publication->getLocalizedData('coverImage')) {
-                        $trendingSubmissionData['coverImage'] = $publication->getLocalizedData('coverImage');
-                        $trendingSubmissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
-                    } elseif ($issue && $issue->getLocalizedCoverImage()) {
-                        $trendingSubmissionData['coverImage'] = [
-                            'name' => $issue->getLocalizedCoverImage(),
-                            'coverImageUrl' => $issue->getLocalizedCoverImageUrl()
-                        ];
-                    }
-                }
-
-                $trendingSubmissions[] = $trendingSubmissionData;
             }
         }
 
         return $trendingSubmissions;
+    }
+
+    private static function formatSubmissionData($submission, $request, $contextId, $contextPath, $additionalData = [])
+    {
+        $publication = $submission->getCurrentPublication();
+
+        $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
+        $submissionData = [
+            'submissionUrl' => $submissionUrl,
+            'title' => $publication->getData('title'),
+            'authorString' => $submission->getAuthorString(),
+            'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
+        ];
+
+        $issueDao = DAORegistry::getDAO('IssueDAO');
+        $issue = $issueDao->getBySubmissionId($submission->getId(), $contextId);
+
+        if ($publication->getLocalizedData('coverImage')) {
+            $submissionData['coverImage'] = $publication->getLocalizedData('coverImage');
+            $submissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+        } elseif ($issue && $issue->getLocalizedCoverImage()) {
+            $submissionData['coverImage'] = [
+                'name' => $issue->getLocalizedCoverImage(),
+                'coverImageUrl' => $issue->getLocalizedCoverImageUrl()
+            ];
+        }
+
+        return array_merge($submissionData, $additionalData);
     }
 }

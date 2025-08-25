@@ -120,6 +120,8 @@ class HookCallback
         }
 
         $rankingPluginJavaScriptVariables = [
+            'currentLocale' => AppLocale::getLocale(),
+            'primaryLocale' => AppLocale::getPrimaryLocale(),
             'rankingTemplate' => $templateMgr->fetch(
                 $this->plugin->getTemplateResource('ranking.tpl')
             ),
