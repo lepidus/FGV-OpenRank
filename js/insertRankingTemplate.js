@@ -141,7 +141,7 @@
                                     <div>${submission.authorString}</div>
                                 </div>
                                 <div class="article-date-published">
-                                    <p>${submission.datePublishedLabel}</p>
+                                    <p>${localizeDatePublished(submission.datePublished)}</p>
                                 </div>
                             </div>
                         `;
@@ -263,5 +263,18 @@
 
 			return '';
 		}
+
+        function localizeDatePublished(dateString) {
+            const date = moment.utc(dateString).toDate();
+            let dateLocale = window.app.currentLocale !== undefined
+                ? window.app.currentLocale.replace('_', '-')
+                : window.app.currentLocale.replace('_', '-');
+            let localizedDate = date.toLocaleDateString(dateLocale, {
+				year: 'numeric',
+				month: 'short',
+				day: 'numeric'
+			});
+            return window.app.publishedDateLocaleMessage.replace('{$datePublished}', localizedDate);
+        }
     });
 })(jQuery);

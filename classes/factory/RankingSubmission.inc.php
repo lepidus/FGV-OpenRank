@@ -143,7 +143,7 @@ class RankingSubmission
             'submissionUrl' => $submissionUrl,
             'title' => $publication->getData('title'),
             'authorString' => $submission->getAuthorString(),
-            'datePublishedLabel' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate", ['datePublished' => strftime('%b %e, %Y', strtotime($submission->getDatePublished()))]),
+            'datePublished' => $submission->getDatePublished()
         ];
 
         $issueDao = DAORegistry::getDAO('IssueDAO');
