@@ -177,8 +177,50 @@ class RankingCustomizationForm extends Form
                     'object'
                 );
             }
+
+            $this->refreshCache($this->tabId, $this->contextId, $itemsPerTab);
         }
 
         parent::execute(...$functionArgs);
+    }
+
+    private function refreshCache($tabId, $contextId, $limit)
+    {
+        $request = Application::get()->getRequest();
+
+        $contextDao = Application::getContextDAO();
+        $context = $contextDao->getById($contextId);
+        $issn = $context->getData('onlineIssn') ?: $context->getData('printIssn');
+
+        switch ($tabId) {
+            case 'mostRecent':
+                import('plugins.generic.rankingPlugin.classes.cache.MostRecent');
+                $cache = new MostRecent();
+                $cache->refreshCache($context, $request, $limit);
+                break;
+            case 'mostRead':
+                import('plugins.generic.rankingPlugin.classes.cache.MostRead');
+                $mostRead = new MostRead($this->plugin);
+                $mostRead->refreshCache($context, $request, $limit);
+                break;
+            case 'mostCited':
+                import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
+                $mostCited = new MostCitedDois();
+                $mostCited->refreshCache($contextId, $issn, $limit);
+                break;
+            case 'trending':
+                import('plugins.generic.rankingPlugin.classes.cache.TrendingSubmissions');
+                $trending = new TrendingSubmissions();
+                $trending->refreshCache($contextId, $context->getPath(), $limit);
+                break;
+            case 'highlight':
+                import('plugins.generic.rankingPlugin.classes.cache.BestAltmetricsScoreDois');
+                $cache = new BestAltmetricsScoreDois();
+                $cache->refreshCache($contextId, $issn, $limit);
+                break;
+            default:
+                throw new Exception('Invalid tab ID');
+                break;
+        }
     }
 }

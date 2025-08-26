@@ -1,5 +1,7 @@
 <?php
 
+import('classes.submission.Submission');
+
 class RankingSubmission
 {
     public static function get($functionName, $params = [])
