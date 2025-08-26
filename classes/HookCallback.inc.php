@@ -120,6 +120,9 @@ class HookCallback
         }
 
         $rankingPluginJavaScriptVariables = [
+            'currentLocale' => AppLocale::getLocale(),
+            'primaryLocale' => AppLocale::getPrimaryLocale(),
+            'publishedDateLocaleMessage' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate"),
             'rankingTemplate' => $templateMgr->fetch(
                 $this->plugin->getTemplateResource('ranking.tpl')
             ),
@@ -184,6 +187,12 @@ class HookCallback
             'AppData',
             'app = ' . json_encode($rankingPluginJavaScriptVariables) . ';',
             ['inline' => true]
+        );
+
+        $templateMgr->addJavaScript(
+            'momentJs',
+            $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/js/lib/momentjs/moment.min.js',
+            ['priority' => STYLE_SEQUENCE_LAST]
         );
 
         $templateMgr->addJavaScript(

@@ -3,7 +3,7 @@
 
     $(document).ready(function() {
         const rankingTabsDiv = document.querySelector('.rankingTabs');
-        
+
         if (rankingTabsDiv && window.app && window.app.rankingTemplate) {
             rankingTabsDiv.innerHTML = window.app.rankingTemplate;
             document.querySelectorAll('.nav-tabs a[data-toggle="tab"]')
@@ -24,8 +24,8 @@
             dataType: 'json',
             success: function(data) {
                 renderSubmissions(
-                    data['mostRecentSubmissions'], 
-                    $('#mostRecentSubmissionsContainer'), 
+                    data['mostRecentSubmissions'],
+                    $('#mostRecentSubmissionsContainer'),
                     'mostRecent'
                 );
             },
@@ -42,8 +42,8 @@
             dataType: 'json',
             success: function(data) {
                 renderSubmissions(
-                    data['mostReadSubmissions'], 
-                    $('#mostReadSubmissionsContainer'), 
+                    data['mostReadSubmissions'],
+                    $('#mostReadSubmissionsContainer'),
                     'mostRead'
                 );
             },
@@ -53,15 +53,15 @@
                 );
             }
         });
-        
+
         $.ajax({
             url: `${window.app.rankingPluginApiBaseUrl}/mostCitedSubmissions`,
             method: 'GET',
             dataType: 'json',
             success: function(data) {
                 renderSubmissions(
-                    data['mostCitedSubmissions'], 
-                    $('#mostCitedSubmissionsContainer'), 
+                    data['mostCitedSubmissions'],
+                    $('#mostCitedSubmissionsContainer'),
                     'mostCited'
                 );
             },
@@ -78,8 +78,8 @@
             dataType: 'json',
             success: function(data) {
                 renderSubmissions(
-                    data['trendingSubmissions'], 
-                    $('#trendingSubmissionsContainer'), 
+                    data['trendingSubmissions'],
+                    $('#trendingSubmissionsContainer'),
                     'trending'
                 );
             },
@@ -89,38 +89,38 @@
                 );
             }
         });
-        
+
         function renderSubmissions(submissions, container, tabId = null) {
             container.empty();
             if (!submissions || !Array.isArray(submissions) || submissions.length === 0) {
                 container.html(`<p>${window.app.noPublicationsFoundMessage}</p>`);
                 return;
             }
-            
+
             let itemsPerPage = window.app.itemsPerPage || 4;
-            
+
             if (tabId && window.app.tabSettings && window.app.tabSettings[tabId]) {
                 const tabSettings = window.app.tabSettings[tabId];
                 itemsPerPage = tabSettings.itemsPerPage || itemsPerPage;
             }
-            
+
             const totalPages = Math.ceil(submissions.length / itemsPerPage);
             const containerId = container.attr('id');
             const baseId      = containerId.replace(/Container$/, '');
             const paginationContainer = $(`#${baseId}Pagination`);
-            
+
             let currentPage = 1;
-            
+
             function showPage(page) {
                 container.fadeOut(150, function() {
                     container.empty();
                     const start = (page - 1) * itemsPerPage;
                     const end = Math.min(start + itemsPerPage, submissions.length);
                     const pageSubmissions = submissions.slice(start, end);
-                    
+
                     pageSubmissions.forEach(function(submission) {
                         const articleItem = $('<div class="article-item"></div>');
-                        
+
                         if (submission.coverImage) {
                             const coverHtml = `
                                 <div class="article-cover">
@@ -133,15 +133,15 @@
                             `;
                             articleItem.append(coverHtml);
                         }
-                        
+
                         const detailsHtml = `
                             <div class="article-details">
-                                <h3><a href="${submission.submissionUrl}">${submission.title}</a></h3>
+                                <h3><a href="${submission.submissionUrl}">${localize(submission.title)}</a></h3>
                                 <div class="article-authors">
                                     <div>${submission.authorString}</div>
                                 </div>
                                 <div class="article-date-published">
-                                    <p>${submission.datePublishedLabel}</p>
+                                    <p>${localizeDatePublished(submission.datePublished)}</p>
                                 </div>
                             </div>
                         `;
@@ -156,29 +156,29 @@
                             `;
                             articleItem.append(altmetricsBadgeHtml);
                         }
-                        
+
                         container.append(articleItem);
                         container.append('<hr>');
                     });
-                    
+
                     container.fadeIn(150);
                 });
             }
-            
+
             function renderPagination() {
                 if (totalPages <= 1) {
                     paginationContainer.empty();
                     return;
                 }
-                
+
                 paginationContainer.empty();
                 const paginationUl = $('<ul></ul>');
-                
+
                 const prevLi = $('<li></li>');
                 const prevLink = $(`<a class="page-link" href="#" aria-label="${window.app.previousPageLabel || 'Previous'}">
                     ${window.app.previousPageLabel || 'Previous'}
                 </a>`);
-                
+
                 if (currentPage > 1) {
                     prevLink.on('click', function(e) {
                         e.preventDefault();
@@ -190,14 +190,14 @@
                     prevLi.addClass('disabled');
                     prevLink.css('pointer-events', 'none');
                 }
-                
+
                 prevLi.append(prevLink);
                 paginationUl.append(prevLi);
-                
+
                 for (let i = 1; i <= totalPages; i++) {
                     const pageLi = $(`<li class="page-item ${i === currentPage ? 'active' : ''}"></li>`);
                     const pageLink = $(`<a class="page-link" href="#" aria-label="Page ${i}">${i}</a>`);
-                    
+
                     if (i === currentPage) {
                         pageLink.attr('aria-current', 'page');
                     } else {
@@ -208,16 +208,16 @@
                             renderPagination();
                         });
                     }
-                    
+
                     pageLi.append(pageLink);
                     paginationUl.append(pageLi);
                 }
-                
+
                 const nextLi = $('<li></li>');
                 const nextLink = $(`<a class="page-link" href="#" aria-label="${window.app.nextPageLabel || 'Next'}">
                     ${window.app.nextPageLabel || 'Next'}
                 </a>`);
-                
+
                 if (currentPage < totalPages) {
                     nextLink.on('click', function(e) {
                         e.preventDefault();
@@ -229,15 +229,52 @@
                     nextLi.addClass('disabled');
                     nextLink.css('pointer-events', 'none');
                 }
-                
+
                 nextLi.append(nextLink);
                 paginationUl.append(nextLi);
-                
+
                 paginationContainer.append(paginationUl);
             }
-            
+
             showPage(currentPage);
             renderPagination();
+        }
+
+        function localize(multilingualData) {
+			if (!multilingualData) {
+				return '';
+			} else if (
+				multilingualData.hasOwnProperty(window.app.currentLocale) &&
+				multilingualData[window.app.currentLocale]
+			) {
+				return multilingualData[window.app.currentLocale];
+			} else if (
+				multilingualData.hasOwnProperty(window.app.primaryLocale) &&
+				multilingualData[window.app.primaryLocale]
+			) {
+				return multilingualData[window.app.primaryLocale];
+			}
+
+			for (var key in multilingualData) {
+				if (multilingualData[key]) {
+					return multilingualData[key];
+				}
+			}
+
+			return '';
+		}
+
+        function localizeDatePublished(dateString) {
+            const date = moment.utc(dateString).toDate();
+            let dateLocale = window.app.currentLocale !== undefined
+                ? window.app.currentLocale.replace('_', '-')
+                : window.app.currentLocale.replace('_', '-');
+            let localizedDate = date.toLocaleDateString(dateLocale, {
+				year: 'numeric',
+				month: 'short',
+				day: 'numeric'
+			});
+            return window.app.publishedDateLocaleMessage.replace('{$datePublished}', localizedDate);
         }
     });
 })(jQuery);
