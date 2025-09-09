@@ -35,7 +35,12 @@ class RankingSubmission
         ]);
         $mostRecentSubmissionsData = [];
         foreach ($submissions as $submission) {
-            $mostRecentSubmissionsData[] = self::formatSubmissionData($submission, $request, $contextId, $contextPath);
+            $mostRecentSubmissionsData[] = self::formatSubmissionData(
+                $submission,
+                $request,
+                $contextId,
+                $contextPath
+            );
         }
         return $mostRecentSubmissionsData;
     }
@@ -44,41 +49,32 @@ class RankingSubmission
     {
         $request = $params['request'];
         $contextId = $params['contextId'];
-        $limit = $params['limit'];
+        $limit = $params['limit'] + 1;
         $contextPath = $params['contextPath'];
         $mostReadDays = $params['mostReadDays'] ?? 120;
 
-        $dayString = "-" . $mostReadDays . " days";
-        $daysAgo = date('Ymd', strtotime($dayString));
-        $currentDate = date('Ymd');
+        $dayString = '-' . $mostReadDays . ' days';
+        $dateStart = date('Y-m-d', strtotime($dayString));
+        $currentDate = date('Y-m-d');
 
-        $filter = [
-            STATISTICS_DIMENSION_CONTEXT_ID => $contextId,
-            STATISTICS_DIMENSION_ASSOC_TYPE => ASSOC_TYPE_SUBMISSION_FILE,
-            STATISTICS_DIMENSION_DAY => ['from' => $daysAgo, 'to' => $currentDate],
-        ];
-
-        $orderBy = [STATISTICS_METRIC => STATISTICS_ORDER_DESC];
-        $column = [STATISTICS_DIMENSION_SUBMISSION_ID];
-
-        import('lib.pkp.classes.db.DBResultRange');
-        $dbResultRange = new DBResultRange($limit);
-
-        $metricsDao = DAORegistry::getDAO('MetricsDAO');
-        $result = $metricsDao->getMetrics(
-            OJS_METRIC_TYPE_COUNTER,
-            $column,
-            $filter,
-            $orderBy,
-            $dbResultRange
+        $topSubmissions = Services::get('stats')->getOrderedObjects(
+            STATISTICS_DIMENSION_SUBMISSION_ID,
+            STATISTICS_ORDER_DESC,
+            [
+                'contextIds' => [$contextId],
+                'dateStart' => $dateStart,
+                'dateEnd' => $currentDate,
+                'count' => $limit,
+                'offset' => 0,
+            ]
         );
 
-        $submissionDao = DAORegistry::getDAO('SubmissionDAO');
         $mostReadSubmissions = [];
+        $submissionService = Services::get('submission');
 
-        foreach ($result as $resultRecord) {
-            $submissionId = $resultRecord[STATISTICS_DIMENSION_SUBMISSION_ID];
-            $submission = $submissionDao->getById($submissionId);
+        foreach ($topSubmissions as $topSubmission) {
+            $submissionId = $topSubmission['id'];
+            $submission = $submissionService->get($submissionId);
 
             if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
                 $mostReadSubmissions[] = self::formatSubmissionData(
@@ -86,7 +82,7 @@ class RankingSubmission
                     $request,
                     $contextId,
                     $contextPath,
-                    ['metric' => $resultRecord[STATISTICS_METRIC]]
+                    ['metric' => $topSubmission['total']]
                 );
             }
         }
@@ -105,7 +101,12 @@ class RankingSubmission
         foreach ($mostCitedDois as $doi) {
             $submission = $submissionDao->getByPubId('doi', $doi, $contextId);
             if ($submission) {
-                $mostCitedSubmissions[] = self::formatSubmissionData($submission, $request, $contextId, $contextPath);
+                $mostCitedSubmissions[] = self::formatSubmissionData(
+                    $submission,
+                    $request,
+                    $contextId,
+                    $contextPath
+                );
             }
         }
         return $mostCitedSubmissions;
@@ -136,11 +137,23 @@ class RankingSubmission
         return $trendingSubmissions;
     }
 
-    private static function formatSubmissionData($submission, $request, $contextId, $contextPath, $additionalData = [])
-    {
+    private static function formatSubmissionData(
+        $submission,
+        $request,
+        $contextId,
+        $contextPath,
+        $additionalData = []
+    ) {
         $publication = $submission->getCurrentPublication();
 
-        $submissionUrl = $request->getDispatcher()->url($request, ROUTE_PAGE, $contextPath, 'article', 'view', $submission->getBestId());
+        $submissionUrl = $request->getDispatcher()->url(
+            $request,
+            ROUTE_PAGE,
+            $contextPath,
+            'article',
+            'view',
+            $submission->getBestId()
+        );
         $submissionData = [
             'submissionUrl' => $submissionUrl,
             'title' => $publication->getData('title'),
@@ -152,8 +165,11 @@ class RankingSubmission
         $issue = $issueDao->getBySubmissionId($submission->getId(), $contextId);
 
         if ($publication->getLocalizedData('coverImage')) {
-            $submissionData['coverImage'] = $publication->getLocalizedData('coverImage');
-            $submissionData['coverImage']['coverImageUrl'] = $publication->getLocalizedCoverImageUrl($contextId);
+            $submissionData['coverImage'] = $publication->getLocalizedData(
+                'coverImage'
+            );
+            $submissionData['coverImage']['coverImageUrl']
+                = $publication->getLocalizedCoverImageUrl($contextId);
         } elseif ($issue && $issue->getLocalizedCoverImage()) {
             $submissionData['coverImage'] = [
                 'name' => $issue->getLocalizedCoverImage(),
