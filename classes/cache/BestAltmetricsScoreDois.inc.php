@@ -26,7 +26,7 @@ class BestAltmetricsScoreDois
             return $bestScoreDois;
         }
 
-        return [];
+        return $this->refreshCache($contextId, $issn, $limit);
     }
 
     public function refreshCache(int $contextId, string $issn, int $limit): array
