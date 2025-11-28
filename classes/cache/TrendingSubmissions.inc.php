@@ -20,7 +20,7 @@ class TrendingSubmissions
             return $trendingSubmissions;
         }
 
-        return [];
+        return $this->refreshCache($contextId, $contextPath, $limit);
     }
 
     public function refreshCache($contextId, $contextPath, $limit = null)

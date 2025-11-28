@@ -26,7 +26,7 @@ class MostRead
             return $mostReadSubmissions;
         }
 
-        return [];
+        return $this->refreshCache($context, $request, $limit);
     }
 
     public function refreshCache($context, $request, $limit = null)
