@@ -19,7 +19,7 @@ class MostRecent
             return $mostRecentSubmissions;
         }
 
-        return [];
+        return $this->refreshCache($context, $request, $limit);
     }
 
     public function refreshCache($context, $request, $limit = null)
