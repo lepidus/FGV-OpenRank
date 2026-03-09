@@ -16,6 +16,9 @@ class RankingCacheUpdateTask extends ScheduledTask
 
     public function executeActions()
     {
+        $request = Application::get()->getRequest();
+        $request->setDispatcher(Application::get()->getDispatcher());
+
         $contextDao = Application::getContextDAO();
         $contexts = $contextDao->getAll();
 
@@ -33,9 +36,10 @@ class RankingCacheUpdateTask extends ScheduledTask
     private function updateContextCaches($context)
     {
         $request = Application::get()->getRequest();
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin')
+            ?? PluginRegistry::loadPlugin('generic', 'rankingplugin');
 
-        if (!$plugin || !$plugin->getEnabled()) {
+        if (!$plugin || !$plugin->getEnabled($context->getId())) {
             return;
         }
 
