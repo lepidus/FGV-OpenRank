@@ -272,7 +272,8 @@
             let localizedDate = date.toLocaleDateString(dateLocale, {
 				year: 'numeric',
 				month: 'short',
-				day: 'numeric'
+				day: 'numeric',
+                timeZone: 'UTC'
 			});
             return window.app.publishedDateLocaleMessage.replace('{$datePublished}', localizedDate);
         }
