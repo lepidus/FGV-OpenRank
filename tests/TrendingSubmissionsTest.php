@@ -136,6 +136,59 @@ class TrendingSubmissionsTest extends PKPTestCase
     /**
      * @test
      */
+    public function itShouldFallBackToManualDoisWhenDecryptionFails()
+    {
+        $manualDois = [
+            self::FIRST_OPTION_ID => self::FIRST_TRENDING_DOI,
+            self::SECOND_OPTION_ID => self::SECOND_TRENDING_DOI,
+        ];
+        $plugin = $this->buildPluginMock([
+            'altmetricsApiKey_trending' => self::ENCRYPTED_API_KEY,
+            'trendingDois_trending' => $manualDois,
+        ]);
+
+        $encryption = $this->createMock(APIKeyEncryption::class);
+        $encryption->method('decryptString')
+            ->with(self::ENCRYPTED_API_KEY)
+            ->willThrowException(new \Exception('Failed to decrypt string'));
+
+        $bestDois = $this->createMock(BestAltmetricsScoreDois::class);
+        $bestDois->expects($this->never())->method('refreshCache');
+
+        $service = $this->createMock(RankingSubmissionService::class);
+        $service->expects($this->once())
+            ->method('getBestAltmetricsScoreSubmissions')
+            ->with([self::FIRST_TRENDING_DOI, self::SECOND_TRENDING_DOI], $this->anything())
+            ->willReturn([]);
+
+        $trending = new class ($plugin, $bestDois, $encryption, $service) extends TrendingSubmissions {
+            private $service;
+            public function __construct($plugin, $bestDois, $encryption, $service)
+            {
+                parent::__construct($plugin, $bestDois, $encryption);
+                $this->service = $service;
+            }
+            protected function getContextIssn($contextId): ?string
+            {
+                return null;
+            }
+            protected function createRankingSubmissionService($cid, $cp, $l)
+            {
+                return $this->service;
+            }
+        };
+
+        $previousErrorLog = ini_set('error_log', '/dev/null');
+        try {
+            $trending->refreshCache(self::CONTEXT_ID, self::CONTEXT_PATH, self::LIMIT);
+        } finally {
+            ini_set('error_log', $previousErrorLog);
+        }
+    }
+
+    /**
+     * @test
+     */
     public function itShouldRespectLimitWhenUsingManualDois()
     {
         $manualDois = [

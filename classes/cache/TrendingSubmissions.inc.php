@@ -72,7 +72,16 @@ class TrendingSubmissions
         if (empty($encrypted)) {
             return null;
         }
-        return $this->getApiKeyEncryption()->decryptString($encrypted);
+        try {
+            return $this->getApiKeyEncryption()->decryptString($encrypted);
+        } catch (\Exception $e) {
+            error_log(sprintf(
+                '[rankingPlugin] Failed to decrypt Altmetric API key for context %s: %s',
+                $contextId,
+                $e->getMessage()
+            ));
+            return null;
+        }
     }
 
     private function refreshFromApi($contextId, $contextPath, $limit, $apiKey): array

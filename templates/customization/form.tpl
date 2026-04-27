@@ -59,6 +59,14 @@
                     {/fbvFormSection}
                 {/if}
 
+                {if $hasAltmetricsApiKey}
+                    <div class="pkp_notification">
+                        <span class="description">
+                            {translate key="plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet"}
+                        </span>
+                    </div>
+                {/if}
+
                 {capture assign=trendingDoisGridUrl}{url router=$smarty.const.ROUTE_COMPONENT component="plugins.generic.rankingPlugin.controllers.grid.TrendingDoisGridHandler" op="fetchGrid" escape=false}{/capture}
                 {load_url_in_div id="trendingDoisGridContainer" url=$trendingDoisGridUrl}
             {/if}

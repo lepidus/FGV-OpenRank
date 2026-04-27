@@ -138,3 +138,6 @@ msgstr "Este DOI no se encontró en la revista. Solo se pueden añadir DOIs asig
 
 msgid "plugins.generic.rankingPlugin.trendingDois.deleteConfirm"
 msgstr "¿Seguro que desea eliminar este DOI de la lista?"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet"
+msgstr "Esta lista se ignora mientras haya una clave de API de Altmetric configurada. Elimine la clave almacenada arriba para usar la lista manual."

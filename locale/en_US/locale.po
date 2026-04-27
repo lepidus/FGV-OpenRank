@@ -138,3 +138,6 @@ msgstr "This DOI was not found in the journal. Only DOIs assigned to submissions
 
 msgid "plugins.generic.rankingPlugin.trendingDois.deleteConfirm"
 msgstr "Are you sure you want to remove this DOI from the list?"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet"
+msgstr "This list is ignored while an Altmetric API key is configured. Remove the stored API key above to use the manual list."
