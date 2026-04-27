@@ -106,6 +106,10 @@ class TrendingDoisGridHandler extends GridHandler
 
     public function saveSequence($args, $request)
     {
+        if (!$request->checkCSRF()) {
+            return new JSONMessage(false);
+        }
+
         $data = json_decode($request->getUserVar('data'));
         if (!is_array($data)) {
             $data = [];

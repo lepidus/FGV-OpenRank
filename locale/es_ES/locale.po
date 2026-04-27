@@ -105,6 +105,7 @@ msgstr "Actualización de caché completada exitosamente para el contexto: {$con
 
 msgid "plugins.generic.rankingPlugin.scheduledTask.updateError"
 msgstr "Error al actualizar caché para el contexto {$contextName}: {$error}"
+
 msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey"
 msgstr "Clave de API de Altmetric"
 

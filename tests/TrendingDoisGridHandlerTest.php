@@ -5,21 +5,30 @@ import('plugins.generic.rankingPlugin.controllers.grid.TrendingDoisGridHandler')
 
 class TrendingDoisGridHandlerTest extends PKPTestCase
 {
+    private const FIRST_OPTION_ID = '64f1a0b7c2d31';
+    private const SECOND_OPTION_ID = '64f1a0b7c2d32';
+    private const THIRD_OPTION_ID = '64f1a0b7c2d33';
+    private const ABSENT_OPTION_ID = '64ffffffffffe';
+
+    private const FIRST_DOI = '10.4322/2179-7560.2024.001';
+    private const SECOND_DOI = '10.4322/2179-7560.2024.002';
+    private const THIRD_DOI = '10.4322/2179-7560.2024.003';
+
     /**
      * @test
      */
     public function itShouldBuildGridDataFromStoredDois()
     {
         $stored = [
-            'uidA' => '10.1/a',
-            'uidB' => '10.1/b',
+            self::FIRST_OPTION_ID => self::FIRST_DOI,
+            self::SECOND_OPTION_ID => self::SECOND_DOI,
         ];
 
         $result = TrendingDoisGridHandler::buildGridData($stored);
 
         $this->assertSame([
-            'uidA' => ['id' => 'uidA', 'doi' => '10.1/a', 'sequence' => 0],
-            'uidB' => ['id' => 'uidB', 'doi' => '10.1/b', 'sequence' => 1],
+            self::FIRST_OPTION_ID => ['id' => self::FIRST_OPTION_ID, 'doi' => self::FIRST_DOI, 'sequence' => 0],
+            self::SECOND_OPTION_ID => ['id' => self::SECOND_OPTION_ID, 'doi' => self::SECOND_DOI, 'sequence' => 1],
         ], $result);
     }
 
@@ -37,15 +46,24 @@ class TrendingDoisGridHandlerTest extends PKPTestCase
     public function itShouldReorderDoisAccordingToProvidedOrder()
     {
         $stored = [
-            'uidA' => '10.1/a',
-            'uidB' => '10.1/b',
-            'uidC' => '10.1/c',
+            self::FIRST_OPTION_ID => self::FIRST_DOI,
+            self::SECOND_OPTION_ID => self::SECOND_DOI,
+            self::THIRD_OPTION_ID => self::THIRD_DOI,
         ];
 
-        $result = TrendingDoisGridHandler::reorderDois($stored, ['uidC', 'uidA', 'uidB']);
+        $result = TrendingDoisGridHandler::reorderDois(
+            $stored,
+            [self::THIRD_OPTION_ID, self::FIRST_OPTION_ID, self::SECOND_OPTION_ID]
+        );
 
-        $this->assertSame(['uidC', 'uidA', 'uidB'], array_keys($result));
-        $this->assertSame(['10.1/c', '10.1/a', '10.1/b'], array_values($result));
+        $this->assertSame(
+            [self::THIRD_OPTION_ID, self::FIRST_OPTION_ID, self::SECOND_OPTION_ID],
+            array_keys($result)
+        );
+        $this->assertSame(
+            [self::THIRD_DOI, self::FIRST_DOI, self::SECOND_DOI],
+            array_values($result)
+        );
     }
 
     /**
@@ -54,14 +72,17 @@ class TrendingDoisGridHandlerTest extends PKPTestCase
     public function itShouldPreserveUnlistedDoisAtTheEndWhenReordering()
     {
         $stored = [
-            'uidA' => '10.1/a',
-            'uidB' => '10.1/b',
-            'uidC' => '10.1/c',
+            self::FIRST_OPTION_ID => self::FIRST_DOI,
+            self::SECOND_OPTION_ID => self::SECOND_DOI,
+            self::THIRD_OPTION_ID => self::THIRD_DOI,
         ];
 
-        $result = TrendingDoisGridHandler::reorderDois($stored, ['uidC']);
+        $result = TrendingDoisGridHandler::reorderDois($stored, [self::THIRD_OPTION_ID]);
 
-        $this->assertSame(['uidC', 'uidA', 'uidB'], array_keys($result));
+        $this->assertSame(
+            [self::THIRD_OPTION_ID, self::FIRST_OPTION_ID, self::SECOND_OPTION_ID],
+            array_keys($result)
+        );
     }
 
     /**
@@ -70,16 +91,16 @@ class TrendingDoisGridHandlerTest extends PKPTestCase
     public function itShouldRemoveDoiByOptionId()
     {
         $stored = [
-            'uidA' => '10.1/a',
-            'uidB' => '10.1/b',
-            'uidC' => '10.1/c',
+            self::FIRST_OPTION_ID => self::FIRST_DOI,
+            self::SECOND_OPTION_ID => self::SECOND_DOI,
+            self::THIRD_OPTION_ID => self::THIRD_DOI,
         ];
 
-        $result = TrendingDoisGridHandler::removeDoi($stored, 'uidB');
+        $result = TrendingDoisGridHandler::removeDoi($stored, self::SECOND_OPTION_ID);
 
         $this->assertSame([
-            'uidA' => '10.1/a',
-            'uidC' => '10.1/c',
+            self::FIRST_OPTION_ID => self::FIRST_DOI,
+            self::THIRD_OPTION_ID => self::THIRD_DOI,
         ], $result);
     }
 
@@ -88,9 +109,9 @@ class TrendingDoisGridHandlerTest extends PKPTestCase
      */
     public function itShouldReturnUnchangedWhenRemovingNonexistentDoi()
     {
-        $stored = ['uidA' => '10.1/a'];
+        $stored = [self::FIRST_OPTION_ID => self::FIRST_DOI];
 
-        $result = TrendingDoisGridHandler::removeDoi($stored, 'missingUid');
+        $result = TrendingDoisGridHandler::removeDoi($stored, self::ABSENT_OPTION_ID);
 
         $this->assertSame($stored, $result);
     }

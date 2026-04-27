@@ -10,8 +10,27 @@ import('plugins.generic.rankingPlugin.RankingPlugin');
 class TrendingSubmissionsTest extends PKPTestCase
 {
     private const CONTEXT_ID = 1;
-    private const CONTEXT_PATH = 'testjournal';
+    private const CONTEXT_PATH = 'rbgdp';
     private const LIMIT = 4;
+    private const JOURNAL_PRINT_ISSN = '2179-7560';
+
+    private const ENCRYPTED_API_KEY = 'base64:encrypted-blob';
+    private const DECRYPTED_API_KEY = 'altmetric-api-key-plaintext';
+
+    private const FIRST_OPTION_ID = '64f1a0b7c2d31';
+    private const SECOND_OPTION_ID = '64f1a0b7c2d32';
+    private const THIRD_OPTION_ID = '64f1a0b7c2d33';
+    private const FOURTH_OPTION_ID = '64f1a0b7c2d34';
+    private const FIFTH_OPTION_ID = '64f1a0b7c2d35';
+
+    private const FIRST_TRENDING_DOI = '10.4322/2179-7560.2024.001';
+    private const SECOND_TRENDING_DOI = '10.4322/2179-7560.2024.002';
+    private const THIRD_TRENDING_DOI = '10.4322/2179-7560.2024.003';
+    private const FOURTH_TRENDING_DOI = '10.4322/2179-7560.2024.004';
+    private const FIFTH_TRENDING_DOI = '10.4322/2179-7560.2024.005';
+
+    private const ALTMETRIC_RETURNED_DOI_FIRST = '10.4322/2179-7560.2023.011';
+    private const ALTMETRIC_RETURNED_DOI_SECOND = '10.4322/2179-7560.2023.012';
 
     private function buildPluginMock(array $settings)
     {
@@ -29,24 +48,24 @@ class TrendingSubmissionsTest extends PKPTestCase
     public function itShouldCallAltmetricApiWithDecryptedKeyWhenKeyIsConfigured()
     {
         $plugin = $this->buildPluginMock([
-            'altmetricsApiKey_trending' => 'base64:encrypted-blob',
+            'altmetricsApiKey_trending' => self::ENCRYPTED_API_KEY,
         ]);
 
         $encryption = $this->createMock(APIKeyEncryption::class);
         $encryption->method('decryptString')
-            ->with('base64:encrypted-blob')
-            ->willReturn('decrypted-key');
+            ->with(self::ENCRYPTED_API_KEY)
+            ->willReturn(self::DECRYPTED_API_KEY);
 
         $bestDois = $this->createMock(BestAltmetricsScoreDois::class);
         $bestDois->expects($this->once())
             ->method('refreshCache')
-            ->with(self::CONTEXT_ID, '1234-5678', self::LIMIT, 'decrypted-key')
-            ->willReturn(['10.1234/a', '10.1234/b']);
+            ->with(self::CONTEXT_ID, self::JOURNAL_PRINT_ISSN, self::LIMIT, self::DECRYPTED_API_KEY)
+            ->willReturn([self::ALTMETRIC_RETURNED_DOI_FIRST, self::ALTMETRIC_RETURNED_DOI_SECOND]);
 
         $service = $this->createMock(RankingSubmissionService::class);
         $service->method('getBestAltmetricsScoreSubmissions')->willReturn([]);
 
-        $trending = new class($plugin, $bestDois, $encryption, '1234-5678', $service) extends TrendingSubmissions {
+        $trending = new class($plugin, $bestDois, $encryption, self::JOURNAL_PRINT_ISSN, $service) extends TrendingSubmissions {
             private $issn;
             private $service;
             public function __construct($plugin, $bestDois, $encryption, $issn, $service)
@@ -73,7 +92,10 @@ class TrendingSubmissionsTest extends PKPTestCase
      */
     public function itShouldUseManualDoisAndSkipAltmetricWhenNoKey()
     {
-        $manualDois = ['uid1' => '10.1234/a', 'uid2' => '10.5678/b'];
+        $manualDois = [
+            self::FIRST_OPTION_ID => self::FIRST_TRENDING_DOI,
+            self::SECOND_OPTION_ID => self::SECOND_TRENDING_DOI,
+        ];
         $plugin = $this->buildPluginMock([
             'altmetricsApiKey_trending' => '',
             'trendingDois_trending' => $manualDois,
@@ -88,7 +110,7 @@ class TrendingSubmissionsTest extends PKPTestCase
         $service = $this->createMock(RankingSubmissionService::class);
         $service->expects($this->once())
             ->method('getBestAltmetricsScoreSubmissions')
-            ->with(['10.1234/a', '10.5678/b'], $this->anything())
+            ->with([self::FIRST_TRENDING_DOI, self::SECOND_TRENDING_DOI], $this->anything())
             ->willReturn([]);
 
         $trending = new class($plugin, $bestDois, $encryption, $service) extends TrendingSubmissions {
@@ -117,8 +139,11 @@ class TrendingSubmissionsTest extends PKPTestCase
     public function itShouldRespectLimitWhenUsingManualDois()
     {
         $manualDois = [
-            'u1' => '10.1/a', 'u2' => '10.1/b', 'u3' => '10.1/c',
-            'u4' => '10.1/d', 'u5' => '10.1/e',
+            self::FIRST_OPTION_ID => self::FIRST_TRENDING_DOI,
+            self::SECOND_OPTION_ID => self::SECOND_TRENDING_DOI,
+            self::THIRD_OPTION_ID => self::THIRD_TRENDING_DOI,
+            self::FOURTH_OPTION_ID => self::FOURTH_TRENDING_DOI,
+            self::FIFTH_OPTION_ID => self::FIFTH_TRENDING_DOI,
         ];
         $plugin = $this->buildPluginMock([
             'altmetricsApiKey_trending' => null,
@@ -128,7 +153,10 @@ class TrendingSubmissionsTest extends PKPTestCase
         $service = $this->createMock(RankingSubmissionService::class);
         $service->expects($this->once())
             ->method('getBestAltmetricsScoreSubmissions')
-            ->with(['10.1/a', '10.1/b', '10.1/c'], $this->anything())
+            ->with(
+                [self::FIRST_TRENDING_DOI, self::SECOND_TRENDING_DOI, self::THIRD_TRENDING_DOI],
+                $this->anything()
+            )
             ->willReturn([]);
 
         $trending = new class($plugin, null, null, $service) extends TrendingSubmissions {

@@ -16,6 +16,20 @@ class TrendingDoiFormTest extends PKPTestCase
 {
     private const CONTEXT_ID = 1;
 
+    private const FIRST_OPTION_ID = '64f1a0b7c2d31';
+    private const SECOND_OPTION_ID = '64f1a0b7c2d32';
+    private const THIRD_OPTION_ID = '64f1a0b7c2d33';
+    private const PREVIOUS_OPTION_ID = '64eeeeeebbbb1';
+
+    private const FIRST_DOI = '10.4322/2179-7560.2024.001';
+    private const SECOND_DOI_BEFORE_EDIT = '10.4322/2179-7560.2024.002';
+    private const SECOND_DOI_AFTER_EDIT = '10.4322/2179-7560.2024.002-corrigendum';
+    private const THIRD_DOI = '10.4322/2179-7560.2024.003';
+    private const PREVIOUS_JOURNAL_DOI = '10.4322/2179-7560.2023.012';
+    private const NEW_DOI = '10.4322/2179-7560.2024.004';
+    private const DOI_ABSENT_FROM_JOURNAL = '10.1234/article-from-another-journal';
+    private const LOOKUP_DOI = '10.4322/2179-7560.2024.lookup';
+
     private function buildPluginMock(&$settings)
     {
         $plugin = $this->createMock(RankingPlugin::class);
@@ -68,7 +82,7 @@ class TrendingDoiFormTest extends PKPTestCase
         $submissionDao = $this->buildSubmissionDaoMock(new stdClass());
 
         $form = new TestableTrendingDoiForm($plugin, self::CONTEXT_ID, null, $submissionDao);
-        $form->setData('doi', '10.1234/example.abc');
+        $form->setData('doi', self::FIRST_DOI);
 
         $this->assertTrue($form->validate());
     }
@@ -83,7 +97,7 @@ class TrendingDoiFormTest extends PKPTestCase
         $submissionDao = $this->buildSubmissionDaoMock(null);
 
         $form = new TestableTrendingDoiForm($plugin, self::CONTEXT_ID, null, $submissionDao);
-        $form->setData('doi', '10.1234/missing.in.journal');
+        $form->setData('doi', self::DOI_ABSENT_FROM_JOURNAL);
 
         $this->assertFalse($form->validate());
         $errors = $form->getErrorsArray();
@@ -103,11 +117,11 @@ class TrendingDoiFormTest extends PKPTestCase
             ->getMockForAbstractClass();
         $submissionDao->expects($this->once())
             ->method('getByPubId')
-            ->with('doi', '10.1234/lookup.test', self::CONTEXT_ID)
+            ->with('doi', self::LOOKUP_DOI, self::CONTEXT_ID)
             ->willReturn(new stdClass());
 
         $form = new TestableTrendingDoiForm($plugin, self::CONTEXT_ID, null, $submissionDao);
-        $form->setData('doi', '10.1234/lookup.test');
+        $form->setData('doi', self::LOOKUP_DOI);
 
         $this->assertTrue($form->validate());
     }
@@ -140,12 +154,12 @@ class TrendingDoiFormTest extends PKPTestCase
         $plugin = $this->buildPluginMock($settings);
 
         $form = new TestableTrendingDoiForm($plugin, self::CONTEXT_ID);
-        $form->setData('doi', '10.1234/first.doi');
+        $form->setData('doi', self::FIRST_DOI);
         $optionId = $form->execute();
 
         $this->assertIsString($optionId);
         $this->assertArrayHasKey('trendingDois_trending', $settings);
-        $this->assertSame(['10.1234/first.doi'], array_values($settings['trendingDois_trending']));
+        $this->assertSame([self::FIRST_DOI], array_values($settings['trendingDois_trending']));
         $this->assertSame($optionId, array_keys($settings['trendingDois_trending'])[0]);
     }
 
@@ -155,19 +169,19 @@ class TrendingDoiFormTest extends PKPTestCase
     public function itShouldAppendDoiPreservingExisting()
     {
         $settings = [
-            'trendingDois_trending' => ['existingUid' => '10.9999/old.doi'],
+            'trendingDois_trending' => [self::PREVIOUS_OPTION_ID => self::PREVIOUS_JOURNAL_DOI],
         ];
         $plugin = $this->buildPluginMock($settings);
 
         $form = new TestableTrendingDoiForm($plugin, self::CONTEXT_ID);
-        $form->setData('doi', '10.1234/new.doi');
+        $form->setData('doi', self::NEW_DOI);
         $form->execute();
 
         $this->assertSame(
-            ['10.9999/old.doi', '10.1234/new.doi'],
+            [self::PREVIOUS_JOURNAL_DOI, self::NEW_DOI],
             array_values($settings['trendingDois_trending'])
         );
-        $this->assertArrayHasKey('existingUid', $settings['trendingDois_trending']);
+        $this->assertArrayHasKey(self::PREVIOUS_OPTION_ID, $settings['trendingDois_trending']);
     }
 
     /**
@@ -177,19 +191,23 @@ class TrendingDoiFormTest extends PKPTestCase
     {
         $settings = [
             'trendingDois_trending' => [
-                'uidA' => '10.1/a',
-                'uidB' => '10.1/old-b',
-                'uidC' => '10.1/c',
+                self::FIRST_OPTION_ID => self::FIRST_DOI,
+                self::SECOND_OPTION_ID => self::SECOND_DOI_BEFORE_EDIT,
+                self::THIRD_OPTION_ID => self::THIRD_DOI,
             ],
         ];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new TestableTrendingDoiForm($plugin, self::CONTEXT_ID, 'uidB');
-        $form->setData('doi', '10.1/new-b');
+        $form = new TestableTrendingDoiForm($plugin, self::CONTEXT_ID, self::SECOND_OPTION_ID);
+        $form->setData('doi', self::SECOND_DOI_AFTER_EDIT);
         $form->execute();
 
         $this->assertSame(
-            ['uidA' => '10.1/a', 'uidB' => '10.1/new-b', 'uidC' => '10.1/c'],
+            [
+                self::FIRST_OPTION_ID => self::FIRST_DOI,
+                self::SECOND_OPTION_ID => self::SECOND_DOI_AFTER_EDIT,
+                self::THIRD_OPTION_ID => self::THIRD_DOI,
+            ],
             $settings['trendingDois_trending']
         );
     }
@@ -200,13 +218,13 @@ class TrendingDoiFormTest extends PKPTestCase
     public function itShouldLoadDoiValueWhenEditing()
     {
         $settings = [
-            'trendingDois_trending' => ['uidA' => '10.1/existing'],
+            'trendingDois_trending' => [self::FIRST_OPTION_ID => self::FIRST_DOI],
         ];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new TestableTrendingDoiForm($plugin, self::CONTEXT_ID, 'uidA');
+        $form = new TestableTrendingDoiForm($plugin, self::CONTEXT_ID, self::FIRST_OPTION_ID);
         $form->initData();
 
-        $this->assertSame('10.1/existing', $form->getData('doi'));
+        $this->assertSame(self::FIRST_DOI, $form->getData('doi'));
     }
 }
