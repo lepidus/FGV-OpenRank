@@ -12,24 +12,6 @@ class BestAltmetricsScoreDois
             ?? new Altmetrics(Application::get()->getHttpClient());
     }
 
-    public function getBestAltmetricsScoreSubmissionsDois(int $contextId, string $issn, int $limit, ?string $apiKey = null): array
-    {
-        $cacheManager = CacheManager::getManager();
-        $cache = $cacheManager->getFileCache(
-            $contextId,
-            'best_altmetrics_score_dois',
-            [$this, 'cacheDismiss']
-        );
-
-        $bestScoreDois = & $cache->getContents();
-
-        if ($bestScoreDois && $bestScoreDois != '[]') {
-            return $bestScoreDois;
-        }
-
-        return $this->refreshCache($contextId, $issn, $limit, $apiKey);
-    }
-
     public function refreshCache(int $contextId, string $issn, int $limit, ?string $apiKey = null): array
     {
         $cacheManager = CacheManager::getManager();
