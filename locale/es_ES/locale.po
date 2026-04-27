@@ -105,3 +105,35 @@ msgstr "Actualización de caché completada exitosamente para el contexto: {$con
 
 msgid "plugins.generic.rankingPlugin.scheduledTask.updateError"
 msgstr "Error al actualizar caché para el contexto {$contextName}: {$error}"
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey"
+msgstr "Clave de API de Altmetric"
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.description"
+msgstr "Introduzca la clave de API de Altmetric (opcional). Si se deja vacía, la pestaña Trending usará la lista manual de DOIs definida abajo. Requiere 'api_key_secret' configurado en config.inc.php."
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.stored"
+msgstr "Ya hay una clave de API almacenada (cifrada). Deje el campo en blanco para conservarla, o introduzca un valor nuevo para reemplazarla."
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.remove"
+msgstr "Eliminar la clave de API almacenada"
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.secretMissing"
+msgstr "No se pudo guardar la clave: 'api_key_secret' no está configurado en config.inc.php."
+
+msgid "plugins.generic.rankingPlugin.trendingDois.title"
+msgstr "Lista manual de DOIs (pestaña Trending)"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.add"
+msgstr "Añadir DOI"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.doi"
+msgstr "DOI"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.invalidDoi"
+msgstr "Introduzca un DOI válido con el formato 10.xxxx/yyyy."
+
+msgid "plugins.generic.rankingPlugin.trendingDois.doiNotInJournal"
+msgstr "Este DOI no se encontró en la revista. Solo se pueden añadir DOIs asignados a envíos de esta revista."
+
+msgid "plugins.generic.rankingPlugin.trendingDois.deleteConfirm"
+msgstr "¿Seguro que desea eliminar este DOI de la lista?"

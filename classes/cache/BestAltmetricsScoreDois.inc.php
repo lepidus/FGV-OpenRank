@@ -6,12 +6,13 @@ class BestAltmetricsScoreDois
 {
     private $altmetricsClient;
 
-    public function __construct()
+    public function __construct($altmetricsClient = null)
     {
-        $this->altmetricsClient = new Altmetrics(Application::get()->getHttpClient());
+        $this->altmetricsClient = $altmetricsClient
+            ?? new Altmetrics(Application::get()->getHttpClient());
     }
 
-    public function getBestAltmetricsScoreSubmissionsDois(int $contextId, string $issn, int $limit): array
+    public function getBestAltmetricsScoreSubmissionsDois(int $contextId, string $issn, int $limit, ?string $apiKey = null): array
     {
         $cacheManager = CacheManager::getManager();
         $cache = $cacheManager->getFileCache(
@@ -26,10 +27,10 @@ class BestAltmetricsScoreDois
             return $bestScoreDois;
         }
 
-        return $this->refreshCache($contextId, $issn, $limit);
+        return $this->refreshCache($contextId, $issn, $limit, $apiKey);
     }
 
-    public function refreshCache(int $contextId, string $issn, int $limit): array
+    public function refreshCache(int $contextId, string $issn, int $limit, ?string $apiKey = null): array
     {
         $cacheManager = CacheManager::getManager();
         $cache = $cacheManager->getFileCache(
@@ -41,7 +42,7 @@ class BestAltmetricsScoreDois
         $cache->flush();
 
         $bestScoreSubmissions = $this->altmetricsClient
-            ->fetchBestScoreSubmissions($issn, $limit);
+            ->fetchBestScoreSubmissions($issn, $limit, $apiKey);
         $submissionDois = [];
 
         if (isset($bestScoreSubmissions['results'])) {

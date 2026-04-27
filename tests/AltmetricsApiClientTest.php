@@ -65,4 +65,53 @@ class AltmetricsApiClientTest extends PKPTestCase
         );
         $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
     }
+
+    /**
+     * @test
+     */
+    public function itShouldSendApiKeyWhenProvided()
+    {
+        $response = new Response(200, [], json_encode(['results' => []]));
+        $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
+        $httpClientMock->expects($this->once())
+            ->method('request')
+            ->with(
+                'GET',
+                $this->anything(),
+                $this->callback(function ($options) {
+                    return isset($options['query'])
+                        && ($options['query']['key'] ?? null) === 'xyz'
+                        && ($options['query']['num_results'] ?? null) === self::LIMIT
+                        && ($options['query']['issns'] ?? null) === self::ISSN
+                        && ($options['query']['order_by'] ?? null) === 'score';
+                })
+            )
+            ->willReturn($response);
+
+        $apiClient = new Altmetrics($httpClientMock);
+        $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT, 'xyz');
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldOmitApiKeyWhenNotProvided()
+    {
+        $response = new Response(200, [], json_encode(['results' => []]));
+        $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
+        $httpClientMock->expects($this->once())
+            ->method('request')
+            ->with(
+                'GET',
+                $this->anything(),
+                $this->callback(function ($options) {
+                    return isset($options['query'])
+                        && !array_key_exists('key', $options['query']);
+                })
+            )
+            ->willReturn($response);
+
+        $apiClient = new Altmetrics($httpClientMock);
+        $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
+    }
 }

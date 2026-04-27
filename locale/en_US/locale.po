@@ -105,3 +105,36 @@ msgstr "Cache update completed successfully for context: {$contextName}"
 
 msgid "plugins.generic.rankingPlugin.scheduledTask.updateError"
 msgstr "Error updating cache for context {$contextName}: {$error}"
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey"
+msgstr "Altmetric API key"
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.description"
+msgstr "Enter your Altmetric API key (optional). If left empty, the Trending tab will use the manual DOI list defined below. Requires 'api_key_secret' to be set in config.inc.php."
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.stored"
+msgstr "An API key is already stored (encrypted). Leave blank to keep it, or enter a new value to replace it."
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.remove"
+msgstr "Remove the stored API key"
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.secretMissing"
+msgstr "The API key could not be saved: 'api_key_secret' is not configured in config.inc.php."
+
+msgid "plugins.generic.rankingPlugin.trendingDois.title"
+msgstr "Manual DOI list (Trending tab)"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.add"
+msgstr "Add DOI"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.doi"
+msgstr "DOI"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.invalidDoi"
+msgstr "Please enter a valid DOI in the format 10.xxxx/yyyy."
+
+msgid "plugins.generic.rankingPlugin.trendingDois.doiNotInJournal"
+msgstr "This DOI was not found in the journal. Only DOIs assigned to submissions in this journal can be added."
+
+msgid "plugins.generic.rankingPlugin.trendingDois.deleteConfirm"
+msgstr "Are you sure you want to remove this DOI from the list?"
