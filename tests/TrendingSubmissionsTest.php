@@ -46,8 +46,7 @@ class TrendingSubmissionsTest extends PKPTestCase
         $service = $this->createMock(RankingSubmissionService::class);
         $service->method('getBestAltmetricsScoreSubmissions')->willReturn([]);
 
-        $trending = new class($plugin, $bestDois, $encryption, '1234-5678', $service)
-            extends TrendingSubmissions {
+        $trending = new class($plugin, $bestDois, $encryption, '1234-5678', $service) extends TrendingSubmissions {
             private $issn;
             private $service;
             public function __construct($plugin, $bestDois, $encryption, $issn, $service)
@@ -92,8 +91,7 @@ class TrendingSubmissionsTest extends PKPTestCase
             ->with(['10.1234/a', '10.5678/b'], $this->anything())
             ->willReturn([]);
 
-        $trending = new class($plugin, $bestDois, $encryption, $service)
-            extends TrendingSubmissions {
+        $trending = new class($plugin, $bestDois, $encryption, $service) extends TrendingSubmissions {
             private $service;
             public function __construct($plugin, $bestDois, $encryption, $service)
             {
@@ -133,8 +131,7 @@ class TrendingSubmissionsTest extends PKPTestCase
             ->with(['10.1/a', '10.1/b', '10.1/c'], $this->anything())
             ->willReturn([]);
 
-        $trending = new class($plugin, null, null, $service)
-            extends TrendingSubmissions {
+        $trending = new class($plugin, null, null, $service) extends TrendingSubmissions {
             private $service;
             public function __construct($plugin, $bestDois, $encryption, $service)
             {
