@@ -174,7 +174,11 @@ class HookCallback
     public function setupRankingConfigurationGridHandler($hookName, $params)
     {
         $component = &$params[0];
-        if ($component == 'plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridHandler') {
+        $allowed = [
+            'plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridHandler',
+            'plugins.generic.rankingPlugin.controllers.grid.TrendingDoisGridHandler',
+        ];
+        if (in_array($component, $allowed, true)) {
             return true;
         }
         return false;

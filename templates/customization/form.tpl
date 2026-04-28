@@ -41,6 +41,36 @@
                 {/fbvFormSection}
             {/if}
 
+            {if $tabId == 'trending'}
+                {fbvFormSection label="plugins.generic.rankingPlugin.settings.altmetricsApiKey"}
+                    {fbvElement type="text" password="true" id="altmetricsApiKey" value="" size=$fbvStyles.size.MEDIUM}
+                    <span class="description">
+                        {if $hasAltmetricsApiKey}
+                            {translate key="plugins.generic.rankingPlugin.settings.altmetricsApiKey.stored"}
+                        {else}
+                            {translate key="plugins.generic.rankingPlugin.settings.altmetricsApiKey.description"}
+                        {/if}
+                    </span>
+                {/fbvFormSection}
+
+                {if $hasAltmetricsApiKey}
+                    {fbvFormSection list=true}
+                        {fbvElement type="checkbox" id="removeAltmetricsApiKey" label="plugins.generic.rankingPlugin.settings.altmetricsApiKey.remove"}
+                    {/fbvFormSection}
+                {/if}
+
+                {if $hasAltmetricsApiKey}
+                    <div class="pkp_notification">
+                        <span class="description">
+                            {translate key="plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet"}
+                        </span>
+                    </div>
+                {/if}
+
+                {capture assign=trendingDoisGridUrl}{url router=$smarty.const.ROUTE_COMPONENT component="plugins.generic.rankingPlugin.controllers.grid.TrendingDoisGridHandler" op="fetchGrid" escape=false}{/capture}
+                {load_url_in_div id="trendingDoisGridContainer" url=$trendingDoisGridUrl}
+            {/if}
+
             {fbvFormButtons submitText="common.save"}
 
         {/fbvFormArea}

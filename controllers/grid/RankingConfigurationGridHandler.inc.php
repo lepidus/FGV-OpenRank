@@ -123,12 +123,9 @@ class RankingConfigurationGridHandler extends GridHandler
         if ($rankingCustomizationForm->validate()) {
             $rankingCustomizationForm->execute();
             return new JSONMessage(true);
-        } else {
-            return new JSONMessage(
-                false,
-                $rankingCustomizationForm->fetch($request)
-            );
         }
+
+        return new JSONMessage(true, $rankingCustomizationForm->fetch($request));
     }
 
     public function saveTabSetting($args, $request)

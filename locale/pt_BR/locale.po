@@ -105,3 +105,42 @@ msgstr "Atualização de cache concluída com sucesso para o contexto: {$context
 
 msgid "plugins.generic.rankingPlugin.scheduledTask.updateError"
 msgstr "Erro ao atualizar cache para o contexto {$contextName}: {$error}"
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey"
+msgstr "Chave de API do Altmetric"
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.description"
+msgstr "Insira a chave de API do Altmetric (opcional). Caso não seja fornecida, a aba Trending usará a lista manual de DOIs definida abaixo. Requer 'api_key_secret' configurado em config.inc.php."
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.stored"
+msgstr "Uma chave de API já está armazenada (criptografada). Deixe o campo em branco para mantê-la, ou preencha para substituí-la."
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.remove"
+msgstr "Remover chave de API armazenada"
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.secretMissing"
+msgstr "Não foi possível salvar a chave: o parâmetro 'api_key_secret' não está configurado em config.inc.php."
+
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.invalid"
+msgstr "A chave de API do Altmetric foi rejeitada pela API. Verifique a chave e tente novamente."
+
+msgid "plugins.generic.rankingPlugin.trendingDois.title"
+msgstr "Lista manual de DOIs (aba Trending)"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.add"
+msgstr "Adicionar DOI"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.doi"
+msgstr "DOI"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.invalidDoi"
+msgstr "Informe um DOI válido no formato 10.xxxx/yyyy."
+
+msgid "plugins.generic.rankingPlugin.trendingDois.doiNotInJournal"
+msgstr "Este DOI não foi encontrado na revista. Apenas DOIs atribuídos a submissões desta revista podem ser adicionados."
+
+msgid "plugins.generic.rankingPlugin.trendingDois.deleteConfirm"
+msgstr "Tem certeza que deseja remover este DOI da lista?"
+
+msgid "plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet"
+msgstr "Esta lista é ignorada enquanto houver uma chave de API do Altmetric cadastrada. Remova a chave armazenada acima para usar a lista manual."

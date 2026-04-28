@@ -1,18 +1,26 @@
 <?php
 
 import('lib.pkp.classes.form.Form');
+import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
+import('plugins.generic.rankingPlugin.lib.APIKeyEncryption.APIKeyEncryption');
 
 class RankingCustomizationForm extends Form
 {
+    private const API_KEY_SETTING = 'altmetricsApiKey_trending';
+
     private $plugin;
     private $contextId;
     private $tabId;
+    private $apiKeyEncryption;
+    private $altmetricsClient;
 
-    public function __construct($plugin, $contextId, $tabId = null)
+    public function __construct($plugin, $contextId, $tabId = null, $apiKeyEncryption = null, $altmetricsClient = null)
     {
         $this->plugin = $plugin;
         $this->contextId = $contextId;
         $this->tabId = $tabId;
+        $this->apiKeyEncryption = $apiKeyEncryption;
+        $this->altmetricsClient = $altmetricsClient;
         $this->addFormValidators();
 
         $template = 'customization/form.tpl';
@@ -47,25 +55,40 @@ class RankingCustomizationForm extends Form
             );
         }
 
+        if ($this->tabId === 'trending') {
+            $templateMgr->assign('hasAltmetricsApiKey', (bool) $this->getData('hasAltmetricsApiKey'));
+        }
+
         return parent::fetch($request);
     }
 
     public function readInputData()
     {
-        $userVars = array(
+        $userVars = [
             'customTitle',
             'description',
             'itemsPerTab',
-            'itemsPerPage'
-        );
+            'itemsPerPage',
+        ];
         if ($this->tabId === 'mostRead') {
             $userVars[] = 'mostReadDays';
         }
         if ($this->tabId === 'highlight') {
             $userVars[] = 'highlightContent';
         }
+        if ($this->tabId === 'trending') {
+            $userVars = array_merge($userVars, $this->getApiKeyUserVars());
+        }
         $this->readUserVars($userVars);
         parent::readInputData();
+    }
+
+    public function getApiKeyUserVars(): array
+    {
+        if ($this->tabId !== 'trending') {
+            return [];
+        }
+        return ['altmetricsApiKey', 'removeAltmetricsApiKey'];
     }
 
     public function initData()
@@ -108,8 +131,72 @@ class RankingCustomizationForm extends Form
                 );
                 $this->setData('highlightContent', $highlightContent);
             }
+
+            if ($this->tabId === 'trending') {
+                $storedKey = $this->plugin->getSetting($this->contextId, self::API_KEY_SETTING);
+                $this->setData('hasAltmetricsApiKey', !empty($storedKey));
+            }
         }
         parent::initData();
+    }
+
+    public function validate($callHooks = true)
+    {
+        if ($this->tabId === 'trending') {
+            $this->validateTrendingApiKey();
+        }
+        return parent::validate($callHooks);
+    }
+
+    private function validateTrendingApiKey(): void
+    {
+        $apiKey = trim((string) $this->getData('altmetricsApiKey'));
+        $remove = (bool) $this->getData('removeAltmetricsApiKey');
+        if ($apiKey === '' || $remove) {
+            return;
+        }
+        if (!$this->getApiKeyEncryption()->secretConfigExists()) {
+            $this->addError(
+                'altmetricsApiKey',
+                __('plugins.generic.rankingPlugin.settings.altmetricsApiKey.secretMissing')
+            );
+            $this->addErrorField('altmetricsApiKey');
+            return;
+        }
+
+        $issn = $this->getContextIssn();
+        if (empty($issn)) {
+            return;
+        }
+
+        try {
+            $this->getAltmetricsClient()->fetchBestScoreSubmissions($issn, 1, $apiKey);
+        } catch (\Exception $error) {
+            error_log($error->getMessage());
+            $this->addError(
+                'altmetricsApiKey',
+                __('plugins.generic.rankingPlugin.settings.altmetricsApiKey.invalid')
+            );
+            $this->addErrorField('altmetricsApiKey');
+        }
+    }
+
+    protected function getContextIssn(): ?string
+    {
+        $contextDao = Application::getContextDAO();
+        $context = $contextDao->getById($this->contextId);
+        if (!$context) {
+            return null;
+        }
+        return $context->getData('onlineIssn') ?: $context->getData('printIssn');
+    }
+
+    private function getAltmetricsClient()
+    {
+        if ($this->altmetricsClient === null) {
+            $this->altmetricsClient = new Altmetrics(Application::get()->getHttpClient());
+        }
+        return $this->altmetricsClient;
     }
 
     public function execute(...$functionArgs)
@@ -178,13 +265,48 @@ class RankingCustomizationForm extends Form
                 );
             }
 
+            if ($this->tabId === 'trending') {
+                $this->executeTrendingApiKey();
+            }
+
             $this->refreshCache($this->tabId, $this->contextId, $itemsPerTab);
         }
 
         parent::execute(...$functionArgs);
     }
 
-    private function refreshCache($tabId, $contextId, $limit)
+    private function executeTrendingApiKey(): void
+    {
+        $apiKey = trim((string) $this->getData('altmetricsApiKey'));
+        $remove = (bool) $this->getData('removeAltmetricsApiKey');
+
+        if ($remove) {
+            $this->plugin->updateSetting($this->contextId, self::API_KEY_SETTING, '', 'string');
+            return;
+        }
+
+        if ($apiKey === '') {
+            return;
+        }
+
+        $encryption = $this->getApiKeyEncryption();
+        if (!$encryption->secretConfigExists()) {
+            return;
+        }
+
+        $encrypted = $encryption->encryptString($apiKey);
+        $this->plugin->updateSetting($this->contextId, self::API_KEY_SETTING, $encrypted, 'string');
+    }
+
+    private function getApiKeyEncryption(): APIKeyEncryption
+    {
+        if ($this->apiKeyEncryption === null) {
+            $this->apiKeyEncryption = new APIKeyEncryption();
+        }
+        return $this->apiKeyEncryption;
+    }
+
+    protected function refreshCache($tabId, $contextId, $limit)
     {
         $request = Application::get()->getRequest();
 

@@ -17,20 +17,22 @@ class Altmetrics
     }
 
 
-    public function fetchBestScoreSubmissions(string $issn, int $limit): array
+    public function fetchBestScoreSubmissions(string $issn, int $limit, ?string $apiKey = null): array
     {
         $uri = self::BASE_URL . self::CITATIONS_ENDPOINT;
+        $query = [
+            'num_results' => $limit,
+            'issns' => $issn,
+            'order_by' => 'score'
+        ];
+        if ($apiKey !== null && $apiKey !== '') {
+            $query['key'] = $apiKey;
+        }
         try {
             $response = $this->_httpClient->request(
                 'GET',
                 $uri,
-                [
-                    'query' => [
-                        'num_results' => $limit,
-                        'issns' => $issn,
-                        'order_by' => 'score'
-                    ]
-                ]
+                ['query' => $query]
             );
             return json_decode($response->getBody()->getContents(), true);
         } catch (ServerException $error) {
