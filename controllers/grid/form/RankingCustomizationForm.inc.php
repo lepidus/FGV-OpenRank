@@ -1,6 +1,7 @@
 <?php
 
 import('lib.pkp.classes.form.Form');
+import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
 import('plugins.generic.rankingPlugin.lib.APIKeyEncryption.APIKeyEncryption');
 
 class RankingCustomizationForm extends Form
@@ -11,13 +12,15 @@ class RankingCustomizationForm extends Form
     private $contextId;
     private $tabId;
     private $apiKeyEncryption;
+    private $altmetricsClient;
 
-    public function __construct($plugin, $contextId, $tabId = null, $apiKeyEncryption = null)
+    public function __construct($plugin, $contextId, $tabId = null, $apiKeyEncryption = null, $altmetricsClient = null)
     {
         $this->plugin = $plugin;
         $this->contextId = $contextId;
         $this->tabId = $tabId;
         $this->apiKeyEncryption = $apiKeyEncryption;
+        $this->altmetricsClient = $altmetricsClient;
         $this->addFormValidators();
 
         $template = 'customization/form.tpl';
@@ -158,7 +161,42 @@ class RankingCustomizationForm extends Form
                 __('plugins.generic.rankingPlugin.settings.altmetricsApiKey.secretMissing')
             );
             $this->addErrorField('altmetricsApiKey');
+            return;
         }
+
+        $issn = $this->getContextIssn();
+        if (empty($issn)) {
+            return;
+        }
+
+        try {
+            $this->getAltmetricsClient()->fetchBestScoreSubmissions($issn, 1, $apiKey);
+        } catch (\Exception $error) {
+            error_log($error->getMessage());
+            $this->addError(
+                'altmetricsApiKey',
+                __('plugins.generic.rankingPlugin.settings.altmetricsApiKey.invalid')
+            );
+            $this->addErrorField('altmetricsApiKey');
+        }
+    }
+
+    protected function getContextIssn(): ?string
+    {
+        $contextDao = Application::getContextDAO();
+        $context = $contextDao->getById($this->contextId);
+        if (!$context) {
+            return null;
+        }
+        return $context->getData('onlineIssn') ?: $context->getData('printIssn');
+    }
+
+    private function getAltmetricsClient()
+    {
+        if ($this->altmetricsClient === null) {
+            $this->altmetricsClient = new Altmetrics(Application::get()->getHttpClient());
+        }
+        return $this->altmetricsClient;
     }
 
     public function execute(...$functionArgs)

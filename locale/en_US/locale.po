@@ -121,6 +121,9 @@ msgstr "Remove the stored API key"
 msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.secretMissing"
 msgstr "The API key could not be saved: 'api_key_secret' is not configured in config.inc.php."
 
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.invalid"
+msgstr "The provided Altmetric API key was rejected by the API. Please check the key and try again."
+
 msgid "plugins.generic.rankingPlugin.trendingDois.title"
 msgstr "Manual DOI list (Trending tab)"
 

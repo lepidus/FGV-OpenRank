@@ -121,6 +121,9 @@ msgstr "Remover chave de API armazenada"
 msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.secretMissing"
 msgstr "Não foi possível salvar a chave: o parâmetro 'api_key_secret' não está configurado em config.inc.php."
 
+msgid "plugins.generic.rankingPlugin.settings.altmetricsApiKey.invalid"
+msgstr "A chave de API do Altmetric foi rejeitada pela API. Verifique a chave e tente novamente."
+
 msgid "plugins.generic.rankingPlugin.trendingDois.title"
 msgstr "Lista manual de DOIs (aba Trending)"
 

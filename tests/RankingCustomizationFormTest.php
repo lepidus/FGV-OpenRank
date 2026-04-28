@@ -2,6 +2,7 @@
 
 import('lib.pkp.tests.PKPTestCase');
 import('plugins.generic.rankingPlugin.controllers.grid.form.RankingCustomizationForm');
+import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
 import('plugins.generic.rankingPlugin.lib.APIKeyEncryption.APIKeyEncryption');
 import('plugins.generic.rankingPlugin.RankingPlugin');
 
@@ -13,6 +14,11 @@ class TestableRankingCustomizationForm extends RankingCustomizationForm
 
     protected function refreshCache($tabId, $contextId, $limit)
     {
+    }
+
+    protected function getContextIssn(): ?string
+    {
+        return '1234-5678';
     }
 }
 
@@ -127,6 +133,111 @@ class RankingCustomizationFormTest extends PKPTestCase
         $this->assertFalse($valid);
         $errors = $form->getErrorsArray();
         $this->assertArrayHasKey('altmetricsApiKey', $errors);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldFailValidationWhenAltmetricRejectsTheKey()
+    {
+        $settings = [];
+        $plugin = $this->buildPluginMock($settings);
+        $encryption = $this->createMock(APIKeyEncryption::class);
+        $encryption->method('secretConfigExists')->willReturn(true);
+
+        $altmetricsClient = $this->createMock(Altmetrics::class);
+        $altmetricsClient->expects($this->once())
+            ->method('fetchBestScoreSubmissions')
+            ->with('1234-5678', $this->anything(), 'bad-key')
+            ->willThrowException(new \Exception(
+                __('plugins.generic.rankingPlugin.client.altmetrics.clientError')
+            ));
+
+        $form = new TestableRankingCustomizationForm(
+            $plugin,
+            self::CONTEXT_ID,
+            'trending',
+            $encryption,
+            $altmetricsClient
+        );
+        $form->setData('altmetricsApiKey', 'bad-key');
+        $form->setData('removeAltmetricsApiKey', false);
+
+        $valid = $form->validate();
+
+        $this->assertFalse($valid);
+        $errors = $form->getErrorsArray();
+        $this->assertArrayHasKey('altmetricsApiKey', $errors);
+        $this->assertArrayNotHasKey('altmetricsApiKey_trending', $settings);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldPassValidationWhenAltmetricAcceptsTheKey()
+    {
+        $settings = [];
+        $plugin = $this->buildPluginMock($settings);
+        $encryption = $this->createMock(APIKeyEncryption::class);
+        $encryption->method('secretConfigExists')->willReturn(true);
+
+        $altmetricsClient = $this->createMock(Altmetrics::class);
+        $altmetricsClient->expects($this->once())
+            ->method('fetchBestScoreSubmissions')
+            ->with('1234-5678', $this->anything(), 'good-key')
+            ->willReturn(['results' => []]);
+
+        $form = new TestableRankingCustomizationForm(
+            $plugin,
+            self::CONTEXT_ID,
+            'trending',
+            $encryption,
+            $altmetricsClient
+        );
+        $form->setData('customTitle', []);
+        $form->setData('description', []);
+        $form->setData('itemsPerTab', 4);
+        $form->setData('itemsPerPage', 4);
+        $form->setData('altmetricsApiKey', 'good-key');
+        $form->setData('removeAltmetricsApiKey', false);
+
+        $valid = $form->validate();
+
+        $this->assertTrue($valid);
+        $errors = $form->getErrorsArray();
+        $this->assertArrayNotHasKey('altmetricsApiKey', $errors);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldNotCallAltmetricWhenKeyIsBeingRemoved()
+    {
+        $settings = ['altmetricsApiKey_trending' => 'base64:previous-key'];
+        $plugin = $this->buildPluginMock($settings);
+        $encryption = $this->createMock(APIKeyEncryption::class);
+        $encryption->method('secretConfigExists')->willReturn(true);
+
+        $altmetricsClient = $this->createMock(Altmetrics::class);
+        $altmetricsClient->expects($this->never())->method('fetchBestScoreSubmissions');
+
+        $form = new TestableRankingCustomizationForm(
+            $plugin,
+            self::CONTEXT_ID,
+            'trending',
+            $encryption,
+            $altmetricsClient
+        );
+        $form->setData('customTitle', []);
+        $form->setData('description', []);
+        $form->setData('itemsPerTab', 4);
+        $form->setData('itemsPerPage', 4);
+        $form->setData('altmetricsApiKey', '');
+        $form->setData('removeAltmetricsApiKey', true);
+
+        $valid = $form->validate();
+
+        $this->assertTrue($valid);
     }
 
     /**
