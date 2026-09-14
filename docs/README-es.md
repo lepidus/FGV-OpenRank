@@ -1,0 +1,139 @@
+**Español** | [English](../README.md) | [Português Brasileiro](README-pt_BR.md)
+
+# Módulo de Ranking
+
+[![OJS compatibility](https://img.shields.io/badge/ojs-3.3.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_3_0)
+[![License type](https://img.shields.io/badge/license-GPL--3.0-blue)](https://www.gnu.org/licenses/gpl-3.0)
+
+Este módulo añade un bloque de ranking a la página de inicio de revistas que usan [OJS](https://pkp.sfu.ca/software/ojs/). El bloque presenta artículos en pestañas — **Más recientes**, **Más leídos**, **Más citados**, **En tendencia** y una pestaña de contenido libre, **Destacado** — y el gestor de la revista decide qué pestañas aparecen, en qué orden, con qué título, descripción y cantidad de elementos.
+
+## Cómo funciona
+
+El bloque se muestra en el lugar donde usted inserte `<div class="rankingTabs"></div>` en el Contenido Adicional de la revista. Cada pestaña carga sus artículos de forma asíncrona desde la API del propio módulo, que entrega datos de una caché actualizada una vez al día. Los servicios externos (Crossref, Altmetric) son consultados por la tarea programada, no mientras la persona lectora espera la página.
+
+| Pestaña | Qué muestra | Fuente | Requiere |
+| --- | --- | --- | --- |
+| **Más recientes** | Los artículos publicados más recientemente | OJS | — |
+| **Más leídos** | Los artículos más vistos en los últimos *N* días (120 por defecto) | Estadísticas de uso de OJS | Estadísticas de uso registradas |
+| **Más citados** | Los artículos más citados de la revista | [Crossref](https://www.crossref.org/services/cited-by/) | ISSN de la revista + DOI de los artículos |
+| **En tendencia** | Los artículos con mayor puntuación Altmetric | API de [Altmetric](https://www.altmetric.com/) o lista manual de DOI | DOI de los artículos (ISSN y clave de API si es automático) |
+| **Destacado** | El contenido que usted mismo escriba (texto con formato) | — | — |
+
+## Primeros pasos
+
+### 1. Instale el módulo
+
+Descargue el `.tar.gz` de la última versión compatible con su OJS desde la [página de versiones](https://gitlab.lepidus.com.br/softwares-pkp/plugins_ojs/rankingPlugin/-/releases), vaya a *Ajustes → Sitio web → Módulos → Subir un nuevo módulo*, envíe el archivo y habilite el módulo en su revista.
+
+### 2. Agregue el bloque a la página de inicio
+
+En *Ajustes → Sitio web → Apariencia → Avanzado*, agregue lo siguiente en **Contenido Adicional**:
+
+```html
+<div class="rankingTabs"></div>
+```
+
+El bloque se muestra dentro de ese elemento, así que usted controla exactamente dónde aparece en la página de inicio.
+
+### 3. Autorice el host
+
+Las pestañas consultan la API del módulo en la propia dirección de la revista, por lo que el host debe estar en `allowed_hosts`, en el archivo `config.inc.php`:
+
+```php
+allowed_hosts = '["mirevista.org"]'
+```
+
+### 4. Configure las pestañas
+
+Abra los *Ajustes* del módulo. Una cuadrícula muestra las cinco pestañas: use el botón de estado para habilitar o deshabilitar cada una, arrastre las filas para cambiar el orden en que aparecen y haga clic en una pestaña para editarla.
+
+## Configuración de cada pestaña
+
+Todas las pestañas tienen:
+
+- **Título personalizado** — sustituye al título predeterminado. Multilingüe.
+- **Descripción** — el texto que se muestra sobre la lista. Multilingüe.
+- **Elementos por pestaña** — cuántos artículos reúne la pestaña (4 por defecto).
+- **Elementos por página** — cuántos se muestran a la vez, paginando el resto (4 por defecto).
+
+Algunas pestañas tienen ajustes propios:
+
+- **Más leídos:** *Días para más leídos* — el período usado para contar las visitas (120 por defecto).
+- **Destacado:** *Contenido personalizado* — un campo de texto con formato. Esta pestaña no hace llamadas a ninguna API; muestra exactamente lo que usted escriba.
+- **En tendencia:** la clave de API de Altmetric y la lista manual de DOI, descritas a continuación.
+
+### La pestaña En tendencia: clave de API o lista manual
+
+La pestaña funciona de dos maneras:
+
+- **Con una clave de API de Altmetric.** Los artículos se obtienen de la API de Altmetric por el ISSN de la revista y se ordenan por puntuación. La clave se valida al guardarla y se almacena cifrada, lo que exige tener configurado `api_key_secret` en `config.inc.php` ([cómo generarlo](https://forum.pkp.sfu.ca/t/how-to-generate-a-api-key-secret-code-in-ojs-3/72008)).
+- **Con una lista manual de DOI.** Sin clave almacenada, la pestaña muestra los DOI que usted registre, en el orden en que fueron agregados. Solo se aceptan DOI de artículos publicados en esta revista.
+
+> [!NOTE]
+> Mientras haya una clave almacenada, la lista manual se ignora. Para volver a usarla, marque *Eliminar la clave de API almacenada* y guarde.
+
+## Caché y actualización diaria
+
+Las pestañas se sirven desde una caché en archivo, por revista. Una tarea programada — *Ranking Plugin Cache Update* — actualiza todas las pestañas de todas las revistas habilitadas diariamente a medianoche, así que mantenga habilitado el módulo **Acron** o incluya `runScheduledTasks.php` en el crontab del servidor ([Guía del Administrador de PKP](https://docs.pkp.sfu.ca/admin-guide/)). Si la caché está vacía cuando alguien visita la página, los datos se obtienen en ese momento.
+
+Para actualizar manualmente, desde la raíz de OJS:
+
+```bash
+php tools/runScheduledTasks.php
+```
+
+## Requisitos
+
+- **OJS 3.3.0.x**
+- **`allowed_hosts`** con el host de la revista.
+- **Un ISSN** registrado en la revista — necesario para *Más citados* y para *En tendencia* cuando se usa una clave de API.
+- **DOI** asignados a los artículos — *Más citados* y *En tendencia* identifican los artículos por su DOI, por lo que un artículo sin DOI nunca aparece en ellas.
+- **`api_key_secret`** en `config.inc.php`, solo si va a almacenar una clave de API de Altmetric.
+
+## Solución de problemas
+
+<details>
+<summary><strong>El bloque no aparece en la página de inicio</strong></summary>
+
+Verifique que el módulo esté habilitado en esta revista y que `<div class="rankingTabs"></div>` esté en el *Contenido Adicional*. Solo se utiliza la primera aparición del elemento.
+
+</details>
+
+<details>
+<summary><strong>Una pestaña muestra un mensaje de error</strong></summary>
+
+Confirme que el host de la revista esté en `allowed_hosts`. Los errores provenientes de Crossref o Altmetric quedan registrados en los logs del servidor de OJS.
+
+</details>
+
+<details>
+<summary><strong>Más citados o En tendencia está vacía</strong></summary>
+
+Por lo general, la revista no tiene ISSN, los artículos no tienen DOI o el servicio externo aún no tiene datos sobre ellos. En la pestaña En tendencia sin clave de API, verifique que la lista manual de DOI esté completa.
+
+</details>
+
+<details>
+<summary><strong>Más leídos está vacía</strong></summary>
+
+No hay visitas registradas en el período. Aumente el valor de *Días para más leídos* o verifique que se estén recopilando las estadísticas de uso de OJS.
+
+</details>
+
+<details>
+<summary><strong>La clave de Altmetric fue rechazada al guardar</strong></summary>
+
+O la clave no es válida para la API de Altmetric, o `api_key_secret` no está configurado en `config.inc.php`, en cuyo caso la clave no puede almacenarse cifrada.
+
+</details>
+
+## Dónde obtener ayuda
+
+- **El módulo:** abra una incidencia en este repositorio.
+- **OJS en sí:** pregunte en el [Foro de la Comunidad PKP](https://forum.pkp.sfu.ca/).
+
+## Licencia
+
+Este módulo está licenciado bajo la [Licencia Pública General GNU v3.0](https://www.gnu.org/licenses/gpl-3.0).
+
+Copyright (c) 2025-2026 Lepidus Tecnologia.

@@ -1,40 +1,139 @@
-# Plugin de Ranqueamento
+**English** | [Português Brasileiro](docs/README-pt_BR.md) | [Español](docs/README-es.md)
 
-## Compatibilidade
+# Ranking Plugin
 
-Este plugin é compatível com o **OJS** versão **3.3.0**.
+[![OJS compatibility](https://img.shields.io/badge/ojs-3.3.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_3_0)
+[![License type](https://img.shields.io/badge/license-GPL--3.0-blue)](https://www.gnu.org/licenses/gpl-3.0)
 
-## Baixar Plugin
+This plugin adds a ranking block to the homepage of a journal running [OJS](https://pkp.sfu.ca/software/ojs/). The block lists articles in tabs — **Most recent**, **Most read**, **Most cited**, **Trending** and a free-content **Highlight** tab — and the journal manager decides which tabs appear, in what order, with which title, description and number of items.
 
-Para baixar o plugin, já até a [página de lançamentos](https://gitlab.lepidus.com.br/softwares-pkp/plugins_ojs/rankingPlugin/-/releases) e baixe o pacote tar.gz da última versão compatível com seu OJS.
+## How it works
 
-## Instalação
+The block is rendered wherever you place `<div class="rankingTabs"></div>` in the journal's Additional Content. Each tab loads its articles asynchronously from the plugin's own API, which serves data from a cache refreshed once a day. External services (Crossref, Altmetric) are queried by the scheduled task, not while a reader waits for the page.
 
-1. Entre na área adminstrativa do seu OJS e navegue para `Configurações`>`Website`>`Plugins`>`Enviar novo plugin`.
-2. Clique em **Enviar Arquivo** e selecione o arquivo **rakingPlugin.tar.gz**.
-3. CLique em **Salvar** e o plugin será instalado no seu OJS.
+| Tab | What it lists | Source | Needs |
+| --- | --- | --- | --- |
+| **Most recent** | The latest published articles | OJS | — |
+| **Most read** | The most viewed articles in the last *N* days (120 by default) | OJS usage statistics | Usage statistics recorded |
+| **Most cited** | The most cited articles of the journal | [Crossref](https://www.crossref.org/services/cited-by/) | Journal ISSN + article DOIs |
+| **Trending** | The articles with the highest Altmetric score | [Altmetric](https://www.altmetric.com/) API or a manual DOI list | Article DOIs (ISSN and API key if automatic) |
+| **Highlight** | Any content you write yourself (rich text) | — | — |
 
-## Requerimentos
+## Getting started
 
-### allowed_hosts
+### 1. Install the plugin
 
-Adicione o Host atual na opção *allowed_hosts* no arquivo de configuração `config.inc.php`.
-Exemplo: `allowed_hosts = '["127.0.0.1", "localhost"]'`
+Download the `.tar.gz` of the latest version compatible with your OJS from the [releases page](https://gitlab.lepidus.com.br/softwares-pkp/plugins_ojs/rankingPlugin/-/releases), then go to *Settings → Website → Plugins → Upload a new plugin*, send the file and enable the plugin for your journal.
 
-### Conteúdo Adicional
+### 2. Add the block to the homepage
 
-Em `Configurações` > `Website` > `Aparência` > `Avançado`, adicione o seguinte código em **Conteúdo Adicional**:
+In *Settings → Website → Appearance → Advanced*, add this to **Additional Content**:
 
 ```html
 <div class="rankingTabs"></div>
 ```
 
-## Créditos
+The block is rendered inside that element, so you control exactly where it shows up on the homepage.
 
-Desenvolvido por [Lepidus Tecnologia](https://github.com/lepidus).
+### 3. Allow your host
 
-## Licença
+The tabs call the plugin's API on the journal's own address, so the host must be listed in `allowed_hosts` in `config.inc.php`:
 
-Este plugin está licenciado sob a Licença Pública Geral GNU v3.0
+```php
+allowed_hosts = '["myjournal.org"]'
+```
 
-Copyright (c) 2025 Lepidus Tecnologia
+### 4. Configure the tabs
+
+Open the plugin's *Settings*. A grid lists the five tabs: use the toggle to enable or disable each one, drag the rows to change the order they appear in, and click a tab to edit it.
+
+## Configuring a tab
+
+Every tab has:
+
+- **Custom title** — replaces the default title. Multilingual.
+- **Description** — the text shown above the list. Multilingual.
+- **Items per tab** — how many articles the tab holds (4 by default).
+- **Items per page** — how many are shown at a time, the rest being paginated (4 by default).
+
+Some tabs have their own extra settings:
+
+- **Most read:** *Days for most read* — the window used to count views (120 by default).
+- **Highlight:** *Custom content* — a rich text field. This tab makes no API call; it shows exactly what you write.
+- **Trending:** the Altmetric API key and the manual DOI list, described below.
+
+### The Trending tab: API key or manual list
+
+The tab works in either of two ways:
+
+- **With an Altmetric API key.** Articles are fetched from the Altmetric API by the journal's ISSN and ordered by score. The key is checked when you save it, and stored encrypted — which requires `api_key_secret` to be set in `config.inc.php` ([how to set one](https://forum.pkp.sfu.ca/t/how-to-generate-a-api-key-secret-code-in-ojs-3/72008)).
+- **With a manual DOI list.** With no key stored, the tab shows the DOIs you list, in the order you list them. Only DOIs of articles published in this journal are accepted.
+
+> [!NOTE]
+> While a key is stored the manual list is ignored. To go back to it, tick *Remove the stored API key* and save.
+
+## Cache and daily update
+
+The tabs are served from a file cache per journal. A scheduled task — *Ranking Plugin Cache Update* — refreshes every tab of every enabled journal daily at midnight, so keep the **Acron** plugin enabled, or have `runScheduledTasks.php` in your server's crontab ([PKP Administrator's Guide](https://docs.pkp.sfu.ca/admin-guide/)). If a cache is empty when a reader arrives, the data is fetched on the spot.
+
+To refresh by hand, from the OJS root:
+
+```bash
+php tools/runScheduledTasks.php
+```
+
+## Requirements
+
+- **OJS 3.3.0.x**
+- **`allowed_hosts`** including the journal's host.
+- **An ISSN** registered for the journal — needed by *Most cited*, and by *Trending* when an API key is used.
+- **DOIs** assigned to the articles — *Most cited* and *Trending* identify articles by DOI, so an article without one never appears in them.
+- **`api_key_secret`** in `config.inc.php`, only if you are going to store an Altmetric API key.
+
+## Troubleshooting
+
+<details>
+<summary><strong>The block does not show up on the homepage</strong></summary>
+
+Check that the plugin is enabled for this journal and that `<div class="rankingTabs"></div>` is in *Additional Content*. Only the first occurrence of the element is used.
+
+</details>
+
+<details>
+<summary><strong>A tab shows an error message</strong></summary>
+
+Confirm the journal's host is in `allowed_hosts`. Errors coming from Crossref or Altmetric are recorded in your OJS server logs.
+
+</details>
+
+<details>
+<summary><strong>Most cited or Trending is empty</strong></summary>
+
+Usually the journal has no ISSN, the articles have no DOIs, or the external service has no data for them yet. In the Trending tab with no API key, check that the manual DOI list is filled in.
+
+</details>
+
+<details>
+<summary><strong>Most read is empty</strong></summary>
+
+There are no recorded views in the period. Increase *Days for most read*, or check that OJS usage statistics are being collected.
+
+</details>
+
+<details>
+<summary><strong>The Altmetric key was rejected when saving</strong></summary>
+
+Either the key is not valid for the Altmetric API, or `api_key_secret` is not configured in `config.inc.php`, in which case the key cannot be stored encrypted.
+
+</details>
+
+## Getting help
+
+- **The plugin:** open an issue in this repository.
+- **OJS itself:** ask on the [PKP Community Forum](https://forum.pkp.sfu.ca/).
+
+## License
+
+This plugin is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0).
+
+Copyright (c) 2025-2026 Lepidus Tecnologia.
