@@ -12,10 +12,11 @@ class RankingPluginSettingsForm extends Form
     {
         $this->plugin = $plugin;
         $this->contextId = $contextId;
-        $this->addFormValidators();
 
         $template = 'settings/form.tpl';
         parent::__construct($plugin->getTemplateResource($template));
+
+        $this->addFormValidators();
     }
 
     private function addFormValidators(): void

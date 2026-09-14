@@ -29,6 +29,22 @@ class RankingPluginSettingsFormTest extends PKPTestCase
     /**
      * @test
      */
+    public function itShouldKeepItsValidatorsAfterConstruction()
+    {
+        $settings = [];
+        $plugin = $this->buildPluginMock($settings);
+
+        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+
+        $checks = array_map('get_class', $form->_checks);
+
+        $this->assertContains('FormValidatorPost', $checks);
+        $this->assertContains('FormValidatorCSRF', $checks);
+    }
+
+    /**
+     * @test
+     */
     public function itShouldStartWithAdditionalContentWhenNothingIsStored()
     {
         $settings = [];
