@@ -30,7 +30,7 @@ Descargue el `.tar.gz` de la última versión compatible con su OJS desde la [p�
 Abra los *Ajustes* del módulo y elija la **Posición en la página de inicio de la revista**:
 
 - **Al principio de la página de inicio** — por encima de todas las demás secciones.
-- **Después de una sección determinada de la página de inicio** — luego responda **¿Después de qué sección?**: `1` coloca el bloque después de la primera sección, `2` después de la segunda, y así sucesivamente. Las secciones son los bloques que su tema muestra en la página de inicio — normalmente la descripción de la revista, los avisos, el último número y el contenido adicional. Un número mayor que la cantidad de secciones lleva el bloque al final de la página.
+- **Después de una sección determinada de la página de inicio** — luego responda **¿Después de qué sección?**: `1` coloca el bloque después de la primera sección, `2` después de la segunda, y así sucesivamente. El conteo considera cada sección que el tema apila en la página de inicio — la imagen de la página de inicio, la descripción de la revista, los avisos, el último número, el contenido adicional y todo lo demás que el tema muestre. Lo que cuenta como sección depende, por lo tanto, del tema y de lo que la revista haya configurado, y algunos temas agrupan varias de ellas dentro de un mismo contenedor, así que puede que deba probar algunos números. Un número mayor que la cantidad de secciones lleva el bloque al final de la página.
 - **Al final de la página de inicio** — por debajo de todas las demás secciones.
 - **Donde esté el elemento `rankingTabs`** (opción por defecto) — en *Ajustes → Sitio web → Apariencia → Avanzado*, agregue lo siguiente en **Contenido Adicional**:
 

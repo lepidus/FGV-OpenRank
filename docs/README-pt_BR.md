@@ -30,7 +30,7 @@ Baixe o `.tar.gz` da última versão compatível com seu OJS na [página de lan�
 Abra as *Configurações* do plugin e escolha a **Posição na página inicial da revista**:
 
 - **No início da página inicial** — acima de todas as demais seções.
-- **Depois de uma seção específica da página inicial** — então responda **Depois de qual seção?**: `1` posiciona o bloco depois da primeira seção, `2` depois da segunda, e assim por diante. As seções são os blocos que o seu tema exibe na página inicial — normalmente a descrição da revista, os anúncios, a edição atual e o conteúdo adicional. Um número maior que a quantidade de seções leva o bloco para o fim da página.
+- **Depois de uma seção específica da página inicial** — então responda **Depois de qual seção?**: `1` posiciona o bloco depois da primeira seção, `2` depois da segunda, e assim por diante. A contagem considera cada seção que o tema empilha na página inicial — a imagem da página inicial, a descrição da revista, os anúncios, a edição atual, o conteúdo adicional e o que mais o tema exibir. O que conta como seção depende, portanto, do tema e do que a revista tem configurado, e alguns temas agrupam várias delas dentro de um mesmo contêiner, então pode ser preciso testar alguns números. Um número maior que a quantidade de seções leva o bloco para o fim da página.
 - **No fim da página inicial** — abaixo de todas as demais seções.
 - **Onde o elemento `rankingTabs` estiver** (padrão) — em *Configurações → Website → Aparência → Avançado*, inclua o seguinte em **Conteúdo Adicional**:
 

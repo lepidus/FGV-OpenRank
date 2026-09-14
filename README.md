@@ -30,7 +30,7 @@ Download the `.tar.gz` of the latest version compatible with your OJS from the [
 Open the plugin's *Settings* and pick the **Position on the journal homepage**:
 
 - **At the top of the homepage** — above every other section.
-- **After a given section of the homepage** — then answer **After which section?**: `1` puts the block after the first section, `2` after the second, and so on. Sections are the blocks your theme renders on the homepage — typically the journal description, the announcements, the current issue and the additional content. A number higher than the number of sections puts the block at the bottom.
+- **After a given section of the homepage** — then answer **After which section?**: `1` puts the block after the first section, `2` after the second, and so on. The count covers every section your theme stacks on the homepage — the homepage image, the journal description, the announcements, the current issue, the additional content, and anything else the theme renders. What counts as a section therefore depends on the theme and on what the journal has configured, and some themes group several of them into a single wrapper, so expect to try a couple of numbers. A number higher than the number of sections puts the block at the bottom.
 - **At the bottom of the homepage** — below every other section.
 - **Where the `rankingTabs` element is** (the default) — in *Settings → Website → Appearance → Advanced*, add this to **Additional Content**:
 
