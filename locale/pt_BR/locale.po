@@ -144,3 +144,27 @@ msgstr "Tem certeza que deseja remover este DOI da lista?"
 
 msgid "plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet"
 msgstr "Esta lista é ignorada enquanto houver uma chave de API do Altmetric cadastrada. Remova a chave armazenada acima para usar a lista manual."
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition"
+msgstr "Posição na página inicial da revista"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.description"
+msgstr "Escolha onde o bloco de ranqueamento será exibido na página inicial da revista."
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.additionalContent"
+msgstr "Onde o elemento &lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt; estiver no Conteúdo Adicional"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.top"
+msgstr "No início da página inicial, antes de todo o restante do conteúdo"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.afterSection"
+msgstr "Depois de uma seção específica da página inicial"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.bottom"
+msgstr "No fim da página inicial, depois de todo o restante do conteúdo"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPositionSection"
+msgstr "Depois de qual seção?"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPositionSection.description"
+msgstr "Serve para colocar o bloco no meio da página inicial, entre duas seções. Seções são os blocos que o tema empilha na página: normalmente a descrição da revista, os anúncios, a edição atual e o conteúdo adicional. Informe 1 para exibir o bloco logo depois da primeira seção, 2 para depois da segunda, e assim por diante. Se o número for maior que a quantidade de seções da página, o bloco vai para o fim."

@@ -4,7 +4,7 @@
 
 `rankingPlugin` is a generic OJS (Open Journal Systems) plugin targeting **OJS 3.3.0**. It lives at `plugins/generic/rankingPlugin/` inside an OJS checkout — it is not a standalone project. All `import(...)` paths (`plugins.generic.rankingPlugin.*`, `lib.pkp.classes.*`, `classes.*`) resolve relative to the OJS root, so the plugin cannot be built, linted, or tested outside that checkout.
 
-The plugin adds a homepage widget (five tabs: mostRecent, mostRead, mostCited, trending, highlight) that the OJS index template renders inside any `<div class="rankingTabs"></div>` placed in the journal's Additional Content.
+The plugin adds a homepage widget (five tabs: mostRecent, mostRead, mostCited, trending, highlight) rendered inside a `<div class="rankingTabs"></div>` placeholder — either emitted by the plugin on the journal index page or placed by hand in the journal's Additional Content, depending on the `displayPosition` setting.
 
 ## Development commands
 
@@ -12,7 +12,7 @@ Run all commands from the **OJS root** (`../../../` relative to this plugin), no
 
 ### Tests
 
-The plugin ships two PHPUnit tests (`tests/AltmetricsApiClientTest.php`, `tests/CrossrefApiClientTest.php`). Tests are wired through the PKP test harness, so run them via OJS's bundled PHPUnit with the PKP env config:
+The plugin's PHPUnit tests live in `tests/`. Tests are wired through the PKP test harness, so run them via OJS's bundled PHPUnit with the PKP env config:
 
 ```bash
 # From the OJS root:
@@ -48,12 +48,13 @@ php tools/runScheduledTasks.php
 
 ### Request flow
 
-The plugin hooks OJS at four points, registered in `RankingPlugin::register` (RankingPlugin.inc.php:15-22) and dispatched through `classes/HookCallback.inc.php`:
+The plugin hooks OJS at five points, registered in `RankingPlugin::register` (RankingPlugin.inc.php:15-23) and dispatched through `classes/HookCallback.inc.php`:
 
 1. **`TemplateManager::display`** (frontend) — on `frontend/pages/indexJournal.tpl`, `HookCallback::handleMetricsData` injects per-tab settings, localized titles/descriptions, the fetched `ranking.tpl` HTML, and a `window.app` JS blob; then enqueues `js/insertRankingTemplate.js` + `styles/*.css`.
-2. **`Dispatcher::dispatch`** (API) — `HookCallback::setupRankingPluginAPIHandler` intercepts any path matching `api/v1/rankingPlugin`, loads `api/v1/rankingPlugin/RankingPluginHandler.inc.php`, runs its Slim app, and `exit`s. The plugin never registers through OJS's normal API discovery — **all routing for this plugin is the hook's responsibility**.
-3. **`LoadComponentHandler`** (admin) — enables `RankingConfigurationGridHandler` for the settings grid.
-4. **`Schema::get::submission`** — appends an `altmetricsScore` (nullable number, `apiSummary: true`) property to the submission JSON schema.
+2. **`Templates::Index::journal`** (frontend) — `HookCallback::insertRankingPlaceholder` appends `<div class="rankingTabs"></div>` to the hook output for every plugin-owned `displayPosition` (`top`, `afterSection`, `bottom`), which lands it as the first child of whatever element the theme uses for the homepage. It is the only frontend template hook on that page; themes that override `indexJournal.tpl` keep the `{call_hook}` they copied from core. When the setting is `additionalContent` (the default) the callback emits nothing and the manager's own placeholder is used.
+3. **`Dispatcher::dispatch`** (API) — `HookCallback::setupRankingPluginAPIHandler` intercepts any path matching `api/v1/rankingPlugin`, loads `api/v1/rankingPlugin/RankingPluginHandler.inc.php`, runs its Slim app, and `exit`s. The plugin never registers through OJS's normal API discovery — **all routing for this plugin is the hook's responsibility**.
+4. **`LoadComponentHandler`** (admin) — enables `RankingConfigurationGridHandler` for the settings grid.
+5. **`Schema::get::submission`** — appends an `altmetricsScore` (nullable number, `apiSummary: true`) property to the submission JSON schema.
 
 There's also an `AcronPlugin::parseCronTab` hook (registered directly on the plugin, not the callback object) that appends `scheduledTasks.xml` so Acron picks up `RankingCacheUpdateTask`.
 
@@ -81,14 +82,17 @@ Settings are stored per context (journal) via `plugin->getSetting($contextId, $k
 - `tabEnabled_{index}`, `tabSequence_{index}` — `index` is the position in `['mostRecent', 'mostRead', 'mostCited', 'trending', 'highlight']` from `HookCallback::getOrderedTabs`. Tab ordering is derived from these two per-index keys; a `tabEnabled_{index}` that's never set counts as enabled (check is `!== false`).
 - `customTitle_{tabId}`, `customDescription_{tabId}`, `highlightContent_{tabId}` — localized values. `getLocalizedValue` falls back current locale → primary locale → first non-empty.
 - `itemsPerTab` / `itemsPerPage` are global defaults (4); `itemsPerTab_{tabId}` / `itemsPerPage_{tabId}` override per tab.
+- `displayPosition` — `top`, `afterSection`, `bottom` or `additionalContent` (the default and the fallback for unknown/absent values) — and `displayPositionSection`, the 1-based section number `afterSection` counts to (`normalizeSection` clamps anything below 1 to 1). Both live in `classes/RankingDisplayPosition.inc.php`; `HookCallback` and `RankingPluginSettingsForm` both go through its `normalize`/`normalizeSection`/`needsPlaceholder`, so add new positions there.
 
-The settings admin UI is a PKP `GridHandler` (`controllers/grid/RankingConfigurationGridHandler.inc.php`) with actions `editTab`, `updateTab`, `saveSequence`, `saveTabSetting` restricted to `ROLE_ID_MANAGER`. The "main" plugin settings form (`classes/settings/RankingPluginSettingsForm.inc.php`) is mostly a shell — `initData`/`readInputData`/`execute` are pass-throughs; actual per-tab config lives in the grid + `RankingCustomizationForm`.
+The settings admin UI is a PKP `GridHandler` (`controllers/grid/RankingConfigurationGridHandler.inc.php`) with actions `editTab`, `updateTab`, `saveSequence`, `saveTabSetting` restricted to `ROLE_ID_MANAGER`. The "main" plugin settings form (`classes/settings/RankingPluginSettingsForm.inc.php`) holds only `displayPosition` + `displayPositionSection`; actual per-tab config lives in the grid + `RankingCustomizationForm`, which `templates/settings/form.tpl` loads below the position radios.
 
 ### Frontend
 
 `js/insertRankingTemplate.js` replaces the first `.rankingTabs` div with `window.app.rankingTemplate`, then fires four parallel AJAX calls to `window.app.rankingPluginApiBaseUrl + /{mostRecent,mostRead,mostCitedSubmissions,trendingSubmissions}`. Error messages per tab are pre-localized into `window.app` (mostRecentFailedMessage, …). The `highlight` tab is content-only and has no API call.
 
-The journal operator must add `<div class="rankingTabs"></div>` to **Website → Appearance → Advanced → Additional Content**, and `allowed_hosts` in `config.inc.php` must include the journal's host (see README).
+**Positioning is split between PHP and JS.** PHP only guarantees the placeholder exists at the start of the homepage container; `moveToConfiguredPosition` in `js/insertRankingTemplate.js` then moves it, before filling it, using `placeholder.parentElement` as the anchor and `window.app.displayPosition` / `displayPositionSection` (both injected by `HookCallback::getDisplayPositionSettings`) as the offset. It deliberately matches **no** CSS classes: the local themes disagree on all of them (`rieja` has no current-issue section and renders `.additional_content` first; `saudeEmDebate` uses `.saude_announcements`/`.saude_articles` instead of `.cmp_announcements`/`.current_issue`), so counting the container's own children is the only theme-agnostic anchor. Keep it that way when adding positions.
+
+With `displayPosition` left at `additionalContent`, the journal operator must add `<div class="rankingTabs"></div>` to **Website → Appearance → Advanced → Additional Content**; otherwise the plugin emits the placeholder itself. Either way `allowed_hosts` in `config.inc.php` must include the journal's host (see README).
 
 ## Conventions
 

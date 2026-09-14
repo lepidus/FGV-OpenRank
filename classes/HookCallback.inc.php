@@ -1,5 +1,7 @@
 <?php
 
+import('plugins.generic.rankingPlugin.classes.RankingDisplayPosition');
+
 class HookCallback
 {
     private $plugin;
@@ -119,7 +121,7 @@ class HookCallback
             ];
         }
 
-        $rankingPluginJavaScriptVariables = [
+        $rankingPluginJavaScriptVariables = $this->getDisplayPositionSettings($contextId) + [
             'currentLocale' => AppLocale::getLocale(),
             'primaryLocale' => AppLocale::getPrimaryLocale(),
             'publishedDateLocaleMessage' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate"),
@@ -158,6 +160,43 @@ class HookCallback
         return false;
     }
 
+    public function insertRankingPlaceholder($hookName, $args)
+    {
+        $contextId = $this->getContextId();
+
+        if ($contextId === null) {
+            return false;
+        }
+
+        $settings = $this->getDisplayPositionSettings($contextId);
+
+        if (!RankingDisplayPosition::needsPlaceholder($settings['displayPosition'])) {
+            return false;
+        }
+
+        $args[2] .= RankingDisplayPosition::PLACEHOLDER;
+
+        return false;
+    }
+
+    public function getDisplayPositionSettings($contextId): array
+    {
+        return [
+            'displayPosition' => RankingDisplayPosition::normalize(
+                $this->plugin->getSetting(
+                    $contextId,
+                    RankingDisplayPosition::SETTING_NAME
+                )
+            ),
+            'displayPositionSection' => RankingDisplayPosition::normalizeSection(
+                $this->plugin->getSetting(
+                    $contextId,
+                    RankingDisplayPosition::SECTION_SETTING_NAME
+                )
+            ),
+        ];
+    }
+
     public function addScoreFieldToSubmissionSchema($hookName, $args)
     {
         $schema = $args[0];
@@ -184,6 +223,13 @@ class HookCallback
         return false;
     }
 
+
+    protected function getContextId()
+    {
+        $context = Application::get()->getRequest()->getContext();
+
+        return $context === null ? null : $context->getId();
+    }
 
     private function loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables)
     {

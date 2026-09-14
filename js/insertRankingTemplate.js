@@ -5,6 +5,7 @@
         const rankingTabsDiv = document.querySelector('.rankingTabs');
 
         if (rankingTabsDiv && window.app && window.app.rankingTemplate) {
+            moveToConfiguredPosition(rankingTabsDiv);
             rankingTabsDiv.innerHTML = window.app.rankingTemplate;
             document.querySelectorAll('.nav-tabs a[data-toggle="tab"]')
             .forEach(function(tabLink){
@@ -90,7 +91,31 @@
             }
         });
 
-        function renderSubmissions(submissions, container, tabId = null) {
+        function moveToConfiguredPosition(container) {
+        const position = window.app.displayPosition;
+        const parent = container.parentElement;
+
+        if (!parent || !position || position === 'additionalContent' || position === 'top') {
+            return;
+        }
+
+        if (position === 'bottom') {
+            parent.appendChild(container);
+            return;
+        }
+
+        if (position === 'afterSection') {
+            const siblings = Array.prototype.slice.call(parent.children)
+                .filter(function(element) {
+                    return element !== container;
+                });
+            const section = parseInt(window.app.displayPositionSection, 10) || 1;
+
+            parent.insertBefore(container, siblings[section] || null);
+        }
+    }
+
+    function renderSubmissions(submissions, container, tabId = null) {
             container.empty();
             if (!submissions || !Array.isArray(submissions) || submissions.length === 0) {
                 container.html(`<p>${window.app.noPublicationsFoundMessage}</p>`);
