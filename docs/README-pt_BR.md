@@ -9,7 +9,7 @@ Este plugin adiciona um bloco de ranqueamento à página inicial de revistas que
 
 ## Como funciona
 
-O bloco é renderizado no lugar em que você inserir `<div class="rankingTabs"></div>` no Conteúdo Adicional da revista. Cada aba carrega seus artigos de forma assíncrona, a partir da API do próprio plugin, que entrega dados de um cache atualizado uma vez por dia. Os serviços externos (Crossref, Altmetric) são consultados pela tarefa agendada, e não enquanto o leitor espera a página carregar.
+Você escolhe onde o bloco fica nas configurações do plugin — no início da página inicial, depois de uma seção específica dela, no fim, ou no lugar em que você inserir `<div class="rankingTabs"></div>` no Conteúdo Adicional. Cada aba carrega seus artigos de forma assíncrona, a partir da API do próprio plugin, que entrega dados de um cache atualizado uma vez por dia. Os serviços externos (Crossref, Altmetric) são consultados pela tarefa agendada, e não enquanto o leitor espera a página carregar.
 
 | Aba | O que lista | Fonte | Requer |
 | --- | --- | --- | --- |
@@ -25,15 +25,22 @@ O bloco é renderizado no lugar em que você inserir `<div class="rankingTabs"><
 
 Baixe o `.tar.gz` da última versão compatível com seu OJS na [página de lançamentos](https://gitlab.lepidus.com.br/softwares-pkp/plugins_ojs/rankingPlugin/-/releases), acesse *Configurações → Website → Plugins → Enviar novo plugin*, envie o arquivo e habilite o plugin na sua revista.
 
-### 2. Adicione o bloco à página inicial
+### 2. Escolha onde o bloco aparece
 
-Em *Configurações → Website → Aparência → Avançado*, inclua o seguinte em **Conteúdo Adicional**:
+Abra as *Configurações* do plugin e escolha a **Posição na página inicial da revista**:
 
-```html
-<div class="rankingTabs"></div>
-```
+- **No início da página inicial** — acima de todas as demais seções.
+- **Depois de uma seção específica da página inicial** — então responda **Depois de qual seção?**: `1` posiciona o bloco depois da primeira seção, `2` depois da segunda, e assim por diante. A contagem considera cada seção que o tema empilha na página inicial — a imagem da página inicial, a descrição da revista, os anúncios, a edição atual, o conteúdo adicional e o que mais o tema exibir. O que conta como seção depende, portanto, do tema e do que a revista tem configurado, e alguns temas agrupam várias delas dentro de um mesmo contêiner, então pode ser preciso testar alguns números. Um número maior que a quantidade de seções leva o bloco para o fim da página.
+- **No fim da página inicial** — abaixo de todas as demais seções.
+- **Onde o elemento `rankingTabs` estiver** (padrão) — em *Configurações → Website → Aparência → Avançado*, inclua o seguinte em **Conteúdo Adicional**:
 
-O bloco é renderizado dentro desse elemento, então você controla exatamente onde ele aparece na página inicial.
+  ```html
+  <div class="rankingTabs"></div>
+  ```
+
+  O bloco é renderizado dentro desse elemento.
+
+As três primeiras opções são resolvidas pelo próprio plugin, sem CSS personalizado envolvido. Elas são contadas entre os blocos da página inicial, e não casadas com classes CSS específicas de cada tema, então se sustentam quando um tema renomeia, reordena ou remove alguma seção — um tema muito customizado ainda pode exigir ajustes.
 
 ### 3. Libere o host
 
@@ -95,7 +102,14 @@ php tools/runScheduledTasks.php
 <details>
 <summary><strong>O bloco não aparece na página inicial</strong></summary>
 
-Verifique se o plugin está habilitado nesta revista e se `<div class="rankingTabs"></div>` está no *Conteúdo Adicional*. Apenas a primeira ocorrência do elemento é utilizada.
+Verifique se o plugin está habilitado nesta revista. Se a posição estiver definida como *Onde o elemento `rankingTabs` estiver*, confirme que `<div class="rankingTabs"></div>` está no *Conteúdo Adicional*. Apenas a primeira ocorrência do elemento na página é utilizada.
+
+</details>
+
+<details>
+<summary><strong>O bloco aparece no lugar errado</strong></summary>
+
+Com *Depois de uma seção específica da página inicial*, experimente outra resposta para **Depois de qual seção?** — quantas seções a página inicial tem depende do tema e do que a revista configurou. Números altos demais levam o bloco para o fim da página.
 
 </details>
 

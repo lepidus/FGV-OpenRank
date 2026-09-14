@@ -9,7 +9,7 @@ This plugin adds a ranking block to the homepage of a journal running [OJS](http
 
 ## How it works
 
-The block is rendered wherever you place `<div class="rankingTabs"></div>` in the journal's Additional Content. Each tab loads its articles asynchronously from the plugin's own API, which serves data from a cache refreshed once a day. External services (Crossref, Altmetric) are queried by the scheduled task, not while a reader waits for the page.
+You choose where the block goes in the plugin settings — top of the homepage, after a given section of it, bottom, or wherever you place `<div class="rankingTabs"></div>` in the journal's Additional Content. Each tab loads its articles asynchronously from the plugin's own API, which serves data from a cache refreshed once a day. External services (Crossref, Altmetric) are queried by the scheduled task, not while a reader waits for the page.
 
 | Tab | What it lists | Source | Needs |
 | --- | --- | --- | --- |
@@ -25,15 +25,22 @@ The block is rendered wherever you place `<div class="rankingTabs"></div>` in th
 
 Download the `.tar.gz` of the latest version compatible with your OJS from the [releases page](https://gitlab.lepidus.com.br/softwares-pkp/plugins_ojs/rankingPlugin/-/releases), then go to *Settings → Website → Plugins → Upload a new plugin*, send the file and enable the plugin for your journal.
 
-### 2. Add the block to the homepage
+### 2. Choose where the block appears
 
-In *Settings → Website → Appearance → Advanced*, add this to **Additional Content**:
+Open the plugin's *Settings* and pick the **Position on the journal homepage**:
 
-```html
-<div class="rankingTabs"></div>
-```
+- **At the top of the homepage** — above every other section.
+- **After a given section of the homepage** — then answer **After which section?**: `1` puts the block after the first section, `2` after the second, and so on. The count covers every section your theme stacks on the homepage — the homepage image, the journal description, the announcements, the current issue, the additional content, and anything else the theme renders. What counts as a section therefore depends on the theme and on what the journal has configured, and some themes group several of them into a single wrapper, so expect to try a couple of numbers. A number higher than the number of sections puts the block at the bottom.
+- **At the bottom of the homepage** — below every other section.
+- **Where the `rankingTabs` element is** (the default) — in *Settings → Website → Appearance → Advanced*, add this to **Additional Content**:
 
-The block is rendered inside that element, so you control exactly where it shows up on the homepage.
+  ```html
+  <div class="rankingTabs"></div>
+  ```
+
+  The block is rendered inside that element.
+
+The first three options are handled by the plugin itself, with no custom CSS involved. They are counted among the homepage blocks rather than matched against theme-specific CSS classes, so they hold up when a theme renames, reorders or drops a section — a heavily customized theme may still need adjusting.
 
 ### 3. Allow your host
 
@@ -95,7 +102,14 @@ php tools/runScheduledTasks.php
 <details>
 <summary><strong>The block does not show up on the homepage</strong></summary>
 
-Check that the plugin is enabled for this journal and that `<div class="rankingTabs"></div>` is in *Additional Content*. Only the first occurrence of the element is used.
+Check that the plugin is enabled for this journal. If the position is set to *Where the `rankingTabs` element is*, make sure `<div class="rankingTabs"></div>` is in *Additional Content*. Only the first occurrence of the element on the page is used.
+
+</details>
+
+<details>
+<summary><strong>The block shows up in the wrong place</strong></summary>
+
+With *After a given section of the homepage*, try another answer to **After which section?** — how many sections a homepage has depends on the theme and on what the journal has configured. Numbers that are too high land the block at the bottom.
 
 </details>
 

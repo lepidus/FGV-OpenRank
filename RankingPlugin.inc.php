@@ -16,6 +16,7 @@ class RankingPlugin extends GenericPlugin
             $hookCallback = new HookCallback($this);
             HookRegistry::register('Dispatcher::dispatch', array($hookCallback, 'setupRankingPluginAPIHandler'));
             HookRegistry::register('TemplateManager::display', [$hookCallback, 'handleMetricsData']);
+            HookRegistry::register('Templates::Index::journal', [$hookCallback, 'insertRankingPlaceholder']);
             HookRegistry::register('Schema::get::submission', array($hookCallback, 'addScoreFieldToSubmissionSchema'));
             HookRegistry::register('LoadComponentHandler', array($hookCallback, 'setupRankingConfigurationGridHandler'));
             HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'parseCrontab'));

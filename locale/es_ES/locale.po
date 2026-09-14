@@ -144,3 +144,27 @@ msgstr "¿Seguro que desea eliminar este DOI de la lista?"
 
 msgid "plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet"
 msgstr "Esta lista se ignora mientras haya una clave de API de Altmetric configurada. Elimine la clave almacenada arriba para usar la lista manual."
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition"
+msgstr "Posición en la página de inicio de la revista"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.description"
+msgstr "Elija dónde se mostrará el bloque de ranking en la página de inicio de la revista."
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.additionalContent"
+msgstr "Donde esté el elemento &lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt; en el Contenido Adicional"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.top"
+msgstr "Al principio de la página de inicio, antes del resto del contenido"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.afterSection"
+msgstr "Después de una sección determinada de la página de inicio"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.bottom"
+msgstr "Al final de la página de inicio, después del resto del contenido"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPositionSection"
+msgstr "¿Después de qué sección?"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPositionSection.description"
+msgstr "Sirve para colocar el bloque de ranking en medio de la página de inicio. El conteo considera cada sección que el tema apila en la página — la imagen de la página de inicio, la descripción de la revista, los avisos, el último número, el contenido adicional y todo lo demás que el tema muestre. Escriba 1 para colocar el bloque después de la primera sección, 2 para después de la segunda, y así sucesivamente. Lo que cuenta como sección depende del tema y de lo que la revista haya configurado, y algunos temas agrupan varias en una sola, así que puede que deba probar algunos números. Un número mayor que la cantidad de secciones lleva el bloque al final de la página."

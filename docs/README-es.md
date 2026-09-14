@@ -9,7 +9,7 @@ Este módulo añade un bloque de ranking a la página de inicio de revistas que 
 
 ## Cómo funciona
 
-El bloque se muestra en el lugar donde usted inserte `<div class="rankingTabs"></div>` en el Contenido Adicional de la revista. Cada pestaña carga sus artículos de forma asíncrona desde la API del propio módulo, que entrega datos de una caché actualizada una vez al día. Los servicios externos (Crossref, Altmetric) son consultados por la tarea programada, no mientras la persona lectora espera la página.
+Usted elige dónde queda el bloque en los ajustes del módulo — al principio de la página de inicio, después de una sección determinada de ella, al final, o en el lugar donde inserte `<div class="rankingTabs"></div>` en el Contenido Adicional. Cada pestaña carga sus artículos de forma asíncrona desde la API del propio módulo, que entrega datos de una caché actualizada una vez al día. Los servicios externos (Crossref, Altmetric) son consultados por la tarea programada, no mientras la persona lectora espera la página.
 
 | Pestaña | Qué muestra | Fuente | Requiere |
 | --- | --- | --- | --- |
@@ -25,15 +25,22 @@ El bloque se muestra en el lugar donde usted inserte `<div class="rankingTabs"><
 
 Descargue el `.tar.gz` de la última versión compatible con su OJS desde la [página de versiones](https://gitlab.lepidus.com.br/softwares-pkp/plugins_ojs/rankingPlugin/-/releases), vaya a *Ajustes → Sitio web → Módulos → Subir un nuevo módulo*, envíe el archivo y habilite el módulo en su revista.
 
-### 2. Agregue el bloque a la página de inicio
+### 2. Elija dónde aparece el bloque
 
-En *Ajustes → Sitio web → Apariencia → Avanzado*, agregue lo siguiente en **Contenido Adicional**:
+Abra los *Ajustes* del módulo y elija la **Posición en la página de inicio de la revista**:
 
-```html
-<div class="rankingTabs"></div>
-```
+- **Al principio de la página de inicio** — por encima de todas las demás secciones.
+- **Después de una sección determinada de la página de inicio** — luego responda **¿Después de qué sección?**: `1` coloca el bloque después de la primera sección, `2` después de la segunda, y así sucesivamente. El conteo considera cada sección que el tema apila en la página de inicio — la imagen de la página de inicio, la descripción de la revista, los avisos, el último número, el contenido adicional y todo lo demás que el tema muestre. Lo que cuenta como sección depende, por lo tanto, del tema y de lo que la revista haya configurado, y algunos temas agrupan varias de ellas dentro de un mismo contenedor, así que puede que deba probar algunos números. Un número mayor que la cantidad de secciones lleva el bloque al final de la página.
+- **Al final de la página de inicio** — por debajo de todas las demás secciones.
+- **Donde esté el elemento `rankingTabs`** (opción por defecto) — en *Ajustes → Sitio web → Apariencia → Avanzado*, agregue lo siguiente en **Contenido Adicional**:
 
-El bloque se muestra dentro de ese elemento, así que usted controla exactamente dónde aparece en la página de inicio.
+  ```html
+  <div class="rankingTabs"></div>
+  ```
+
+  El bloque se muestra dentro de ese elemento.
+
+Las tres primeras opciones las resuelve el propio módulo, sin CSS personalizado de por medio. Se cuentan entre los bloques de la página de inicio en lugar de emparejarse con clases CSS propias de cada tema, así que se sostienen cuando un tema renombra, reordena o elimina alguna sección — un tema muy personalizado todavía puede requerir ajustes.
 
 ### 3. Autorice el host
 
@@ -95,7 +102,14 @@ php tools/runScheduledTasks.php
 <details>
 <summary><strong>El bloque no aparece en la página de inicio</strong></summary>
 
-Verifique que el módulo esté habilitado en esta revista y que `<div class="rankingTabs"></div>` esté en el *Contenido Adicional*. Solo se utiliza la primera aparición del elemento.
+Verifique que el módulo esté habilitado en esta revista. Si la posición está configurada como *Donde esté el elemento `rankingTabs`*, confirme que `<div class="rankingTabs"></div>` esté en el *Contenido Adicional*. Solo se utiliza la primera aparición del elemento en la página.
+
+</details>
+
+<details>
+<summary><strong>El bloque aparece en el lugar equivocado</strong></summary>
+
+Con *Después de una sección determinada de la página de inicio*, pruebe otra respuesta para **¿Después de qué sección?** — cuántas secciones tiene la página de inicio depende del tema y de lo que la revista haya configurado. Números demasiado altos llevan el bloque al final de la página.
 
 </details>
 

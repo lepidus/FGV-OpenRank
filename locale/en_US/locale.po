@@ -144,3 +144,27 @@ msgstr "Are you sure you want to remove this DOI from the list?"
 
 msgid "plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet"
 msgstr "This list is ignored while an Altmetric API key is configured. Remove the stored API key above to use the manual list."
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition"
+msgstr "Position on the journal homepage"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.description"
+msgstr "Choose where the ranking block is rendered on the journal homepage."
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.additionalContent"
+msgstr "Where the &lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt; element is placed in Additional Content"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.top"
+msgstr "At the top of the homepage, before all other content"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.afterSection"
+msgstr "After a given section of the homepage"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPosition.bottom"
+msgstr "At the bottom of the homepage, after all other content"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPositionSection"
+msgstr "After which section?"
+
+msgid "plugins.generic.rankingPlugin.settings.displayPositionSection.description"
+msgstr "Use this to place the ranking block in the middle of the homepage. The count covers every section your theme stacks on the page — the homepage image, the journal description, the announcements, the current issue, the additional content, and anything else the theme renders. Enter 1 to place the block after the first section, 2 for after the second, and so on. What counts as a section depends on the theme and on what the journal has configured, and some themes group several of them into one, so expect to try a couple of numbers. A number higher than the number of sections puts the block at the bottom."
