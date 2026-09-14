@@ -2,17 +2,17 @@
 
 class RankingDisplayPosition
 {
-    const SETTING_NAME = 'displayPosition';
-    const SECTION_SETTING_NAME = 'displayPositionSection';
+    public const SETTING_NAME = 'displayPosition';
+    public const SECTION_SETTING_NAME = 'displayPositionSection';
 
-    const TOP = 'top';
-    const AFTER_SECTION = 'afterSection';
-    const BOTTOM = 'bottom';
-    const ADDITIONAL_CONTENT = 'additionalContent';
+    public const TOP = 'top';
+    public const AFTER_SECTION = 'afterSection';
+    public const BOTTOM = 'bottom';
+    public const ADDITIONAL_CONTENT = 'additionalContent';
 
-    const FIRST_SECTION = 1;
+    public const FIRST_SECTION = 1;
 
-    const PLACEHOLDER = '<div class="rankingTabs"></div>';
+    public const PLACEHOLDER = '<div class="rankingTabs"></div>';
 
     public static function getAll(): array
     {
