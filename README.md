@@ -25,7 +25,7 @@ You choose where the block goes in the plugin settings — top of the homepage, 
 
 ### 1. Install the plugin
 
-Download the `.tar.gz` of the latest version compatible with your OJS from the [releases page](https://gitlab.lepidus.com.br/softwares-pkp/plugins_ojs/rankingPlugin/-/releases), then go to *Settings → Website → Plugins → Upload a new plugin*, send the file and enable the plugin for your journal.
+Download the `.tar.gz` of the latest version compatible with your OJS from the [releases page](https://github.com/lepidus/FGV-OpenRank/releases), then go to *Settings → Website → Plugins → Upload a new plugin*, send the file and enable the plugin for your journal.
 
 ### 2. Choose where the block appears
 

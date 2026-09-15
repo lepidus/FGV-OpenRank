@@ -25,7 +25,7 @@ Você escolhe onde o bloco fica nas configurações do plugin — no início da 
 
 ### 1. Instale o plugin
 
-Baixe o `.tar.gz` da última versão compatível com seu OJS na [página de lançamentos](https://gitlab.lepidus.com.br/softwares-pkp/plugins_ojs/rankingPlugin/-/releases), acesse *Configurações → Website → Plugins → Enviar novo plugin*, envie o arquivo e habilite o plugin na sua revista.
+Baixe o `.tar.gz` da última versão compatível com seu OJS na [página de lançamentos](https://github.com/lepidus/FGV-OpenRank/releases), acesse *Configurações → Website → Plugins → Enviar novo plugin*, envie o arquivo e habilite o plugin na sua revista.
 
 ### 2. Escolha onde o bloco aparece
 

@@ -25,7 +25,7 @@ Usted elige dónde queda el bloque en los ajustes del módulo — al principio d
 
 ### 1. Instale el módulo
 
-Descargue el `.tar.gz` de la última versión compatible con su OJS desde la [página de versiones](https://gitlab.lepidus.com.br/softwares-pkp/plugins_ojs/rankingPlugin/-/releases), vaya a *Ajustes → Sitio web → Módulos → Subir un nuevo módulo*, envíe el archivo y habilite el módulo en su revista.
+Descargue el `.tar.gz` de la última versión compatible con su OJS desde la [página de versiones](https://github.com/lepidus/FGV-OpenRank/releases), vaya a *Ajustes → Sitio web → Módulos → Subir un nuevo módulo*, envíe el archivo y habilite el módulo en su revista.
 
 ### 2. Elija dónde aparece el bloque
 
