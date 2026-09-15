@@ -24,9 +24,9 @@
     align-items: center;
     justify-content: center;
     padding: 6px 12px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    color: #008cba;
+    background-color: var(--ranking-surface);
+    border: 1px solid var(--ranking-border-color);
+    color: var(--ranking-link);
     text-decoration: none;
     border-radius: 2px;
     line-height: 1.5;
@@ -45,15 +45,15 @@
 }
 
 .rankingTabs .ranking-pagination .page-item.active .page-link {
-    background-color: #008cba;
+    background-color: var(--ranking-link);
     border-color: #007bff;
-    color: #fff;
+    color: var(--ranking-surface);
 }
 
 .rankingTabs .ranking-pagination .page-item.disabled .page-link {
     color: #6c757d;
-    background-color: #fff;
-    border-color: #ddd;
+    background-color: var(--ranking-surface);
+    border-color: var(--ranking-border-color);
     cursor: not-allowed;
     pointer-events: none;
     opacity: 0.65;
