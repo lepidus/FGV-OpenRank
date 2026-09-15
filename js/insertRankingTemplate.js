@@ -7,14 +7,14 @@
         if (rankingTabsDiv && window.app && window.app.rankingTemplate) {
             moveToConfiguredPosition(rankingTabsDiv);
             rankingTabsDiv.innerHTML = window.app.rankingTemplate;
-            document.querySelectorAll('.nav-tabs a[data-toggle="tab"]')
+            rankingTabsDiv.querySelectorAll('.nav-tabs a[data-toggle="tab"]')
             .forEach(function(tabLink){
                 tabLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    document.querySelectorAll('.nav-tabs li').forEach(li=> li.classList.remove('active'));
-                    document.querySelectorAll('.tab-pane').forEach(pane=> pane.classList.remove('active'));
+                    rankingTabsDiv.querySelectorAll('.nav-tabs li').forEach(li=> li.classList.remove('active'));
+                    rankingTabsDiv.querySelectorAll('.tab-pane').forEach(pane=> pane.classList.remove('active'));
                     this.parentElement.classList.add('active');
-                    document.querySelector(this.getAttribute('href')).classList.add('active');
+                    rankingTabsDiv.querySelector(this.getAttribute('href')).classList.add('active');
                 });
             });
         }
@@ -199,7 +199,7 @@
                 paginationContainer.empty();
                 const paginationUl = $('<ul></ul>');
 
-                const prevLi = $('<li></li>');
+                const prevLi = $('<li class="page-item"></li>');
                 const prevLink = $(`<a class="page-link" href="#" aria-label="${window.app.previousPageLabel || 'Previous'}">
                     ${window.app.previousPageLabel || 'Previous'}
                 </a>`);
@@ -238,7 +238,7 @@
                     paginationUl.append(pageLi);
                 }
 
-                const nextLi = $('<li></li>');
+                const nextLi = $('<li class="page-item"></li>');
                 const nextLink = $(`<a class="page-link" href="#" aria-label="${window.app.nextPageLabel || 'Next'}">
                     ${window.app.nextPageLabel || 'Next'}
                 </a>`);

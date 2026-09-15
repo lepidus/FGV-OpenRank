@@ -1,98 +1,178 @@
-.nav-tabs {
+.rankingTabs {
+    --ranking-block-spacing: 32px;
+    --ranking-gutter: 20px;
+    --ranking-cover-width: 150px;
+    --ranking-details-min-width: 260px;
+    --ranking-border-color: #ddd;
+    --ranking-surface: #fff;
+    --ranking-text: #222;
+    --ranking-link: #008cba;
+
+    box-sizing: border-box;
+    max-width: 100%;
+    margin-top: var(--ranking-block-spacing);
+    margin-bottom: var(--ranking-block-spacing);
+}
+
+.rankingTabs *,
+.rankingTabs *::before,
+.rankingTabs *::after {
+    box-sizing: inherit;
+}
+
+.rankingTabs .nav-tabs {
     list-style: none;
     padding: 0;
     margin: 0 0 1em;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--ranking-border-color);
     display: flex;
+    flex-wrap: wrap;
+    row-gap: 1px;
     font-size: 15px;
 }
-.nav-tabs li {
+
+.rankingTabs .nav-tabs li {
     margin-right: 2px;
     margin-bottom: -1px;
 }
-.nav-tabs li a {
+
+.rankingTabs .nav-tabs li a {
     display: block;
     background: #e7e7e7;
     padding: .5em 1em;
     text-decoration: none;
-    color: #222;
+    color: var(--ranking-text);
     border: 1px solid transparent;
     border-bottom: none;
     cursor: pointer;
 }
-.nav-tabs li.active a {
-    background: #fff !important;
+
+.rankingTabs .nav-tabs li.active a {
+    background: var(--ranking-surface) !important;
     border-color: #ccc;
-    border-bottom-color: #fff;
+    border-bottom-color: var(--ranking-surface);
     color: #6f6f6f;
 }
 
-.nav-tabs li a:hover {
+.rankingTabs .nav-tabs li a:hover {
     background-color: #eee;
 }
 
-.tab-content {
+.rankingTabs .tab-content {
     padding: 1em;
-    background: #fff;
+    background: var(--ranking-surface);
+    color: var(--ranking-text);
 }
 
-.tab-content a {
-    color: #008cba;
+.rankingTabs .tab-content a {
+    color: var(--ranking-link);
     text-decoration: none;
 }
 
-.tab-content h3 {
+.rankingTabs .tab-content h3 {
     margin-top: 0;
 }
 
-.tab-content hr {
-    border: 1px solid #ddd;
+.rankingTabs .tab-content hr {
+    border: 1px solid var(--ranking-border-color);
     margin-top: 21px;
     margin-bottom: 21px;
 }
 
-.tab-content .article-authors {
-    margin-bottom: 2.7rem;
+.rankingTabs .tab-content .article-authors {
+    margin-bottom: 2.7em;
 }
 
-.tab-content .article-date-published {
+.rankingTabs .tab-content .article-date-published {
     margin-top: 2px;
 }
 
-.tab-content a:hover {
+.rankingTabs .tab-content a:hover {
     text-decoration: underline;
 }
 
-.tab-pane {
+.rankingTabs .tab-pane {
     display: none;
 }
-.tab-pane.active {
+
+.rankingTabs .tab-pane.active {
     display: block;
 }
 
-.article-item {
+.rankingTabs .article-item {
     display: flex;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: var(--ranking-gutter);
 }
 
-.article-cover {
-    flex: 0 0 150px;
+.rankingTabs .article-cover {
+    flex: 0 1 var(--ranking-cover-width);
+    max-width: var(--ranking-cover-width);
     margin: auto;
 }
 
-.article-cover img {
+.rankingTabs .article-cover img {
     max-width: 100%;
     height: auto;
 }
 
-.article-details {
-    flex: 1;
+.rankingTabs .article-details {
+    flex: 1 1 var(--ranking-details-min-width);
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
-.article-details.highlight {
+.rankingTabs .article-details.highlight {
     align-content: center;
 }
 
-.article-details.highlight p {
+.rankingTabs .article-details.highlight p {
     margin: 0;
+}
+
+.rankingTabs .tab-pane img,
+.rankingTabs .tab-pane iframe,
+.rankingTabs .tab-pane video,
+.rankingTabs .tab-pane embed,
+.rankingTabs .tab-pane object {
+    max-width: 100%;
+}
+
+.rankingTabs .tab-pane img {
+    height: auto;
+}
+
+.rankingTabs .tab-pane table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+@media (max-width: 767px) {
+    .rankingTabs {
+        --ranking-block-spacing: 24px;
+        --ranking-gutter: 16px;
+    }
+
+    .rankingTabs .nav-tabs {
+        font-size: 14px;
+    }
+
+    .rankingTabs .nav-tabs li {
+        flex: 1 1 auto;
+        text-align: center;
+    }
+
+    .rankingTabs .nav-tabs li a {
+        padding: .5em .75em;
+    }
+
+    .rankingTabs .tab-content {
+        padding: 1em 0;
+    }
+
+    .rankingTabs .tab-content .article-authors {
+        margin-bottom: 1.2em;
+    }
 }
