@@ -7,6 +7,8 @@
 
 This plugin adds a ranking block to the homepage of a journal running [OJS](https://pkp.sfu.ca/software/ojs/). The block lists articles in tabs — **Most recent**, **Most read**, **Most cited**, **Trending** and a free-content **Highlight** tab — and the journal manager decides which tabs appear, in what order, with which title, description and number of items.
 
+OJS navigation is organized by issue, which leaves readers browsing edition by edition to find what interests them. The block adds a discovery path at the article level, built from the journal's own metadata and usage statistics and from citation (Crossref) and online attention (Altmetric) data.
+
 ## How it works
 
 You choose where the block goes in the plugin settings — top of the homepage, after a given section of it, bottom, or wherever you place `<div class="rankingTabs"></div>` in the journal's Additional Content. Each tab loads its articles asynchronously from the plugin's own API, which serves data from a cache refreshed once a day. External services (Crossref, Altmetric) are queried by the scheduled task, not while a reader waits for the page.
@@ -191,8 +193,14 @@ Either the key is not valid for the Altmetric API, or `api_key_secret` is not co
 - **The plugin:** open an issue in this repository.
 - **OJS itself:** ask on the [PKP Community Forum](https://forum.pkp.sfu.ca/).
 
+## Credits
+
+This plugin was funded by the [Fundação Getulio Vargas (FGV)](https://periodicos.fgv.br/index) and developed by [Lepidus Tecnologia](https://lepidus.com.br/). It runs in production on FGV's [Portal de Periódicos](https://periodicos.fgv.br/index).
+
 ## License
 
 This plugin is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0).
 
 Copyright (c) 2025-2026 Lepidus Tecnologia.
+
+Copyright (c) 2025-2026 Fundação Getulio Vargas.

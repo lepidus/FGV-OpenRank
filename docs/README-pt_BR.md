@@ -7,6 +7,8 @@
 
 Este plugin adiciona um bloco de ranqueamento à página inicial de revistas que usam o [OJS](https://pkp.sfu.ca/software/ojs/). O bloco lista artigos em abas — **Mais recentes**, **Mais lidos**, **Mais citados**, **Em alta** e uma aba de conteúdo livre, **Destaque** — e o editor-gerente decide quais abas aparecem, em que ordem, com qual título, descrição e quantidade de itens.
 
+A navegação do OJS é organizada por fascículo, o que faz o leitor percorrer edições até encontrar o que lhe interessa. O bloco acrescenta a isso uma via de descoberta no nível do artigo, construída a partir dos metadados e das estatísticas de acesso da própria revista e de dados de citação (Crossref) e de atenção online (Altmetric).
+
 ## Como funciona
 
 Você escolhe onde o bloco fica nas configurações do plugin — no início da página inicial, depois de uma seção específica dela, no fim, ou no lugar em que você inserir `<div class="rankingTabs"></div>` no Conteúdo Adicional. Cada aba carrega seus artigos de forma assíncrona, a partir da API do próprio plugin, que entrega dados de um cache atualizado uma vez por dia. Os serviços externos (Crossref, Altmetric) são consultados pela tarefa agendada, e não enquanto o leitor espera a página carregar.
@@ -191,8 +193,14 @@ Ou a chave não é válida para a API do Altmetric, ou o `api_key_secret` não e
 - **O plugin:** abra uma issue neste repositório.
 - **O OJS em si:** pergunte no [Fórum da Comunidade PKP](https://forum.pkp.sfu.ca/).
 
+## Créditos
+
+Este plugin foi financiado pela [Fundação Getulio Vargas (FGV)](https://periodicos.fgv.br/index) e desenvolvido pela [Lepidus Tecnologia](https://lepidus.com.br/). Ele está em produção no [Portal de Periódicos da FGV](https://periodicos.fgv.br/index).
+
 ## Licença
 
 Este plugin está licenciado sob a [Licença Pública Geral GNU v3.0](https://www.gnu.org/licenses/gpl-3.0).
 
 Copyright (c) 2025-2026 Lepidus Tecnologia.
+
+Copyright (c) 2025-2026 Fundação Getulio Vargas.

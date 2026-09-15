@@ -7,6 +7,8 @@
 
 Este módulo añade un bloque de ranking a la página de inicio de revistas que usan [OJS](https://pkp.sfu.ca/software/ojs/). El bloque presenta artículos en pestañas — **Más recientes**, **Más leídos**, **Más citados**, **En tendencia** y una pestaña de contenido libre, **Destacado** — y el gestor de la revista decide qué pestañas aparecen, en qué orden, con qué título, descripción y cantidad de elementos.
 
+La navegación de OJS está organizada por fascículo, lo que obliga a la persona lectora a recorrer ediciones hasta encontrar lo que le interesa. El bloque añade a eso una vía de descubrimiento a nivel de artículo, construida a partir de los metadatos y las estadísticas de acceso de la propia revista y de datos de citación (Crossref) y de atención en línea (Altmetric).
+
 ## Cómo funciona
 
 Usted elige dónde queda el bloque en los ajustes del módulo — al principio de la página de inicio, después de una sección determinada de ella, al final, o en el lugar donde inserte `<div class="rankingTabs"></div>` en el Contenido Adicional. Cada pestaña carga sus artículos de forma asíncrona desde la API del propio módulo, que entrega datos de una caché actualizada una vez al día. Los servicios externos (Crossref, Altmetric) son consultados por la tarea programada, no mientras la persona lectora espera la página.
@@ -191,8 +193,14 @@ O la clave no es válida para la API de Altmetric, o `api_key_secret` no está c
 - **El módulo:** abra una incidencia en este repositorio.
 - **OJS en sí:** pregunte en el [Foro de la Comunidad PKP](https://forum.pkp.sfu.ca/).
 
+## Créditos
+
+Este módulo fue financiado por la [Fundação Getulio Vargas (FGV)](https://periodicos.fgv.br/index) y desarrollado por [Lepidus Tecnologia](https://lepidus.com.br/). Está en producción en el [Portal de Periódicos de la FGV](https://periodicos.fgv.br/index).
+
 ## Licencia
 
 Este módulo está licenciado bajo la [Licencia Pública General GNU v3.0](https://www.gnu.org/licenses/gpl-3.0).
 
 Copyright (c) 2025-2026 Lepidus Tecnologia.
+
+Copyright (c) 2025-2026 Fundação Getulio Vargas.
