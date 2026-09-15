@@ -1,52 +1,56 @@
-.ranking-pagination {
+.rankingTabs .ranking-pagination {
     line-height: 1.5em;
     text-align: center;
-    margin: 1rem 0;
+    margin: 16px 0;
 }
 
-.ranking-pagination ul {
+.rankingTabs .ranking-pagination ul {
     margin: 0;
     padding: 0;
     list-style: none;
-    display: inline-block;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
 }
 
-.ranking-pagination li {
-    display: inline-block;
-    margin-left: 1px;
-    margin-right: 1px;
+.rankingTabs .ranking-pagination li {
+    display: block;
+    margin: 0;
 }
 
-.ranking-pagination .page-link {
-    display: inline-block;
-    padding: 0.375rem 0.75rem;
+.rankingTabs .ranking-pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
     background-color: #fff;
     border: 1px solid #ddd;
     color: #008cba;
     text-decoration: none;
     border-radius: 2px;
     line-height: 1.5;
-    min-width: 2rem;
+    min-width: 36px;
+    min-height: 36px;
     text-align: center;
     transition: all 0.15s ease-in-out;
-    align-content: center;
 }
 
-.ranking-pagination .page-link:hover,
-.ranking-pagination .page-link:focus {
+.rankingTabs .ranking-pagination .page-link:hover,
+.rankingTabs .ranking-pagination .page-link:focus {
     background-color: #f5f5f5;
     border-color: #007bff;
     color: #0056b3;
     text-decoration: none;
 }
 
-.ranking-pagination .page-item.active .page-link {
+.rankingTabs .ranking-pagination .page-item.active .page-link {
     background-color: #008cba;
     border-color: #007bff;
     color: #fff;
 }
 
-.ranking-pagination .page-item.disabled .page-link {
+.rankingTabs .ranking-pagination .page-item.disabled .page-link {
     color: #6c757d;
     background-color: #fff;
     border-color: #ddd;
@@ -55,11 +59,11 @@
     opacity: 0.65;
 }
 
-.article-item {
+.rankingTabs .article-item {
     transition: opacity 0.15s ease-in-out;
 }
 
-.article-cover .altmetric-embed a img {
+.rankingTabs .article-cover .altmetric-embed a img {
     width: auto;
     height: auto;
 }
