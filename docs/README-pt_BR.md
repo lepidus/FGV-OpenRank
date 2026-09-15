@@ -50,7 +50,44 @@ As abas consultam a API do plugin no próprio endereço da revista, então o hos
 allowed_hosts = '["minharevista.org"]'
 ```
 
-### 4. Configure as abas
+### 4. Libere os domínios do Altmetric, se o servidor envia CSP
+
+Este passo vale apenas para a aba **Em alta** e apenas quando o servidor web adiciona cabeçalhos personalizados com uma *Content Security Policy*.
+
+| Diretiva | Domínios | O que cobre |
+| --- | --- | --- |
+| `script-src` | `https://d1bxh8uas1mnw7.cloudfront.net`<br>`https://embed.altmetric.com`<br>`https://api.altmetric.com` | o script de embed que o plugin insere, o script do medidor que ele carrega em seguida e a própria pontuação — que trafega como JSONP e por isso é verificada pelo navegador como script |
+| `style-src` | `https://embed.altmetric.com` | a folha de estilo do medidor |
+| `img-src` | `https://badges.altmetric.com` | a imagem do medidor |
+
+Um exemplo mínimo para o nginx:
+
+```nginx
+add_header Content-Security-Policy "
+    script-src 'self' 'unsafe-inline' 'unsafe-eval'
+        https://d1bxh8uas1mnw7.cloudfront.net
+        https://embed.altmetric.com
+        https://api.altmetric.com;
+    style-src 'self' 'unsafe-inline'
+        https://embed.altmetric.com;
+    img-src 'self' data:
+        https://badges.altmetric.com;
+" always;
+```
+
+Ou, se a política for declarada em uma tag `<meta>` do tema:
+
+```html
+<meta http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://d1bxh8uas1mnw7.cloudfront.net https://embed.altmetric.com https://api.altmetric.com;
+               style-src 'self' 'unsafe-inline' https://embed.altmetric.com;
+               img-src 'self' data: https://badges.altmetric.com;">
+```
+
+> [!NOTE]
+> São exemplos, não uma política completa: incorpore os domínios às diretivas que você já tem, preservando o que o OJS e o tema precisam.
+
+### 5. Configure as abas
 
 Abra as *Configurações* do plugin. Uma grade lista as cinco abas: use o botão de status para habilitar ou desabilitar cada uma, arraste as linhas para mudar a ordem em que aparecem e clique em uma aba para editá-la.
 
@@ -96,6 +133,7 @@ php tools/runScheduledTasks.php
 - **ISSN** cadastrado na revista — necessário para *Mais citados* e para *Em alta* quando há chave de API.
 - **DOIs** atribuídos aos artigos — *Mais citados* e *Em alta* identificam os artigos pelo DOI, então um artigo sem DOI nunca aparece nessas abas.
 - **`api_key_secret`** no `config.inc.php`, apenas se você for armazenar uma chave de API do Altmetric.
+- **Domínios do Altmetric liberados na CSP**, apenas se o servidor web envia uma *Content Security Policy* personalizada e a aba *Em alta* está em uso.
 
 ## Solução de problemas
 
@@ -124,6 +162,13 @@ Confirme se o host da revista está em `allowed_hosts`. Erros vindos do Crossref
 <summary><strong>Mais citados ou Em alta está vazia</strong></summary>
 
 Em geral, a revista não tem ISSN, os artigos não têm DOI ou o serviço externo ainda não tem dados sobre eles. Na aba Em alta sem chave de API, verifique se a lista manual de DOIs foi preenchida.
+
+</details>
+
+<details>
+<summary><strong>Em alta lista os artigos, mas os medidores mostram um ponto de interrogação cinza</strong></summary>
+
+A lista vem do cache do plugin, enquanto o medidor é buscado diretamente no Altmetric pelo navegador do leitor, então um pode falhar sem o outro. Se o seu servidor envia uma *Content Security Policy*, verifique se os domínios do Altmetric estão liberados. O console do navegador informa tanto a requisição bloqueada quanto a diretiva que a bloqueou.
 
 </details>
 

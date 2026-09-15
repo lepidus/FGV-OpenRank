@@ -50,7 +50,44 @@ The tabs call the plugin's API on the journal's own address, so the host must be
 allowed_hosts = '["myjournal.org"]'
 ```
 
-### 4. Configure the tabs
+### 4. Release Altmetric's domains, if the server sends a CSP
+
+This step is only for the **Trending** tab, and only when your web server adds custom headers with a *Content Security Policy*.
+
+| Directive | Domains | What it covers |
+| --- | --- | --- |
+| `script-src` | `https://d1bxh8uas1mnw7.cloudfront.net`<br>`https://embed.altmetric.com`<br>`https://api.altmetric.com` | the embed script the plugin inserts, the badge script it loads in turn, and the score itself — which travels as JSONP, so the browser checks it as a script |
+| `style-src` | `https://embed.altmetric.com` | the donut's stylesheet |
+| `img-src` | `https://badges.altmetric.com` | the donut image |
+
+A minimal example for nginx:
+
+```nginx
+add_header Content-Security-Policy "
+    script-src 'self' 'unsafe-inline' 'unsafe-eval'
+        https://d1bxh8uas1mnw7.cloudfront.net
+        https://embed.altmetric.com
+        https://api.altmetric.com;
+    style-src 'self' 'unsafe-inline'
+        https://embed.altmetric.com;
+    img-src 'self' data:
+        https://badges.altmetric.com;
+" always;
+```
+
+Or, if the policy is declared in a `<meta>` tag of the theme:
+
+```html
+<meta http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://d1bxh8uas1mnw7.cloudfront.net https://embed.altmetric.com https://api.altmetric.com;
+               style-src 'self' 'unsafe-inline' https://embed.altmetric.com;
+               img-src 'self' data: https://badges.altmetric.com;">
+```
+
+> [!NOTE]
+> These are examples, not a complete policy: merge the domains into the directives you already have, keeping whatever OJS and your theme need.
+
+### 5. Configure the tabs
 
 Open the plugin's *Settings*. A grid lists the five tabs: use the toggle to enable or disable each one, drag the rows to change the order they appear in, and click a tab to edit it.
 
@@ -96,6 +133,7 @@ php tools/runScheduledTasks.php
 - **An ISSN** registered for the journal — needed by *Most cited*, and by *Trending* when an API key is used.
 - **DOIs** assigned to the articles — *Most cited* and *Trending* identify articles by DOI, so an article without one never appears in them.
 - **`api_key_secret`** in `config.inc.php`, only if you are going to store an Altmetric API key.
+- **Altmetric's domains released in the CSP**, only if your web server sends a custom *Content Security Policy* and the *Trending* tab is in use.
 
 ## Troubleshooting
 
@@ -124,6 +162,13 @@ Confirm the journal's host is in `allowed_hosts`. Errors coming from Crossref or
 <summary><strong>Most cited or Trending is empty</strong></summary>
 
 Usually the journal has no ISSN, the articles have no DOIs, or the external service has no data for them yet. In the Trending tab with no API key, check that the manual DOI list is filled in.
+
+</details>
+
+<details>
+<summary><strong>Trending lists the articles but the donuts show a grey question mark</strong></summary>
+
+The list comes from the plugin's cache, while the donut is fetched straight from Altmetric by the reader's browser, so one can fail without the other. If your server sends a *Content Security Policy*, check that Altmetric's domains are released. The browser console names both the blocked request and the directive that blocked it.
 
 </details>
 
