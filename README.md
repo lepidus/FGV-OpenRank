@@ -1,6 +1,6 @@
 **English** | [Português Brasileiro](docs/README-pt_BR.md) | [Español](docs/README-es.md)
 
-# Ranking Plugin
+# FGV OpenRank
 
 [![OJS compatibility](https://img.shields.io/badge/ojs-3.3.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_3_0)
 [![License type](https://img.shields.io/badge/license-GPL--3.0-blue)](https://www.gnu.org/licenses/gpl-3.0)
@@ -81,7 +81,7 @@ The tab works in either of two ways:
 
 ## Cache and daily update
 
-The tabs are served from a file cache per journal. A scheduled task — *Ranking Plugin Cache Update* — refreshes every tab of every enabled journal daily at midnight, so keep the **Acron** plugin enabled, or have `runScheduledTasks.php` in your server's crontab ([PKP Administrator's Guide](https://docs.pkp.sfu.ca/admin-guide/)). If a cache is empty when a reader arrives, the data is fetched on the spot.
+The tabs are served from a file cache per journal. A scheduled task — *FGV OpenRank cache update* — refreshes every tab of every enabled journal daily at midnight, so keep the **Acron** plugin enabled, or have `runScheduledTasks.php` in your server's crontab ([PKP Administrator's Guide](https://docs.pkp.sfu.ca/admin-guide/)). If a cache is empty when a reader arrives, the data is fetched on the spot.
 
 To refresh by hand, from the OJS root:
 

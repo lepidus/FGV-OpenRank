@@ -1,6 +1,6 @@
 **Español** | [English](../README.md) | [Português Brasileiro](README-pt_BR.md)
 
-# Módulo de Ranking
+# FGV OpenRank
 
 [![OJS compatibility](https://img.shields.io/badge/ojs-3.3.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_3_0)
 [![License type](https://img.shields.io/badge/license-GPL--3.0-blue)](https://www.gnu.org/licenses/gpl-3.0)
@@ -81,7 +81,7 @@ La pestaña funciona de dos maneras:
 
 ## Caché y actualización diaria
 
-Las pestañas se sirven desde una caché en archivo, por revista. Una tarea programada — *Ranking Plugin Cache Update* — actualiza todas las pestañas de todas las revistas habilitadas diariamente a medianoche, así que mantenga habilitado el módulo **Acron** o incluya `runScheduledTasks.php` en el crontab del servidor ([Guía del Administrador de PKP](https://docs.pkp.sfu.ca/admin-guide/)). Si la caché está vacía cuando alguien visita la página, los datos se obtienen en ese momento.
+Las pestañas se sirven desde una caché en archivo, por revista. Una tarea programada — *Actualización de caché de FGV OpenRank* — actualiza todas las pestañas de todas las revistas habilitadas diariamente a medianoche, así que mantenga habilitado el módulo **Acron** o incluya `runScheduledTasks.php` en el crontab del servidor ([Guía del Administrador de PKP](https://docs.pkp.sfu.ca/admin-guide/)). Si la caché está vacía cuando alguien visita la página, los datos se obtienen en ese momento.
 
 Para actualizar manualmente, desde la raíz de OJS:
 

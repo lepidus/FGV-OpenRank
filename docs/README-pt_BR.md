@@ -1,6 +1,6 @@
 **Português Brasileiro** | [English](../README.md) | [Español](README-es.md)
 
-# Plugin de Ranqueamento
+# FGV OpenRank
 
 [![OJS compatibility](https://img.shields.io/badge/ojs-3.3.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_3_0)
 [![License type](https://img.shields.io/badge/license-GPL--3.0-blue)](https://www.gnu.org/licenses/gpl-3.0)
@@ -81,7 +81,7 @@ A aba funciona de duas formas:
 
 ## Cache e atualização diária
 
-As abas são servidas a partir de um cache em arquivo, por revista. Uma tarefa agendada — *Ranking Plugin Cache Update* — atualiza todas as abas de todas as revistas habilitadas diariamente à meia-noite. Por isso, mantenha o plugin **Acron** habilitado ou coloque o `runScheduledTasks.php` no crontab do servidor ([Guia do Administrador da PKP](https://docs.pkp.sfu.ca/admin-guide/)). Se o cache estiver vazio quando um leitor acessar a página, os dados são buscados na hora.
+As abas são servidas a partir de um cache em arquivo, por revista. Uma tarefa agendada — *Atualização de cache do FGV OpenRank* — atualiza todas as abas de todas as revistas habilitadas diariamente à meia-noite. Por isso, mantenha o plugin **Acron** habilitado ou coloque o `runScheduledTasks.php` no crontab do servidor ([Guia do Administrador da PKP](https://docs.pkp.sfu.ca/admin-guide/)). Se o cache estiver vazio quando um leitor acessar a página, os dados são buscados na hora.
 
 Para atualizar manualmente, a partir da raiz do OJS:
 

@@ -7,12 +7,12 @@
   * Copyright (c) 2025 Lepidus Tecnologia
   * Distributed under the GNU GPL v3. For full terms see the file docs/COPYING.
   *
-  * Ranking Plugin scheduled tasks.
+  * FGV OpenRank scheduled tasks.
   -->
 
 <scheduled_tasks>
 	<task class="plugins.generic.rankingPlugin.classes.tasks.RankingCacheUpdateTask">
-    <description>Update the ranking cache for the Ranking Plugin.</description>
+    <description>Update the ranking cache for FGV OpenRank.</description>
     <frequency hour="0"/>
   </task>
 </scheduled_tasks>
