@@ -190,7 +190,7 @@ O la clave no es válida para la API de Altmetric, o `api_key_secret` no está c
 
 ## Créditos
 
-Este módulo fue financiado por la [Fundação Getulio Vargas (FGV)](https://periodicos.fgv.br/index) y desarrollado por [Lepidus Tecnologia](https://lepidus.com.br/). Está en producción en el [Portal de Periódicos de la FGV](https://periodicos.fgv.br/index).
+Este módulo fue ideado y financiado por la [Fundação Getulio Vargas (FGV)](https://periodicos.fgv.br/index) y desarrollado por [Lepidus Tecnologia](https://lepidus.com.br/). Está en producción en el [Portal de Periódicos de la FGV](https://periodicos.fgv.br/index).
 
 ## Licencia
 

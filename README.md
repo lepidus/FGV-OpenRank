@@ -190,7 +190,7 @@ Either the key is not valid for the Altmetric API, or `api_key_secret` is not co
 
 ## Credits
 
-This plugin was funded by the [Fundação Getulio Vargas (FGV)](https://periodicos.fgv.br/index) and developed by [Lepidus Tecnologia](https://lepidus.com.br/). It runs in production on FGV's [Portal de Periódicos](https://periodicos.fgv.br/index).
+This plugin was conceived and funded by the [Fundação Getulio Vargas (FGV)](https://periodicos.fgv.br/index) and developed by [Lepidus Tecnologia](https://lepidus.com.br/). It runs in production on FGV's [Portal de Periódicos](https://periodicos.fgv.br/index).
 
 ## License
 
