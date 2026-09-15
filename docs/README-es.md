@@ -50,7 +50,44 @@ Las pestañas consultan la API del módulo en la propia dirección de la revista
 allowed_hosts = '["mirevista.org"]'
 ```
 
-### 4. Configure las pestañas
+### 4. Autorice los dominios de Altmetric, si el servidor envía una CSP
+
+Este paso solo concierne a la pestaña **En tendencia** y solo cuando el servidor web añade cabeceras personalizadas con una *Content Security Policy*.
+
+| Directiva | Dominios | Qué cubre |
+| --- | --- | --- |
+| `script-src` | `https://d1bxh8uas1mnw7.cloudfront.net`<br>`https://embed.altmetric.com`<br>`https://api.altmetric.com` | el script de embed que inserta el módulo, el script del medidor que este carga a continuación y la puntuación misma — que viaja como JSONP y por eso el navegador la verifica como un script |
+| `style-src` | `https://embed.altmetric.com` | la hoja de estilos del medidor |
+| `img-src` | `https://badges.altmetric.com` | la imagen del medidor |
+
+Un ejemplo mínimo para nginx:
+
+```nginx
+add_header Content-Security-Policy "
+    script-src 'self' 'unsafe-inline' 'unsafe-eval'
+        https://d1bxh8uas1mnw7.cloudfront.net
+        https://embed.altmetric.com
+        https://api.altmetric.com;
+    style-src 'self' 'unsafe-inline'
+        https://embed.altmetric.com;
+    img-src 'self' data:
+        https://badges.altmetric.com;
+" always;
+```
+
+O bien, si la política se declara en una etiqueta `<meta>` del tema:
+
+```html
+<meta http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://d1bxh8uas1mnw7.cloudfront.net https://embed.altmetric.com https://api.altmetric.com;
+               style-src 'self' 'unsafe-inline' https://embed.altmetric.com;
+               img-src 'self' data: https://badges.altmetric.com;">
+```
+
+> [!NOTE]
+> Son ejemplos, no una política completa: incorpore los dominios a las directivas que ya tenga, conservando lo que OJS y su tema necesitan.
+
+### 5. Configure las pestañas
 
 Abra los *Ajustes* del módulo. Una cuadrícula muestra las cinco pestañas: use el botón de estado para habilitar o deshabilitar cada una, arrastre las filas para cambiar el orden en que aparecen y haga clic en una pestaña para editarla.
 
@@ -96,6 +133,7 @@ php tools/runScheduledTasks.php
 - **Un ISSN** registrado en la revista — necesario para *Más citados* y para *En tendencia* cuando se usa una clave de API.
 - **DOI** asignados a los artículos — *Más citados* y *En tendencia* identifican los artículos por su DOI, por lo que un artículo sin DOI nunca aparece en ellas.
 - **`api_key_secret`** en `config.inc.php`, solo si va a almacenar una clave de API de Altmetric.
+- **Dominios de Altmetric autorizados en la CSP**, solo si el servidor web envía una *Content Security Policy* personalizada y la pestaña *En tendencia* está en uso.
 
 ## Solución de problemas
 
@@ -124,6 +162,13 @@ Confirme que el host de la revista esté en `allowed_hosts`. Los errores proveni
 <summary><strong>Más citados o En tendencia está vacía</strong></summary>
 
 Por lo general, la revista no tiene ISSN, los artículos no tienen DOI o el servicio externo aún no tiene datos sobre ellos. En la pestaña En tendencia sin clave de API, verifique que la lista manual de DOI esté completa.
+
+</details>
+
+<details>
+<summary><strong>En tendencia muestra los artículos, pero los medidores aparecen con un signo de interrogación gris</strong></summary>
+
+La lista proviene de la caché del módulo, mientras que el medidor lo obtiene el navegador del lector directamente de Altmetric, así que uno puede fallar sin el otro. Si su servidor envía una *Content Security Policy*, compruebe que los dominios de Altmetric estén autorizados. La consola del navegador indica tanto la petición bloqueada como la directiva que la bloqueó.
 
 </details>
 
