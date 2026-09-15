@@ -188,11 +188,6 @@ Either the key is not valid for the Altmetric API, or `api_key_secret` is not co
 
 </details>
 
-## Getting help
-
-- **The plugin:** open an issue in this repository.
-- **OJS itself:** ask on the [PKP Community Forum](https://forum.pkp.sfu.ca/).
-
 ## Credits
 
 This plugin was funded by the [Fundação Getulio Vargas (FGV)](https://periodicos.fgv.br/index) and developed by [Lepidus Tecnologia](https://lepidus.com.br/). It runs in production on FGV's [Portal de Periódicos](https://periodicos.fgv.br/index).
