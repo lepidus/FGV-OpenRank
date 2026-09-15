@@ -2,7 +2,7 @@
 
 ## What this is
 
-`rankingPlugin` is a generic OJS (Open Journal Systems) plugin targeting **OJS 3.3.0**. It lives at `plugins/generic/rankingPlugin/` inside an OJS checkout — it is not a standalone project. All `import(...)` paths (`plugins.generic.rankingPlugin.*`, `lib.pkp.classes.*`, `classes.*`) resolve relative to the OJS root, so the plugin cannot be built, linted, or tested outside that checkout.
+**FGV OpenRank** is a generic OJS (Open Journal Systems) plugin targeting **OJS 3.3.0**. "FGV OpenRank" is a proper name and stays untranslated in every locale; `rankingPlugin` remains the technical identifier used by the directory name, locale keys, class names and CI variables. It lives at `plugins/generic/rankingPlugin/` inside an OJS checkout — it is not a standalone project. All `import(...)` paths (`plugins.generic.rankingPlugin.*`, `lib.pkp.classes.*`, `classes.*`) resolve relative to the OJS root, so the plugin cannot be built, linted, or tested outside that checkout.
 
 The plugin adds a homepage widget (five tabs: mostRecent, mostRead, mostCited, trending, highlight) rendered inside a `<div class="rankingTabs"></div>` placeholder — either emitted by the plugin on the journal index page or placed by hand in the journal's Additional Content, depending on the `displayPosition` setting.
 

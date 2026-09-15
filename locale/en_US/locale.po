@@ -1,5 +1,5 @@
 msgid "plugins.generic.rankingPlugin.displayName"
-msgstr "Ranking Plugin"
+msgstr "FGV OpenRank"
 
 msgid "plugins.generic.rankingPlugin.description"
 msgstr "Adds a ranking block with selectable metrics."
@@ -95,7 +95,7 @@ msgid "plugins.generic.rankingPlugin.client.altmetrics.transferError"
 msgstr "Error while trying to retrieve the Altmetrics Score. The Altmetrics API returned a transfer error."
 
 msgid "plugins.generic.rankingPlugin.scheduledTask.name"
-msgstr "Ranking Plugin Cache Update"
+msgstr "FGV OpenRank cache update"
 
 msgid "plugins.generic.rankingPlugin.scheduledTask.updateStart"
 msgstr "Starting cache update for context: {$contextName}"
