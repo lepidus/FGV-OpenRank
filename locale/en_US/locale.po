@@ -218,7 +218,7 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.intro.requirements"
 msgstr "Two settings live in the server’s <code>config.inc.php</code> and have no screen in the dashboard: <code>allowed_hosts</code> must include the journal’s address, otherwise every tab shows an error, and <code>api_key_secret</code> must be set before an Altmetric API key can be stored. Ask your server administrator if that is the case."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.intro.note"
-msgstr "The links open the settings in another tab so this guide stays available. Nothing is saved here: close and reopen the guide whenever you like."
+msgstr "The links open the settings in another tab so this guide stays available, and each path starts at the screen the step’s button opens. Nothing is saved here: close and reopen the guide whenever you like."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.title"
 msgstr "Choose where the block goes on the homepage"
@@ -227,10 +227,10 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step1.description"
 msgstr "The plugin only draws the block where the position setting tells it to. With the default option it looks for the <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> element in the journal’s \"Additional Content\" — without that element pasted there, the block shows up nowhere. \"Additional Content\" is a rich text field, so the element has to go in through its \"Source code\" button: typed into the visual editor it becomes text rather than an element. The editor is not translated, so that button reads \"Source code\" in every language. The other three options, at the top, after a given section or at the bottom of the homepage, do not need \"Additional Content\"."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathPosition"
-msgstr "Settings → Website → Plugins → Installed Plugins → FGV OpenRank → Settings → Position on the journal homepage → Choose the position and save."
+msgstr "Installed Plugins → FGV OpenRank → Settings → Position on the journal homepage → Choose the position and save."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathAdditionalContent"
-msgstr "Settings → Website → Appearance → Advanced → Additional Content → Source code → Paste <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> in each language and save."
+msgstr "Additional Content → Source code → Paste <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> in each language and save."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.expected"
 msgstr "The journal homepage starts showing the block in the chosen position, with the tabs loading the articles."
@@ -242,10 +242,10 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step2.description"
 msgstr "There are five tabs: \"Most recent\", \"Most read\", \"Most cited\", \"Trending\" and \"Highlight\". The configuration grid decides which ones appear and in what order; editing a tab sets its title, description and how many articles it holds. \"Most read\" also has \"Days for most read\", the window used to count views, and \"Highlight\" has \"Custom content\", free text that replaces the article list."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step2.pathEnabled"
-msgstr "Settings → Website → Plugins → Installed Plugins → FGV OpenRank → Settings → Enabled → Tick the tabs the journal will show and drag the rows to order them."
+msgstr "Installed Plugins → FGV OpenRank → Settings → Enabled → Tick the tabs the journal will show and drag the rows to order them."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step2.pathEdit"
-msgstr "Settings → Website → Plugins → Installed Plugins → FGV OpenRank → Settings → Edit → Fill in the tab title, description and number of items and save."
+msgstr "Installed Plugins → FGV OpenRank → Settings → Edit → Fill in the tab title, description and number of items and save."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step2.expected"
 msgstr "The block on the homepage shows only the ticked tabs, in the order you set and with the titles and descriptions you chose."
@@ -257,7 +257,7 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step3.description"
 msgstr "\"Most cited\" queries Crossref by the journal ISSN, and \"Trending\" queries Altmetric by the ISSN whenever an API key is stored. Without an ISSN \"Most cited\" stays empty, and \"Trending\" is left with only the manual DOI list."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.pathIssn"
-msgstr "Settings → Journal → Masthead → Online ISSN → Fill in the ISSN and save."
+msgstr "Masthead → Online ISSN → Fill in the ISSN and save."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.expected"
 msgstr "On the next cache update \"Most cited\" starts listing articles, and \"Trending\" can be fed by the Altmetric API instead of by hand."
@@ -269,10 +269,10 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step4.description"
 msgstr "\"Most cited\" and \"Trending\" identify each article by its DOI: Crossref and Altmetric return DOIs and the plugin looks up the matching article in the journal. An article with no DOI never shows up in those two tabs, however cited it is."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step4.pathEnable"
-msgstr "Settings → Website → Plugins → Installed Plugins → DOI → Enabled → Tick the box."
+msgstr "Installed Plugins → DOI → Enabled → Tick the box."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step4.pathPrefix"
-msgstr "Settings → Website → Plugins → Installed Plugins → DOI → Settings → Articles → Tick the option, fill in the DOI Prefix and save."
+msgstr "Installed Plugins → DOI → Settings → Articles → Tick the option, fill in the DOI Prefix and save."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step4.expected"
 msgstr "Every published article page starts showing its DOI, and the article becomes eligible for the \"Most cited\" and \"Trending\" tabs."
@@ -284,10 +284,10 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step5.description"
 msgstr "The \"Trending\" tab works in either of two ways. With an Altmetric API key the articles are fetched by the journal ISSN and ordered by score. With no key the tab shows the DOIs of the \"Manual DOI list\", in the order you added them, and it only accepts DOIs of articles published in this journal. While a key is stored the manual list is ignored."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step5.pathApiKey"
-msgstr "Settings → Website → Plugins → Installed Plugins → FGV OpenRank → Settings → Trending → Edit → Altmetric API key → Fill in the key and save."
+msgstr "Installed Plugins → FGV OpenRank → Settings → Trending → Edit → Altmetric API key → Fill in the key and save."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step5.pathDoiList"
-msgstr "Settings → Website → Plugins → Installed Plugins → FGV OpenRank → Settings → Trending → Edit → Add DOI → Enter the DOI and save."
+msgstr "Installed Plugins → FGV OpenRank → Settings → Trending → Edit → Add DOI → Enter the DOI and save."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step5.expected"
 msgstr "The \"Trending\" tab lists articles with the Altmetric donut beside them, ordered by score when a key is stored or in the order of the manual list when it is not."
@@ -299,7 +299,7 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step6.description"
 msgstr "The tabs are served from a per-journal cache refreshed by the \"FGV OpenRank cache update\" scheduled task, which runs every day at midnight. Scheduled tasks are fired by the \"Acron Plugin\", or by <code>runScheduledTasks.php</code> in the server crontab. With neither of them the cache is only filled when a reader arrives and finds the tab empty, which makes that first visit slow."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step6.pathAcron"
-msgstr "Settings → Website → Plugins → Installed Plugins → Acron Plugin → Enabled → Tick the box."
+msgstr "Installed Plugins → Acron Plugin → Enabled → Tick the box."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step6.expected"
 msgstr "The \"FGV OpenRank cache update\" task starts running on its own every day, and the tabs open with the data already in place."

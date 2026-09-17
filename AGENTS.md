@@ -96,6 +96,7 @@ Things that break silently if changed carelessly:
 
 - **`data-guide-target` is a panel index**, not an id. Inserting a step means renumbering every following button and the `total=` of `configurationGuide.progress`.
 - **Every path segment is a core OJS label**, resolved from the `.po` of each locale rather than translated by hand (`manager.setup.masthead` is "Equipe Editorial" in pt_BR, `common.plugins` is "Módulos" in es_ES). The deep links are built by `Dispatcher` with the tab anchors of OJS 3.3 (`#plugins/installedPlugins`, `#appearance/advanced`, `#masthead`); confirm them against `lib/pkp/templates/management/website.tpl` and `templates/management/context.tpl` before changing.
+- **A path starts where its button lands**, not at the sidebar — `Installed Plugins → FGV OpenRank → Settings → …`, because the step's link already opened that tab. So a `configurationGuide.link.*` label, the anchor of the URL behind it and the first segment of the path it sits next to are one unit: change the link and the path has to move with it.
 - **Additional Content is a TinyMCE field**, so the guide sends the operator through its "Source code" button. TinyMCE ships no langs here, so that label is English in every locale. It pads `<div class="rankingTabs"></div>` to `<div class="rankingTabs">&nbsp;</div>` on save; the element survives, the class is kept.
 - There is no page URL for the plugin's own settings modal — it is a component call returning JSON — so the steps about it link to **Installed Plugins** and the link labels say so.
 

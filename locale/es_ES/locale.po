@@ -218,7 +218,7 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.intro.requirements"
 msgstr "Dos ajustes están en el archivo <code>config.inc.php</code> del servidor y no tienen pantalla en el panel: <code>allowed_hosts</code> debe incluir la dirección de la revista, de lo contrario todas las pestañas muestran error, y <code>api_key_secret</code> debe estar definido para guardar la clave de API de Altmetric. Pídaselo a la persona que administra el servidor, si es el caso."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.intro.note"
-msgstr "Los enlaces abren los ajustes en otra pestaña para que esta guía siga disponible. Aquí no se guarda nada: cierre y vuelva a abrir la guía cuando quiera."
+msgstr "Los enlaces abren los ajustes en otra pestaña para que esta guía siga disponible, y cada ruta comienza en la pantalla que abre el botón del paso. Aquí no se guarda nada: cierre y vuelva a abrir la guía cuando quiera."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.title"
 msgstr "Elegir la posición del bloque en la página de inicio"
@@ -227,10 +227,10 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step1.description"
 msgstr "El módulo solo dibuja el bloque donde indique el ajuste de posición. En la opción predeterminada busca el elemento <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> en el \"Contenido adicional\" de la revista: sin ese elemento pegado ahí, el bloque no aparece en ninguna parte. El \"Contenido adicional\" es un campo de texto enriquecido, así que el elemento debe entrar por su botón \"Source code\": escrito en el editor visual se convierte en texto y no en elemento. El editor no está traducido, por lo que ese botón aparece como \"Source code\" en cualquier idioma. Las otras tres opciones, al principio, después de una sección o al final de la página de inicio, no necesitan el \"Contenido adicional\"."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathPosition"
-msgstr "Ajustes → Sitio web → Módulos → Módulos instalados → FGV OpenRank → Ajustes → Posición en la página de inicio de la revista → Elija la posición y guarde."
+msgstr "Módulos instalados → FGV OpenRank → Ajustes → Posición en la página de inicio de la revista → Elija la posición y guarde."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathAdditionalContent"
-msgstr "Ajustes → Sitio web → Apariencia → Avanzado → Contenido adicional → Source code → Pegue <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> en cada idioma y guarde."
+msgstr "Contenido adicional → Source code → Pegue <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> en cada idioma y guarde."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.expected"
 msgstr "La página de inicio de la revista pasa a mostrar el bloque en la posición elegida, con las pestañas cargando los artículos."
@@ -242,10 +242,10 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step2.description"
 msgstr "Son cinco pestañas: \"Más recientes\", \"Más leídos\", \"Más citados\", \"Tendencias\" y \"Destacado\". La tabla de configuración define cuáles aparecen y en qué orden; la edición de cada pestaña define el título, la descripción y cuántos artículos muestra. \"Más leídos\" tiene además \"Días para más leídos\", la ventana usada para contar las visualizaciones, y \"Destacado\" tiene \"Contenido personalizado\", un texto libre que sustituye a la lista de artículos."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step2.pathEnabled"
-msgstr "Ajustes → Sitio web → Módulos → Módulos instalados → FGV OpenRank → Ajustes → Habilitado → Marque las pestañas que la revista va a mostrar y arrastre las filas para ordenarlas."
+msgstr "Módulos instalados → FGV OpenRank → Ajustes → Habilitado → Marque las pestañas que la revista va a mostrar y arrastre las filas para ordenarlas."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step2.pathEdit"
-msgstr "Ajustes → Sitio web → Módulos → Módulos instalados → FGV OpenRank → Ajustes → Editar → Complete el título, la descripción y los ítems de la pestaña y guarde."
+msgstr "Módulos instalados → FGV OpenRank → Ajustes → Editar → Complete el título, la descripción y los ítems de la pestaña y guarde."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step2.expected"
 msgstr "El bloque de la página de inicio muestra solo las pestañas marcadas, en el orden definido y con los títulos y descripciones elegidos."
@@ -257,7 +257,7 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step3.description"
 msgstr "\"Más citados\" consulta Crossref por el ISSN de la revista, y \"Tendencias\" consulta Altmetric por el ISSN cuando hay una clave de API guardada. Sin ISSN, \"Más citados\" queda vacía, y \"Tendencias\" solo cuenta con la lista manual de DOI."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.pathIssn"
-msgstr "Ajustes → Revista → Cabecera → ISSN en línea → Complete el ISSN y guarde."
+msgstr "Cabecera → ISSN en línea → Complete el ISSN y guarde."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.expected"
 msgstr "En la siguiente actualización de la caché, \"Más citados\" pasa a listar artículos, y \"Tendencias\" puede alimentarse desde la API de Altmetric en lugar de a mano."
@@ -269,10 +269,10 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step4.description"
 msgstr "\"Más citados\" y \"Tendencias\" identifican cada artículo por su DOI: Crossref y Altmetric devuelven DOI y el módulo busca en la revista el artículo correspondiente. Un artículo sin DOI nunca aparece en esas dos pestañas, por más citado que sea."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step4.pathEnable"
-msgstr "Ajustes → Sitio web → Módulos → Módulos instalados → DOI → Activo → Marque la casilla."
+msgstr "Módulos instalados → DOI → Activo → Marque la casilla."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step4.pathPrefix"
-msgstr "Ajustes → Sitio web → Módulos → Módulos instalados → DOI → Ajustes → Artículos → Marque la opción, complete el Prefijo DOI y guarde."
+msgstr "Módulos instalados → DOI → Ajustes → Artículos → Marque la opción, complete el Prefijo DOI y guarde."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step4.expected"
 msgstr "La página de cada artículo publicado pasa a mostrar su DOI, y el artículo queda habilitado para las pestañas \"Más citados\" y \"Tendencias\"."
@@ -284,10 +284,10 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step5.description"
 msgstr "La pestaña \"Tendencias\" funciona de dos maneras. Con una clave de API de Altmetric, los artículos se buscan por el ISSN de la revista y se ordenan por puntuación. Sin clave, la pestaña muestra los DOI de la \"Lista manual de DOIs\", en el orden en que los añadió, y solo acepta DOI de artículos publicados en esta revista. Mientras haya una clave guardada, la lista manual se ignora."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step5.pathApiKey"
-msgstr "Ajustes → Sitio web → Módulos → Módulos instalados → FGV OpenRank → Ajustes → Tendencias → Editar → Clave de API de Altmetric → Complete la clave y guarde."
+msgstr "Módulos instalados → FGV OpenRank → Ajustes → Tendencias → Editar → Clave de API de Altmetric → Complete la clave y guarde."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step5.pathDoiList"
-msgstr "Ajustes → Sitio web → Módulos → Módulos instalados → FGV OpenRank → Ajustes → Tendencias → Editar → Añadir DOI → Indique el DOI y guarde."
+msgstr "Módulos instalados → FGV OpenRank → Ajustes → Tendencias → Editar → Añadir DOI → Indique el DOI y guarde."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step5.expected"
 msgstr "La pestaña \"Tendencias\" lista artículos con el donut de Altmetric al lado, ordenados por puntuación cuando hay clave guardada o en el orden de la lista manual cuando no la hay."
@@ -299,7 +299,7 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step6.description"
 msgstr "Las pestañas se sirven desde una caché por revista, actualizada por la tarea programada \"Actualización de caché de FGV OpenRank\", que se ejecuta todos los días a medianoche. Quien dispara las tareas programadas es el \"Módulo Acron\", o <code>runScheduledTasks.php</code> en el crontab del servidor. Sin ninguno de los dos, la caché solo se llena cuando llega una persona lectora y encuentra la pestaña vacía, lo que hace lenta esa primera visita."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step6.pathAcron"
-msgstr "Ajustes → Sitio web → Módulos → Módulos instalados → Módulo Acron → Activo → Marque la casilla."
+msgstr "Módulos instalados → Módulo Acron → Activo → Marque la casilla."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step6.expected"
 msgstr "La tarea \"Actualización de caché de FGV OpenRank\" pasa a ejecutarse sola todos los días, y las pestañas abren con los datos ya listos."
