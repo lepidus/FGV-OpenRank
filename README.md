@@ -23,6 +23,8 @@ You choose where the block goes in the plugin settings — top of the homepage, 
 
 ## Getting started
 
+Once the plugin is enabled, the **Configuration guide** action on its row in the plugin list opens a step by step guide inside OJS. It covers the same six steps described below — the position of the block, the tabs, the journal ISSN, the article DOIs, the Trending tab and the daily cache update — with a direct link to each screen. The steps below are the same thing in writing, for when you are not in front of the dashboard.
+
 ### 1. Install the plugin
 
 Download the `.tar.gz` of the latest version compatible with your OJS from the [releases page](https://github.com/lepidus/FGV-OpenRank/releases), then go to *Settings → Website → Plugins → Upload a new plugin*, send the file and enable the plugin for your journal.

@@ -23,6 +23,8 @@ Você escolhe onde o bloco fica nas configurações do plugin — no início da 
 
 ## Primeiros passos
 
+Com o plugin habilitado, a ação **Guia de configuração**, na linha dele na lista de plugins, abre um passo a passo dentro do próprio OJS. Ele cobre as mesmas seis etapas descritas abaixo — a posição do bloco, as abas, o ISSN da revista, os DOIs dos artigos, a aba Em alta e a atualização diária do cache — com um link direto para cada tela. As seções a seguir são a mesma coisa por escrito, para quando você não estiver no painel.
+
 ### 1. Instale o plugin
 
 Baixe o `.tar.gz` da última versão compatível com seu OJS na [página de lançamentos](https://github.com/lepidus/FGV-OpenRank/releases), acesse *Configurações → Website → Plugins → Enviar novo plugin*, envie o arquivo e habilite o plugin na sua revista.

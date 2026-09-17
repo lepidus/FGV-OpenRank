@@ -23,6 +23,8 @@ Usted elige dónde queda el bloque en los ajustes del módulo — al principio d
 
 ## Primeros pasos
 
+Con el módulo habilitado, la acción **Guía de configuración**, en su fila de la lista de módulos, abre un paso a paso dentro del propio OJS. Cubre los mismos seis pasos descritos más abajo — la posición del bloque, las pestañas, el ISSN de la revista, los DOI de los artículos, la pestaña Tendencias y la actualización diaria de la caché — con un enlace directo a cada pantalla. Las secciones siguientes son lo mismo por escrito, para cuando no esté frente al panel.
+
 ### 1. Instale el módulo
 
 Descargue el `.tar.gz` de la última versión compatible con su OJS desde la [página de versiones](https://github.com/lepidus/FGV-OpenRank/releases), vaya a *Ajustes → Sitio web → Módulos → Subir un nuevo módulo*, envíe el archivo y habilite el módulo en su revista.
