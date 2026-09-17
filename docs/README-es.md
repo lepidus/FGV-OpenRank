@@ -23,6 +23,8 @@ Usted elige dónde queda el bloque en los ajustes del módulo — al principio d
 
 ## Primeros pasos
 
+Con el módulo habilitado, la acción **Guía de configuración**, en su fila de la lista de módulos, abre un paso a paso dentro del propio OJS, con un enlace directo a cada pantalla. Recorre las seis cosas que el bloque necesita en el panel: la posición en la página de inicio, las pestañas, el ISSN de la revista, los DOI de los artículos, la pestaña Tendencias y la actualización diaria de la caché. Lo que se hace en el servidor — `allowed_hosts` y, para los donuts de la pestaña Tendencias, los dominios de Altmetric — no tiene pantalla que enlazar, así que la guía solo lo menciona y son las secciones siguientes las que lo explican.
+
 ### 1. Instale el módulo
 
 Descargue el `.tar.gz` de la última versión compatible con su OJS desde la [página de versiones](https://github.com/lepidus/FGV-OpenRank/releases), vaya a *Ajustes → Sitio web → Módulos → Subir un nuevo módulo*, envíe el archivo y habilite el módulo en su revista.

@@ -16,6 +16,10 @@ class Manage
         $notificationManager = new NotificationManager();
 
         switch ($request->getUserVar('verb')) {
+            case 'configurationGuide':
+                import('plugins.generic.rankingPlugin.classes.settings.ConfigurationGuide');
+                $configurationGuide = new ConfigurationGuide($this->plugin);
+                return $configurationGuide->execute($request);
             case 'settings':
                 $context = $request->getContext();
                 import('plugins.generic.rankingPlugin.classes.settings.RankingPluginSettingsForm');
@@ -31,7 +35,7 @@ class Manage
                 }
                 return new JSONMessage(true, $form->fetch($request));
             default:
-                return $this->plugin->manage($args, $request);
+                return $this->plugin->parentManage($args, $request);
         }
     }
 }

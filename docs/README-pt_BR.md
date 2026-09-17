@@ -23,6 +23,8 @@ Você escolhe onde o bloco fica nas configurações do plugin — no início da 
 
 ## Primeiros passos
 
+Com o plugin habilitado, a ação **Guia de configuração**, na linha dele na lista de plugins, abre um passo a passo dentro do próprio OJS, com um link direto para cada tela. Ele percorre as seis coisas de que o bloco precisa no painel: a posição na página inicial, as abas, o ISSN da revista, os DOIs dos artigos, a aba Em alta e a atualização diária do cache. O que é feito no servidor — `allowed_hosts` e, para os donuts da aba Em alta, os domínios do Altmetric — não tem tela para linkar, então o guia apenas menciona e são as seções a seguir que explicam.
+
 ### 1. Instale o plugin
 
 Baixe o `.tar.gz` da última versão compatível com seu OJS na [página de lançamentos](https://github.com/lepidus/FGV-OpenRank/releases), acesse *Configurações → Website → Plugins → Enviar novo plugin*, envie o arquivo e habilite o plugin na sua revista.

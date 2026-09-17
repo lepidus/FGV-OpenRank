@@ -53,7 +53,7 @@ msgid "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
 msgstr "Mais citados"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCited.content.description"
-msgstr "Artigos mais citados publicados nesta revista. Estas estatísticas são atualizadas mensalmente usando dados obtidos exclusivamente da <a href="https://www.crossref.org/services/cited-by/" target="_blank">CrossRef</a>"
+msgstr "Artigos mais citados publicados nesta revista. Estas estatísticas são atualizadas mensalmente usando dados obtidos exclusivamente da <a href=\"https://www.crossref.org/services/cited-by/\" target=\"_blank\">CrossRef</a>"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCitedFailed"
 msgstr "Erro ao tentar buscar submissões mais citadas."
@@ -168,3 +168,159 @@ msgstr "Depois de qual seção?"
 
 msgid "plugins.generic.rankingPlugin.settings.displayPositionSection.description"
 msgstr "Serve para colocar o bloco de ranqueamento no meio da página inicial. A contagem considera cada seção que o tema empilha na página — a imagem da página inicial, a descrição da revista, os anúncios, a edição atual, o conteúdo adicional e o que mais o tema exibir. Informe 1 para posicionar o bloco depois da primeira seção, 2 para depois da segunda, e assim por diante. O que conta como seção depende do tema e do que a revista tem configurado, e alguns temas agrupam várias delas em uma só, então pode ser preciso testar alguns números. Um número maior que a quantidade de seções leva o bloco para o fim da página."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.action"
+msgstr "Guia de configuração"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.title"
+msgstr "FGV OpenRank: guia de configuração"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.eyebrow"
+msgstr "Configuração assistida"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.where"
+msgstr "Onde configurar"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.expected"
+msgstr "Resultado esperado"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.progress"
+msgstr "Etapa {$current} de {$total}"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.start"
+msgstr "Começar"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.previous"
+msgstr "Anterior"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.next"
+msgstr "Próxima etapa"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.finish"
+msgstr "Concluir"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.restart"
+msgstr "Rever etapas"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.intro.title"
+msgstr "Configurar o FGV OpenRank nesta revista"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.intro.description"
+msgstr "O bloco de ranqueamento lê configurações espalhadas por várias telas do OJS, e não só pelo formulário do plugin. Este guia percorre as seis etapas na ordem em que precisam ser feitas, com o caminho de cada tela e o que conferir depois de salvar."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.intro.summaryLabel"
+msgstr "Resumo do guia"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.intro.summary"
+msgstr "Seis etapas: posição do bloco na página inicial, abas exibidas, ISSN da revista, DOIs dos artigos, aba \"Em alta\" e atualização diária do cache."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.intro.requirements"
+msgstr "Duas configurações ficam no arquivo <code>config.inc.php</code> do servidor e não têm tela no painel: <code>allowed_hosts</code> precisa incluir o endereço da revista, senão todas as abas mostram erro, e <code>api_key_secret</code> precisa estar definido para armazenar a chave de API do Altmetric. Peça ao administrador do servidor, se for o caso."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.intro.note"
+msgstr "Os links abrem as configurações em outra aba para que este guia permaneça disponível, e cada caminho começa na tela que o botão da etapa abre. Nada é salvo aqui: feche e reabra o guia quando quiser."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step1.title"
+msgstr "Escolher a posição do bloco na página inicial"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step1.description"
+msgstr "O plugin só desenha o bloco onde a configuração de posição mandar. Na opção padrão, ele procura o elemento <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> no \"Conteúdo Adicional\" da revista — sem esse elemento colado lá, o bloco não aparece em lugar nenhum. O \"Conteúdo Adicional\" é um campo de texto rico, então o elemento precisa entrar pelo botão \"Source code\" dele: digitado no editor visual, ele vira texto e não elemento. O editor não é traduzido, então esse botão aparece como \"Source code\" em qualquer idioma. As outras três opções, no início, depois de uma seção ou no fim da página inicial, dispensam o \"Conteúdo Adicional\"."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathPosition"
+msgstr "Plugins instalados → FGV OpenRank → Configurações → Posição na página inicial da revista → Escolha a posição e salve."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathAdditionalContent"
+msgstr "Conteúdo Adicional → Source code → Cole <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> em cada idioma e salve."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step1.expected"
+msgstr "A página inicial da revista passa a mostrar o bloco na posição escolhida, com as abas carregando os artigos."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step2.title"
+msgstr "Escolher, ordenar e personalizar as abas"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step2.description"
+msgstr "São cinco abas: \"Mais recentes\", \"Mais lidos\", \"Mais citados\", \"Em alta\" e \"Destaque\". A grade de configuração define quais aparecem e em que ordem; a edição de cada aba define título, descrição e quantos artigos ela mostra. \"Mais lidos\" tem ainda \"Dias para mais lidos\", a janela usada para contar as visualizações, e \"Destaque\" tem \"Conteúdo personalizado\", um texto livre que substitui a lista de artigos."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step2.pathEnabled"
+msgstr "Plugins instalados → FGV OpenRank → Configurações → Habilitado → Marque as abas que a revista vai exibir e arraste as linhas para ordená-las."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step2.pathEdit"
+msgstr "Plugins instalados → FGV OpenRank → Configurações → Editar → Preencha título, descrição e itens da aba e salve."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step2.expected"
+msgstr "O bloco na página inicial mostra apenas as abas marcadas, na ordem definida e com os títulos e descrições escolhidos."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step3.title"
+msgstr "Informar o ISSN da revista"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step3.description"
+msgstr "\"Mais citados\" consulta a Crossref pelo ISSN da revista, e \"Em alta\" consulta o Altmetric pelo ISSN quando há uma chave de API cadastrada. Sem ISSN, \"Mais citados\" fica vazia, e \"Em alta\" só tem a lista manual de DOIs."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step3.pathIssn"
+msgstr "Equipe Editorial → ISSN Eletrônico → Preencha o ISSN e salve."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step3.expected"
+msgstr "Na próxima atualização do cache, \"Mais citados\" passa a listar artigos, e \"Em alta\" pode ser alimentada pela API do Altmetric em vez de na mão."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step4.title"
+msgstr "Atribuir DOIs aos artigos"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step4.description"
+msgstr "\"Mais citados\" e \"Em alta\" identificam cada artigo pelo DOI: a Crossref e o Altmetric devolvem DOIs, e o plugin procura na revista o artigo correspondente. Um artigo sem DOI nunca aparece nessas duas abas, por mais citado que seja."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step4.pathEnable"
+msgstr "Plugins instalados → DOI → Habilitado → Marque a caixa."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step4.pathPrefix"
+msgstr "Plugins instalados → DOI → Configurações → Artigos → Marque a opção, preencha o Prefixo DOI e salve."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step4.expected"
+msgstr "A página de cada artigo publicado passa a exibir o DOI, e o artigo se torna elegível para as abas \"Mais citados\" e \"Em alta\"."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step5.title"
+msgstr "Alimentar a aba \"Em alta\""
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step5.description"
+msgstr "A aba \"Em alta\" funciona de dois jeitos. Com uma chave de API do Altmetric, os artigos são buscados pelo ISSN da revista e ordenados pela pontuação. Sem chave, a aba mostra os DOIs da \"Lista manual de DOIs\", na ordem em que você os cadastrou, e só aceita DOIs de artigos publicados nesta revista. Enquanto houver uma chave armazenada, a lista manual é ignorada."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step5.pathApiKey"
+msgstr "Plugins instalados → FGV OpenRank → Configurações → Em alta → Editar → Chave de API do Altmetric → Preencha a chave e salve."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step5.pathDoiList"
+msgstr "Plugins instalados → FGV OpenRank → Configurações → Em alta → Editar → Adicionar DOI → Informe o DOI e salve."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step5.expected"
+msgstr "A aba \"Em alta\" lista artigos com o donut do Altmetric ao lado, ordenados pela pontuação quando há chave cadastrada ou na ordem da lista manual quando não há."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step6.title"
+msgstr "Garantir a atualização diária do cache"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step6.description"
+msgstr "As abas são servidas de um cache por revista, atualizado pela tarefa agendada \"Atualização de cache do FGV OpenRank\", que roda todo dia à meia-noite. Quem dispara as tarefas agendadas é o \"Plugin Acron\", ou o <code>runScheduledTasks.php</code> no crontab do servidor. Sem nenhum dos dois, o cache só é preenchido quando um leitor chega e encontra a aba vazia, o que deixa essa primeira visita lenta."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step6.pathAcron"
+msgstr "Plugins instalados → Plugin Acron → Habilitado → Marque a caixa."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.step6.expected"
+msgstr "A tarefa \"Atualização de cache do FGV OpenRank\" passa a rodar sozinha todo dia, e as abas abrem com os dados já prontos."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.complete.eyebrow"
+msgstr "Configuração concluída"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.complete.title"
+msgstr "Pronto: confira o bloco na página inicial"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.complete.description"
+msgstr "Abra a página inicial da revista e clique em cada aba habilitada. Se alguma mostrar mensagem de erro, confirme que o endereço da revista está em <code>allowed_hosts</code> no <code>config.inc.php</code>. Se \"Mais citados\" ou \"Em alta\" estiver vazia, confira o ISSN e os DOIs. Este guia pode ser reaberto quando quiser, pela ação \"Guia de configuração\" na linha do plugin."
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.link.installedPlugins"
+msgstr "Abrir os plugins instalados"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.link.additionalContent"
+msgstr "Abrir o Conteúdo Adicional"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.link.masthead"
+msgstr "Abrir a Equipe Editorial da revista"
+
+msgid "plugins.generic.rankingPlugin.configurationGuide.link.homepage"
+msgstr "Abrir a página inicial da revista"

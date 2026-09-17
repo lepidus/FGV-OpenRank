@@ -23,6 +23,8 @@ You choose where the block goes in the plugin settings — top of the homepage, 
 
 ## Getting started
 
+Once the plugin is enabled, the **Configuration guide** action on its row in the plugin list opens a step by step guide inside OJS, with a direct link to each screen. It walks through the six things the block needs from the dashboard: where it goes on the homepage, the tabs, the journal ISSN, the article DOIs, the Trending tab and the daily cache update. What has to be done on the server — `allowed_hosts` and, for the Trending donuts, the Altmetric domains — has no screen to link to, so the guide only names it and the sections below are where it is explained.
+
 ### 1. Install the plugin
 
 Download the `.tar.gz` of the latest version compatible with your OJS from the [releases page](https://github.com/lepidus/FGV-OpenRank/releases), then go to *Settings → Website → Plugins → Upload a new plugin*, send the file and enable the plugin for your journal.
