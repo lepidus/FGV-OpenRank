@@ -53,7 +53,7 @@ msgid "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
 msgstr "Most cited"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCited.content.description"
-msgstr "Most cited articles published in this journal. These statistics are updated monthly using data sourced exclusively from <a href=\"https://www.crossref.org/services/cited-by/\" target=\"_blank\">CrossRef</a>"
+msgstr "Most cited articles published in this journal. These statistics are updated daily using data sourced exclusively from <a href=\"https://www.crossref.org/services/cited-by/\" target=\"_blank\">CrossRef</a>"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCitedFailed"
 msgstr "Error when trying to find the most cited submissions."

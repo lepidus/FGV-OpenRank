@@ -53,7 +53,7 @@ msgid "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
 msgstr "Más citados"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCited.content.description"
-msgstr "Artículos más citados publicados en esta revista. Estas estadísticas se actualizan mensualmente utilizando datos obtenidos exclusivamente de <a href=\"https://www.crossref.org/services/cited-by/\" target=\"_blank\">CrossRef</a>"
+msgstr "Artículos más citados publicados en esta revista. Estas estadísticas se actualizan diariamente utilizando datos obtenidos exclusivamente de <a href=\"https://www.crossref.org/services/cited-by/\" target=\"_blank\">CrossRef</a>"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCitedFailed"
 msgstr "Error al intentar encontrar los envíos más citados."
