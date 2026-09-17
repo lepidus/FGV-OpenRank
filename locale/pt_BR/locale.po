@@ -53,7 +53,7 @@ msgid "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
 msgstr "Mais citados"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCited.content.description"
-msgstr "Artigos mais citados publicados nesta revista. Estas estatísticas são atualizadas mensalmente usando dados obtidos exclusivamente da <a href="https://www.crossref.org/services/cited-by/" target="_blank">CrossRef</a>"
+msgstr "Artigos mais citados publicados nesta revista. Estas estatísticas são atualizadas mensalmente usando dados obtidos exclusivamente da <a href=\"https://www.crossref.org/services/cited-by/\" target=\"_blank\">CrossRef</a>"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCitedFailed"
 msgstr "Erro ao tentar buscar submissões mais citadas."
@@ -224,13 +224,13 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step1.title"
 msgstr "Escolher a posição do bloco na página inicial"
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.description"
-msgstr "O plugin só desenha o bloco onde a configuração de posição mandar. Na opção padrão, ele procura o elemento <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> no \"Conteúdo Adicional\" da revista — sem esse elemento colado lá, o bloco não aparece em lugar nenhum. As outras três opções, no início, depois de uma seção ou no fim da página inicial, dispensam o \"Conteúdo Adicional\"."
+msgstr "O plugin só desenha o bloco onde a configuração de posição mandar. Na opção padrão, ele procura o elemento <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> no \"Conteúdo Adicional\" da revista — sem esse elemento colado lá, o bloco não aparece em lugar nenhum. O \"Conteúdo Adicional\" é um campo de texto rico, então o elemento precisa entrar pelo botão \"Source code\" dele: digitado no editor visual, ele vira texto e não elemento. O editor não é traduzido, então esse botão aparece como \"Source code\" em qualquer idioma. As outras três opções, no início, depois de uma seção ou no fim da página inicial, dispensam o \"Conteúdo Adicional\"."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathPosition"
 msgstr "Configurações → Website → Plugins → Plugins instalados → FGV OpenRank → Configurações → Posição na página inicial da revista → Escolha a posição e salve."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathAdditionalContent"
-msgstr "Configurações → Website → Aparência → Avançado → Conteúdo Adicional → Cole <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> em cada idioma e salve."
+msgstr "Configurações → Website → Aparência → Avançado → Conteúdo Adicional → Source code → Cole <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> em cada idioma e salve."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.expected"
 msgstr "A página inicial da revista passa a mostrar o bloco na posição escolhida, com as abas carregando os artigos."
@@ -254,13 +254,13 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step3.title"
 msgstr "Informar o ISSN da revista"
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.description"
-msgstr "\"Mais citados\" consulta a Crossref pelo ISSN da revista, e \"Em alta\" consulta o Altmetric pelo ISSN quando há uma chave de API cadastrada. Sem ISSN, essas duas abas não têm como pedir os dados e ficam vazias."
+msgstr "\"Mais citados\" consulta a Crossref pelo ISSN da revista, e \"Em alta\" consulta o Altmetric pelo ISSN quando há uma chave de API cadastrada. Sem ISSN, \"Mais citados\" fica vazia, e \"Em alta\" só tem a lista manual de DOIs."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.pathIssn"
 msgstr "Configurações → Revista → Equipe Editorial → ISSN Eletrônico → Preencha o ISSN e salve."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.expected"
-msgstr "Na próxima atualização do cache, as abas \"Mais citados\" e \"Em alta\" passam a listar artigos em vez de aparecerem vazias."
+msgstr "Na próxima atualização do cache, \"Mais citados\" passa a listar artigos, e \"Em alta\" pode ser alimentada pela API do Altmetric em vez de na mão."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step4.title"
 msgstr "Atribuir DOIs aos artigos"

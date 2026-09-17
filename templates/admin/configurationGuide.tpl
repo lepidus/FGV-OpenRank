@@ -7,7 +7,7 @@
  *
  * Step by step configuration guide for FGV OpenRank.
  *}
-<link rel="stylesheet" href="{$pluginUrl}/styles/admin/configurationGuide.css">
+<link rel="stylesheet" href="{$pluginUrl}/styles/admin/configurationGuide.css?v={$assetVersion|escape}">
 
 <div class="cmp_rankingPlugin_guide" data-rankingplugin-guide>
 
@@ -206,4 +206,4 @@
     </section>
 </div>
 
-<script src="{$pluginUrl}/js/configurationGuide.js"></script>
+<script src="{$pluginUrl}/js/configurationGuide.js?v={$assetVersion|escape}"></script>

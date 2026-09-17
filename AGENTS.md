@@ -86,6 +86,21 @@ Settings are stored per context (journal) via `plugin->getSetting($contextId, $k
 
 The settings admin UI is a PKP `GridHandler` (`controllers/grid/RankingConfigurationGridHandler.inc.php`) with actions `editTab`, `updateTab`, `saveSequence`, `saveTabSetting` restricted to `ROLE_ID_MANAGER`. The "main" plugin settings form (`classes/settings/RankingPluginSettingsForm.inc.php`) holds only `displayPosition` + `displayPositionSection`; actual per-tab config lives in the grid + `RankingCustomizationForm`, which `templates/settings/form.tpl` loads below the position radios.
 
+### Configuration guide
+
+`classes/settings/Actions.inc.php` puts two `LinkAction`s on the plugin row when the plugin is enabled: **Settings** (verb `settings`) and **Configuration guide** (verb `configurationGuide`), in that order. `classes/settings/Manage.inc.php` dispatches both; its `default` branch calls `RankingPlugin::parentManage()`, which is the only way back to `GenericPlugin::manage()` — calling `manage()` there would route straight into `Manage::execute()` again.
+
+The guide itself is `classes/settings/ConfigurationGuide.inc.php` rendering `templates/admin/configurationGuide.tpl` into an `AjaxModal`: eight `[data-guide-panel]` sections (intro, six steps, conclusion) toggled by `hidden` through `js/configurationGuide.js`, styled by `styles/admin/configurationGuide.css`. Both assets are injected as plain tags inside the modal, so `ConfigurationGuide::getAssetVersion()` appends the `?v=` that `addJavaScript()`/`addStyleSheet()` would otherwise add — jQuery fetches injected scripts with `cache: true`.
+
+Things that break silently if changed carelessly:
+
+- **`data-guide-target` is a panel index**, not an id. Inserting a step means renumbering every following button and the `total=` of `configurationGuide.progress`.
+- **Every path segment is a core OJS label**, resolved from the `.po` of each locale rather than translated by hand (`manager.setup.masthead` is "Equipe Editorial" in pt_BR, `common.plugins` is "Módulos" in es_ES). The deep links are built by `Dispatcher` with the tab anchors of OJS 3.3 (`#plugins/installedPlugins`, `#appearance/advanced`, `#masthead`); confirm them against `lib/pkp/templates/management/website.tpl` and `templates/management/context.tpl` before changing.
+- **Additional Content is a TinyMCE field**, so the guide sends the operator through its "Source code" button. TinyMCE ships no langs here, so that label is English in every locale. It pads `<div class="rankingTabs"></div>` to `<div class="rankingTabs">&nbsp;</div>` on save; the element survives, the class is kept.
+- There is no page URL for the plugin's own settings modal — it is a component call returning JSON — so the steps about it link to **Installed Plugins** and the link labels say so.
+
+All guide strings live under `plugins.generic.rankingPlugin.configurationGuide.*` in all three locales; the template carries no literal text.
+
 ### Frontend
 
 `js/insertRankingTemplate.js` replaces the first `.rankingTabs` div with `window.app.rankingTemplate`, then fires four parallel AJAX calls to `window.app.rankingPluginApiBaseUrl + /{mostRecent,mostRead,mostCitedSubmissions,trendingSubmissions}`. Error messages per tab are pre-localized into `window.app` (mostRecentFailedMessage, …). The `highlight` tab is content-only and has no API call.

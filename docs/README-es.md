@@ -23,7 +23,7 @@ Usted elige dónde queda el bloque en los ajustes del módulo — al principio d
 
 ## Primeros pasos
 
-Con el módulo habilitado, la acción **Guía de configuración**, en su fila de la lista de módulos, abre un paso a paso dentro del propio OJS. Cubre los mismos seis pasos descritos más abajo — la posición del bloque, las pestañas, el ISSN de la revista, los DOI de los artículos, la pestaña Tendencias y la actualización diaria de la caché — con un enlace directo a cada pantalla. Las secciones siguientes son lo mismo por escrito, para cuando no esté frente al panel.
+Con el módulo habilitado, la acción **Guía de configuración**, en su fila de la lista de módulos, abre un paso a paso dentro del propio OJS, con un enlace directo a cada pantalla. Recorre las seis cosas que el bloque necesita en el panel: la posición en la página de inicio, las pestañas, el ISSN de la revista, los DOI de los artículos, la pestaña Tendencias y la actualización diaria de la caché. Lo que se hace en el servidor — `allowed_hosts` y, para los donuts de la pestaña Tendencias, los dominios de Altmetric — no tiene pantalla que enlazar, así que la guía solo lo menciona y son las secciones siguientes las que lo explican.
 
 ### 1. Instale el módulo
 

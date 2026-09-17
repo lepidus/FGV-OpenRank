@@ -23,7 +23,7 @@ You choose where the block goes in the plugin settings — top of the homepage, 
 
 ## Getting started
 
-Once the plugin is enabled, the **Configuration guide** action on its row in the plugin list opens a step by step guide inside OJS. It covers the same six steps described below — the position of the block, the tabs, the journal ISSN, the article DOIs, the Trending tab and the daily cache update — with a direct link to each screen. The steps below are the same thing in writing, for when you are not in front of the dashboard.
+Once the plugin is enabled, the **Configuration guide** action on its row in the plugin list opens a step by step guide inside OJS, with a direct link to each screen. It walks through the six things the block needs from the dashboard: where it goes on the homepage, the tabs, the journal ISSN, the article DOIs, the Trending tab and the daily cache update. What has to be done on the server — `allowed_hosts` and, for the Trending donuts, the Altmetric domains — has no screen to link to, so the guide only names it and the sections below are where it is explained.
 
 ### 1. Install the plugin
 

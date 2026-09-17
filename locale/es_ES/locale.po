@@ -53,7 +53,7 @@ msgid "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
 msgstr "Más citados"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCited.content.description"
-msgstr "Artículos más citados publicados en esta revista. Estas estadísticas se actualizan mensualmente utilizando datos obtenidos exclusivamente de <a href="https://www.crossref.org/services/cited-by/" target="_blank">CrossRef</a>"
+msgstr "Artículos más citados publicados en esta revista. Estas estadísticas se actualizan mensualmente utilizando datos obtenidos exclusivamente de <a href=\"https://www.crossref.org/services/cited-by/\" target=\"_blank\">CrossRef</a>"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCitedFailed"
 msgstr "Error al intentar encontrar los envíos más citados."
@@ -224,13 +224,13 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step1.title"
 msgstr "Elegir la posición del bloque en la página de inicio"
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.description"
-msgstr "El módulo solo dibuja el bloque donde indique el ajuste de posición. En la opción predeterminada busca el elemento <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> en el \"Contenido adicional\" de la revista: sin ese elemento pegado ahí, el bloque no aparece en ninguna parte. Las otras tres opciones, al principio, después de una sección o al final de la página de inicio, no necesitan el \"Contenido adicional\"."
+msgstr "El módulo solo dibuja el bloque donde indique el ajuste de posición. En la opción predeterminada busca el elemento <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> en el \"Contenido adicional\" de la revista: sin ese elemento pegado ahí, el bloque no aparece en ninguna parte. El \"Contenido adicional\" es un campo de texto enriquecido, así que el elemento debe entrar por su botón \"Source code\": escrito en el editor visual se convierte en texto y no en elemento. El editor no está traducido, por lo que ese botón aparece como \"Source code\" en cualquier idioma. Las otras tres opciones, al principio, después de una sección o al final de la página de inicio, no necesitan el \"Contenido adicional\"."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathPosition"
 msgstr "Ajustes → Sitio web → Módulos → Módulos instalados → FGV OpenRank → Ajustes → Posición en la página de inicio de la revista → Elija la posición y guarde."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathAdditionalContent"
-msgstr "Ajustes → Sitio web → Apariencia → Avanzado → Contenido adicional → Pegue <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> en cada idioma y guarde."
+msgstr "Ajustes → Sitio web → Apariencia → Avanzado → Contenido adicional → Source code → Pegue <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> en cada idioma y guarde."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.expected"
 msgstr "La página de inicio de la revista pasa a mostrar el bloque en la posición elegida, con las pestañas cargando los artículos."
@@ -254,13 +254,13 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step3.title"
 msgstr "Registrar el ISSN de la revista"
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.description"
-msgstr "\"Más citados\" consulta Crossref por el ISSN de la revista, y \"Tendencias\" consulta Altmetric por el ISSN cuando hay una clave de API guardada. Sin ISSN, esas dos pestañas no tienen cómo pedir los datos y quedan vacías."
+msgstr "\"Más citados\" consulta Crossref por el ISSN de la revista, y \"Tendencias\" consulta Altmetric por el ISSN cuando hay una clave de API guardada. Sin ISSN, \"Más citados\" queda vacía, y \"Tendencias\" solo cuenta con la lista manual de DOI."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.pathIssn"
 msgstr "Ajustes → Revista → Cabecera → ISSN en línea → Complete el ISSN y guarde."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.expected"
-msgstr "En la siguiente actualización de la caché, las pestañas \"Más citados\" y \"Tendencias\" pasan a listar artículos en lugar de quedar vacías."
+msgstr "En la siguiente actualización de la caché, \"Más citados\" pasa a listar artículos, y \"Tendencias\" puede alimentarse desde la API de Altmetric en lugar de a mano."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step4.title"
 msgstr "Asignar DOI a los artículos"

@@ -53,7 +53,7 @@ msgid "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
 msgstr "Most cited"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCited.content.description"
-msgstr "Most cited articles published in this journal. These statistics are updated monthly using data sourced exclusively from <a href="https://www.crossref.org/services/cited-by/" target="_blank">CrossRef</a>"
+msgstr "Most cited articles published in this journal. These statistics are updated monthly using data sourced exclusively from <a href=\"https://www.crossref.org/services/cited-by/\" target=\"_blank\">CrossRef</a>"
 
 msgid "plugins.generic.rankingPlugin.tabs.mostCitedFailed"
 msgstr "Error when trying to find the most cited submissions."
@@ -224,13 +224,13 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step1.title"
 msgstr "Choose where the block goes on the homepage"
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.description"
-msgstr "The plugin only draws the block where the position setting tells it to. With the default option it looks for the <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> element in the journal’s \"Additional Content\" — without that element pasted there, the block shows up nowhere. The other three options, at the top, after a given section or at the bottom of the homepage, do not need \"Additional Content\"."
+msgstr "The plugin only draws the block where the position setting tells it to. With the default option it looks for the <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> element in the journal’s \"Additional Content\" — without that element pasted there, the block shows up nowhere. \"Additional Content\" is a rich text field, so the element has to go in through its \"Source code\" button: typed into the visual editor it becomes text rather than an element. The editor is not translated, so that button reads \"Source code\" in every language. The other three options, at the top, after a given section or at the bottom of the homepage, do not need \"Additional Content\"."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathPosition"
 msgstr "Settings → Website → Plugins → Installed Plugins → FGV OpenRank → Settings → Position on the journal homepage → Choose the position and save."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.pathAdditionalContent"
-msgstr "Settings → Website → Appearance → Advanced → Additional Content → Paste <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> in each language and save."
+msgstr "Settings → Website → Appearance → Advanced → Additional Content → Source code → Paste <code>&lt;div class=&quot;rankingTabs&quot;&gt;&lt;/div&gt;</code> in each language and save."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step1.expected"
 msgstr "The journal homepage starts showing the block in the chosen position, with the tabs loading the articles."
@@ -254,13 +254,13 @@ msgid "plugins.generic.rankingPlugin.configurationGuide.step3.title"
 msgstr "Register the journal ISSN"
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.description"
-msgstr "\"Most cited\" queries Crossref by the journal ISSN, and \"Trending\" queries Altmetric by the ISSN whenever an API key is stored. With no ISSN those two tabs have nothing to ask for and stay empty."
+msgstr "\"Most cited\" queries Crossref by the journal ISSN, and \"Trending\" queries Altmetric by the ISSN whenever an API key is stored. Without an ISSN \"Most cited\" stays empty, and \"Trending\" is left with only the manual DOI list."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.pathIssn"
 msgstr "Settings → Journal → Masthead → Online ISSN → Fill in the ISSN and save."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step3.expected"
-msgstr "On the next cache update the \"Most cited\" and \"Trending\" tabs start listing articles instead of coming up empty."
+msgstr "On the next cache update \"Most cited\" starts listing articles, and \"Trending\" can be fed by the Altmetric API instead of by hand."
 
 msgid "plugins.generic.rankingPlugin.configurationGuide.step4.title"
 msgstr "Assign DOIs to the articles"

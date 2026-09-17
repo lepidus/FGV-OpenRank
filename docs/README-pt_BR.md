@@ -23,7 +23,7 @@ Você escolhe onde o bloco fica nas configurações do plugin — no início da 
 
 ## Primeiros passos
 
-Com o plugin habilitado, a ação **Guia de configuração**, na linha dele na lista de plugins, abre um passo a passo dentro do próprio OJS. Ele cobre as mesmas seis etapas descritas abaixo — a posição do bloco, as abas, o ISSN da revista, os DOIs dos artigos, a aba Em alta e a atualização diária do cache — com um link direto para cada tela. As seções a seguir são a mesma coisa por escrito, para quando você não estiver no painel.
+Com o plugin habilitado, a ação **Guia de configuração**, na linha dele na lista de plugins, abre um passo a passo dentro do próprio OJS, com um link direto para cada tela. Ele percorre as seis coisas de que o bloco precisa no painel: a posição na página inicial, as abas, o ISSN da revista, os DOIs dos artigos, a aba Em alta e a atualização diária do cache. O que é feito no servidor — `allowed_hosts` e, para os donuts da aba Em alta, os domínios do Altmetric — não tem tela para linkar, então o guia apenas menciona e são as seções a seguir que explicam.
 
 ### 1. Instale o plugin
 
