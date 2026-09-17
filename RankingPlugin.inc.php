@@ -46,6 +46,16 @@ class RankingPlugin extends GenericPlugin
         return $manage->execute($args, $request);
     }
 
+    /**
+     * Fallback for verbs Manage does not handle. Manage has no way to reach
+     * GenericPlugin::manage() on its own, and calling manage() again would
+     * route straight back into it.
+     */
+    public function parentManage($args, $request)
+    {
+        return parent::manage($args, $request);
+    }
+
     public function getCanEnable()
     {
         $request = Application::get()->getRequest();
