@@ -41,6 +41,11 @@ class RankingPluginSettingsForm extends Form
         $templateMgr = TemplateManager::getManager($request);
         $templateMgr->assign('pluginName', $this->plugin->getName());
         $templateMgr->assign(
+            'pluginUrl',
+            $request->getBaseUrl() . '/' . $this->plugin->getPluginPath()
+        );
+        $templateMgr->assign('assetVersion', $this->plugin->getAssetVersion());
+        $templateMgr->assign(
             'displayPosition',
             $this->getData(RankingDisplayPosition::SETTING_NAME)
         );
