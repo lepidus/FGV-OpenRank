@@ -19,7 +19,7 @@ class ConfigurationGuide
             $this->getGuideUrls($request),
             [
                 'pluginUrl' => $request->getBaseUrl() . '/' . $this->plugin->getPluginPath(),
-                'assetVersion' => $this->getAssetVersion(),
+                'assetVersion' => $this->plugin->getAssetVersion(),
             ]
         ));
 
@@ -29,22 +29,6 @@ class ConfigurationGuide
                 $this->plugin->getTemplateResource('admin/configurationGuide.tpl')
             )
         );
-    }
-
-    /**
-     * The modal's stylesheet and script are injected as plain tags, so they miss the
-     * version query string that addStyleSheet()/addJavaScript() append elsewhere.
-     * jQuery fetches injected scripts with cache: true, so without this an upgraded
-     * guide would keep serving the previous script from the browser cache.
-     */
-    private function getAssetVersion(): string
-    {
-        $pluginVersion = $this->plugin->getCurrentVersion();
-        if ($pluginVersion) {
-            return $pluginVersion->getVersionString();
-        }
-
-        return Application::get()->getCurrentVersion()->getVersionString();
     }
 
     private function getGuideUrls($request): array

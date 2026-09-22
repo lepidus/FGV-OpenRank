@@ -17,6 +17,16 @@
     {rdelim});
 </script>
 
+<link rel="stylesheet" href="{$pluginUrl}/styles/admin/settingsIntro.css?v={$assetVersion|escape}">
+
+<div class="cmp_rankingPlugin_intro">
+    <h2>{translate key="plugins.generic.rankingPlugin.settings.intro.title"}</h2>
+    <p>{translate key="plugins.generic.rankingPlugin.settings.intro.description"}</p>
+    <p>{translate key="plugins.generic.rankingPlugin.settings.intro.update"}</p>
+    <p>{translate key="plugins.generic.rankingPlugin.settings.intro.configured"}</p>
+    <p class="cmp_rankingPlugin_intro_note">{translate key="plugins.generic.rankingPlugin.settings.intro.guide"}</p>
+</div>
+
 {capture assign=rankingConfigurationUrl}{url router=$smarty.const.ROUTE_COMPONENT component="plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridHandler" op="fetchGrid" escape=false}{/capture}
 {load_url_in_div id="rankingConfigurationGridContainer" url=$rankingConfigurationUrl}
 

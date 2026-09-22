@@ -34,6 +34,16 @@ class RankingPlugin extends GenericPlugin
         return __('plugins.generic.rankingPlugin.description');
     }
 
+    public function getAssetVersion(): string
+    {
+        $pluginVersion = $this->getCurrentVersion();
+        if ($pluginVersion) {
+            return $pluginVersion->getVersionString();
+        }
+
+        return Application::get()->getCurrentVersion()->getVersionString();
+    }
+
     public function getActions($request, $actionArgs)
     {
         $actions = new Actions($this);

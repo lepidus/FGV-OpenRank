@@ -1,0 +1,40 @@
+/**
+ * @file styles/admin/settingsIntro.css
+ *
+ * Copyright (c) 2025-2026 Lepidus Tecnologia
+ * Copyright (c) 2025-2026 Fundação Getulio Vargas
+ * Distributed under the GNU GPL v3. For full terms see the file docs/COPYING.
+ *
+ * Styles for the explanatory block at the top of the FGV OpenRank settings modal.
+ */
+.cmp_rankingPlugin_intro {
+    --intro-heading: #183f7a;
+    --intro-text: #2f3438;
+    --intro-muted: #49627d;
+    --intro-border: #c8d4df;
+    --intro-surface: #f5f8fa;
+    margin: 0 0 1.5rem;
+    color: var(--intro-text);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.cmp_rankingPlugin_intro h2 {
+    margin: 0 0 0.75rem;
+    color: var(--intro-heading);
+    font-size: 1.125rem;
+}
+
+.cmp_rankingPlugin_intro p {
+    margin: 0 0 0.75rem;
+}
+
+.cmp_rankingPlugin_intro_note {
+    margin: 0;
+    padding: 1rem;
+    border: 1px solid var(--intro-border);
+    border-left-width: 4px;
+    border-radius: 4px;
+    background: var(--intro-surface);
+    color: var(--intro-muted);
+}

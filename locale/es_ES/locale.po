@@ -2,7 +2,7 @@ msgid "plugins.generic.rankingPlugin.displayName"
 msgstr "FGV OpenRank"
 
 msgid "plugins.generic.rankingPlugin.description"
-msgstr "Agrega un bloque de clasificación con métricas seleccionables."
+msgstr "Muestra en la página de inicio de la revista un bloque de pestañas con los artículos más recientes, más leídos, más citados y en tendencia, además de una pestaña destacada para el contenido que elija el equipo editorial."
 
 msgid "plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"
 msgstr "Destacado"
@@ -144,6 +144,21 @@ msgstr "¿Seguro que desea eliminar este DOI de la lista?"
 
 msgid "plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet"
 msgstr "Esta lista se ignora mientras haya una clave de API de Altmetric configurada. Elimine la clave almacenada arriba para usar la lista manual."
+
+msgid "plugins.generic.rankingPlugin.settings.intro.title"
+msgstr "Cómo funciona el bloque de clasificación"
+
+msgid "plugins.generic.rankingPlugin.settings.intro.description"
+msgstr "Cada pestaña tiene su propia fuente de datos. \"Más recientes\" y \"Más leídos\" usan los datos del propio OJS. \"Más citados\" usa las citas registradas en Crossref y \"Tendencias\" usa la puntuación Altmetric; ambas identifican los artículos por su DOI. \"Destacado\" muestra el contenido libre que escriba la revista."
+
+msgid "plugins.generic.rankingPlugin.settings.intro.update"
+msgstr "Los datos de Crossref y de Altmetric se guardan en una caché que se actualiza una vez al día mediante una tarea programada, de modo que la página de inicio nunca espera por esos servicios."
+
+msgid "plugins.generic.rankingPlugin.settings.intro.configured"
+msgstr "Abajo se define qué pestañas aparecen, en qué orden, con qué títulos y descripciones, cuántos artículos muestra cada una y en qué punto de la página de inicio se exhibe el bloque."
+
+msgid "plugins.generic.rankingPlugin.settings.intro.guide"
+msgstr "Parte de lo que el bloque necesita está fuera de este formulario: el ISSN de la revista, los DOI de los artículos, la clave de API de Altmetric y la tarea que actualiza la caché. La \"Guía de configuración\", en la fila del plugin, recorre todo eso paso a paso."
 
 msgid "plugins.generic.rankingPlugin.settings.displayPosition"
 msgstr "Posición en la página de inicio de la revista"

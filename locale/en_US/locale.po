@@ -2,7 +2,7 @@ msgid "plugins.generic.rankingPlugin.displayName"
 msgstr "FGV OpenRank"
 
 msgid "plugins.generic.rankingPlugin.description"
-msgstr "Adds a ranking block with selectable metrics."
+msgstr "Displays a tabbed block on the journal homepage with its most recent, most read, most cited and trending articles, plus a highlight tab for the editorial team's own content."
 
 msgid "plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"
 msgstr "Highlight"
@@ -144,6 +144,21 @@ msgstr "Are you sure you want to remove this DOI from the list?"
 
 msgid "plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet"
 msgstr "This list is ignored while an Altmetric API key is configured. Remove the stored API key above to use the manual list."
+
+msgid "plugins.generic.rankingPlugin.settings.intro.title"
+msgstr "How the ranking block works"
+
+msgid "plugins.generic.rankingPlugin.settings.intro.description"
+msgstr "Each tab has its own data source. \"Most recent\" and \"Most read\" use the journal's own OJS data. \"Most cited\" uses the citations recorded at Crossref and \"Trending\" uses the Altmetric score; both identify articles by their DOIs. \"Highlight\" shows whatever content the journal writes."
+
+msgid "plugins.generic.rankingPlugin.settings.intro.update"
+msgstr "Crossref and Altmetric data is kept in a cache refreshed once a day by a scheduled task, so the homepage never waits on those services."
+
+msgid "plugins.generic.rankingPlugin.settings.intro.configured"
+msgstr "Below you choose which tabs appear, in what order, with which titles and descriptions, how many articles each one lists and where the block sits on the homepage."
+
+msgid "plugins.generic.rankingPlugin.settings.intro.guide"
+msgstr "Some of what the block needs lives outside this form: the journal's ISSN, the articles' DOIs, the Altmetric API key and the task that refreshes the cache. The \"Configuration guide\", on the plugin's row, walks through all of it step by step."
 
 msgid "plugins.generic.rankingPlugin.settings.displayPosition"
 msgstr "Position on the journal homepage"
