@@ -29,7 +29,7 @@
     margin: 0 0 0.75rem;
 }
 
-.cmp_rankingPlugin_intro_note {
+.cmp_rankingPlugin_intro p.cmp_rankingPlugin_intro_note {
     margin: 0;
     padding: 1rem;
     border: 1px solid var(--intro-border);

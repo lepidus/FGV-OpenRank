@@ -152,13 +152,13 @@ msgid "plugins.generic.rankingPlugin.settings.intro.description"
 msgstr "Each tab has its own data source. \"Most recent\" and \"Most read\" use the journal's own OJS data. \"Most cited\" uses the citations recorded at Crossref and \"Trending\" uses the Altmetric score; both identify articles by their DOIs. \"Highlight\" shows whatever content the journal writes."
 
 msgid "plugins.generic.rankingPlugin.settings.intro.update"
-msgstr "Crossref and Altmetric data is kept in a cache refreshed once a day by a scheduled task, so the homepage never waits on those services."
+msgstr "Crossref and Altmetric data is kept in a cache refreshed once a day by a scheduled task, and the tabs are served from that cache. Only when the cache is empty does the lookup happen during a reader's visit, which makes that first visit slow."
 
 msgid "plugins.generic.rankingPlugin.settings.intro.configured"
-msgstr "Below you choose which tabs appear, in what order, with which titles and descriptions, how many articles each one lists and where the block sits on the homepage."
+msgstr "Below you choose which tabs appear, in what order, with which titles and descriptions, how many articles each one lists and where the block sits on the homepage. The Altmetric API key is set when editing the \"Trending\" tab."
 
 msgid "plugins.generic.rankingPlugin.settings.intro.guide"
-msgstr "Some of what the block needs lives outside this form: the journal's ISSN, the articles' DOIs, the Altmetric API key and the task that refreshes the cache. The \"Configuration guide\", on the plugin's row, walks through all of it step by step."
+msgstr "Some of what the block needs lives outside this form: the journal's ISSN, the articles' DOIs and the scheduled task that refreshes the cache. The \"Configuration guide\", on the plugin's row, walks through all of it step by step."
 
 msgid "plugins.generic.rankingPlugin.settings.displayPosition"
 msgstr "Position on the journal homepage"

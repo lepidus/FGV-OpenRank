@@ -152,13 +152,13 @@ msgid "plugins.generic.rankingPlugin.settings.intro.description"
 msgstr "Cada aba tem sua própria origem de dados. \"Mais recentes\" e \"Mais lidos\" usam os dados do próprio OJS. \"Mais citados\" usa as citações registradas na Crossref e \"Em alta\" usa a pontuação Altmetric; as duas identificam os artigos pelo DOI. \"Destaque\" exibe o conteúdo livre que a revista escrever."
 
 msgid "plugins.generic.rankingPlugin.settings.intro.update"
-msgstr "Os dados da Crossref e da Altmetric ficam guardados em cache e são atualizados uma vez por dia por uma tarefa agendada, então a página inicial nunca espera por esses serviços."
+msgstr "Os dados da Crossref e da Altmetric ficam guardados em cache, atualizado uma vez por dia por uma tarefa agendada, e é do cache que as abas são servidas. Só quando o cache está vazio a consulta acontece durante a visita do leitor, e essa primeira visita fica lenta."
 
 msgid "plugins.generic.rankingPlugin.settings.intro.configured"
-msgstr "Abaixo você define quais abas aparecem, em que ordem, com quais títulos e descrições, quantos artigos cada uma lista e em que ponto da página inicial o bloco é exibido."
+msgstr "Abaixo você define quais abas aparecem, em que ordem, com quais títulos e descrições, quantos artigos cada uma lista e em que ponto da página inicial o bloco é exibido. A chave de API do Altmetric fica na edição da aba \"Em alta\"."
 
 msgid "plugins.generic.rankingPlugin.settings.intro.guide"
-msgstr "Parte do que o bloco precisa fica fora deste formulário: o ISSN da revista, os DOIs dos artigos, a chave de API do Altmetric e a tarefa que atualiza o cache. O \"Guia de configuração\", na linha do plugin, percorre tudo isso passo a passo."
+msgstr "Parte do que o bloco precisa fica fora deste formulário: o ISSN da revista, os DOIs dos artigos e a tarefa agendada que atualiza o cache. O \"Guia de configuração\", na linha do plugin, percorre tudo isso passo a passo."
 
 msgid "plugins.generic.rankingPlugin.settings.displayPosition"
 msgstr "Posição na página inicial da revista"

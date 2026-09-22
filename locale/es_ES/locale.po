@@ -152,13 +152,13 @@ msgid "plugins.generic.rankingPlugin.settings.intro.description"
 msgstr "Cada pestaña tiene su propia fuente de datos. \"Más recientes\" y \"Más leídos\" usan los datos del propio OJS. \"Más citados\" usa las citas registradas en Crossref y \"Tendencias\" usa la puntuación Altmetric; ambas identifican los artículos por su DOI. \"Destacado\" muestra el contenido libre que escriba la revista."
 
 msgid "plugins.generic.rankingPlugin.settings.intro.update"
-msgstr "Los datos de Crossref y de Altmetric se guardan en una caché que se actualiza una vez al día mediante una tarea programada, de modo que la página de inicio nunca espera por esos servicios."
+msgstr "Los datos de Crossref y de Altmetric se guardan en una caché que se actualiza una vez al día mediante una tarea programada, y es de esa caché que se sirven las pestañas. Solo cuando la caché está vacía la consulta ocurre durante la visita del lector, y esa primera visita queda lenta."
 
 msgid "plugins.generic.rankingPlugin.settings.intro.configured"
-msgstr "Abajo se define qué pestañas aparecen, en qué orden, con qué títulos y descripciones, cuántos artículos muestra cada una y en qué punto de la página de inicio se exhibe el bloque."
+msgstr "Abajo se define qué pestañas aparecen, en qué orden, con qué títulos y descripciones, cuántos artículos muestra cada una y en qué punto de la página de inicio se exhibe el bloque. La clave de API de Altmetric se configura al editar la pestaña \"Tendencias\"."
 
 msgid "plugins.generic.rankingPlugin.settings.intro.guide"
-msgstr "Parte de lo que el bloque necesita está fuera de este formulario: el ISSN de la revista, los DOI de los artículos, la clave de API de Altmetric y la tarea que actualiza la caché. La \"Guía de configuración\", en la fila del plugin, recorre todo eso paso a paso."
+msgstr "Parte de lo que el bloque necesita está fuera de este formulario: el ISSN de la revista, los DOI de los artículos y la tarea programada que actualiza la caché. La \"Guía de configuración\", en la fila del plugin, recorre todo eso paso a paso."
 
 msgid "plugins.generic.rankingPlugin.settings.displayPosition"
 msgstr "Posición en la página de inicio de la revista"
