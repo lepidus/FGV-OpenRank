@@ -191,7 +191,7 @@ A chave não é válida para a API do Altmetric. O plugin a verifica na API ante
 
 ## Atualização a partir da versão para OJS 3.3
 
-- **Informe a chave de API do Altmetric de novo.** A versão 3.3 a criptografava com o `api_key_secret`, que o OJS 3.5 não usa mais, então a chave armazenada não pode ser lida. Até que uma nova chave seja salva, a aba Em alta usa a lista manual de DOIs.
+- **Chave de API do Altmetric.** A versão 3.3 a criptografava com o `api_key_secret`, que o OJS 3.5 não usa mais. A atualização a criptografa de novo com o `app_key` do OJS, desde que o `api_key_secret` continue no `config.inc.php`; caso contrário, a chave é removida e precisa ser informada de novo, e até lá a aba Em alta usa a lista manual de DOIs.
 - No OJS 3.5 os DOIs deixaram de ser um plugin: são configurados em *Configurações → Distribuição → DOIs*.
 
 ## Desenvolvimento

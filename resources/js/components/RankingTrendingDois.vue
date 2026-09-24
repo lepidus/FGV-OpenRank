@@ -90,6 +90,8 @@ async function send(url, method, body = undefined) {
 	await request();
 	if (settings.value) {
 		setSettings(settings.value);
+	} else {
+		fetchSettings();
 	}
 }
 

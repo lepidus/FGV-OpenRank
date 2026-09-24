@@ -191,7 +191,7 @@ La clave no es válida para la API de Altmetric. El módulo la verifica en la AP
 
 ## Actualización desde la versión para OJS 3.3
 
-- **Introduzca de nuevo la clave de API de Altmetric.** La versión 3.3 la cifraba con `api_key_secret`, que OJS 3.5 ya no usa, así que la clave almacenada no puede leerse. Hasta que se guarde una nueva clave, la pestaña Tendencias usa la lista manual de DOI.
+- **Clave de API de Altmetric.** La versión 3.3 la cifraba con `api_key_secret`, que OJS 3.5 ya no usa. La actualización la vuelve a cifrar con el `app_key` de OJS siempre que `api_key_secret` siga en `config.inc.php`; de lo contrario, la clave se elimina y debe introducirse de nuevo, y hasta entonces la pestaña Tendencias usa la lista manual de DOI.
 - En OJS 3.5 los DOI dejaron de ser un módulo: se configuran en *Ajustes → Distribución → DOI*.
 
 ## Desarrollo

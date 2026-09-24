@@ -162,12 +162,22 @@ class TabSettingsTest extends PKPTestCase
     #[Test]
     public function itShouldExposeHasAltmetricsApiKeyFlagWithoutLeakingValue()
     {
-        $settings = [TabSettings::API_KEY_SETTING => 'stored'];
+        $settings = [TabSettings::API_KEY_SETTING => (new DataEncryption())->encryptString('stored')];
 
         $values = $this->buildTabSettings($settings, 'trending')->getValues();
 
         $this->assertTrue($values['hasAltmetricsApiKey']);
         $this->assertArrayNotHasKey('altmetricsApiKey', $values);
+    }
+
+    #[Test]
+    public function itShouldReportAStoredKeyOnlyWhenItStillDecrypts()
+    {
+        $settings = [TabSettings::API_KEY_SETTING => 'base64:encrypted-with-the-old-api-key-secret'];
+        $this->assertFalse($this->buildTabSettings($settings, 'trending', new DataEncryption())->hasApiKey());
+
+        $settings = [TabSettings::API_KEY_SETTING => (new DataEncryption())->encryptString('valid-key')];
+        $this->assertTrue($this->buildTabSettings($settings, 'trending', new DataEncryption())->hasApiKey());
     }
 
     #[Test]

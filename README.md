@@ -191,7 +191,7 @@ The key is not valid for the Altmetric API. The plugin checks it against the API
 
 ## Upgrading from the OJS 3.3 version
 
-- **Enter the Altmetric API key again.** The 3.3 version encrypted it with `api_key_secret`, which OJS 3.5 no longer uses, so the stored key cannot be read. Until a new key is saved, the Trending tab falls back to the manual DOI list.
+- **Altmetric API key.** The 3.3 version encrypted it with `api_key_secret`, which OJS 3.5 no longer uses. The upgrade re-encrypts it with the OJS `app_key` as long as `api_key_secret` is still in `config.inc.php`; otherwise the key is removed and must be entered again, and until then the Trending tab falls back to the manual DOI list.
 - DOIs are no longer a plugin in OJS 3.5: they are set up in *Settings → Distribution → DOIs*.
 
 ## Development

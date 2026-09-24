@@ -54,6 +54,8 @@ Route parameters must be read with `$illuminateRequest->route('name')`: the API 
 
 The scheduled task is registered through `HasTaskScheduler::registerSchedules` (daily at midnight).
 
+`classes/migrations/LegacySettingsMigration.php` carries the 3.3 settings over: it renames the locale keys (`en_US`, `es_ES`, ...) of `customTitle_*`, `customDescription_*` and `highlightContent_*` (the OJS 3.4 upgrade only does that for customBlockManager), and re-encrypts `altmetricsApiKey_trending` from the 3.3 `api_key_secret` format (`base64:` prefix) to `Crypt`, removing it when `api_key_secret` is no longer in `config.inc.php`. It runs from two places, because OJS runs them on different paths: `getInstallMigration()`, fired by `Installer::postInstall` on the OJS `upgrade.php` and on a fresh plugin install, and `upgrade.xml`, which `PluginHelper::upgradePlugin` runs when a new plugin version is uploaded. `upgrade.xml` has no `version` attribute on purpose, so the installer never writes a version row from it. The migration writes to `plugin_settings` directly, so it ends by reloading the `PluginSettingsDAO` cache (24 hours otherwise). Keep it idempotent: any plugin upload that ships an `upgrade.xml` fires every plugin's install migration again.
+
 ### The four-tab pipeline
 
 Each tab is a pair of **cache class** (in `classes/cache/`) + **factory method** on `RankingSubmission` (`classes/factory/RankingSubmission.php`). All caches go through `RankingCache`, a thin wrapper on Laravel's `Cache` facade keyed `rankingPlugin-{name}-{contextId}` and stored forever. The pattern is: `get*` reads the cache and, on miss or empty list, calls `refreshCache`; `refreshCache` hits the source, writes the cache, returns the fresh data.
@@ -71,7 +73,7 @@ The **scheduled task** `classes/tasks/RankingCacheUpdateTask.php` iterates enabl
 
 **Trending-tab ISSN quirk**: `TrendingSubmissions::getContextIssn` prefers `printIssn` and falls back to `onlineIssn`, while the task, `TabSettings::getContextIssn` and `getMostCited` in the API controller prefer `onlineIssn` with `printIssn` fallback. Keep them aligned if you touch one.
 
-The Altmetric API key is stored encrypted by `classes/DataEncryption.php`, which uses Laravel's `Crypt` (the OJS `app_key`). Keys stored by the 3.3 version were encrypted with `api_key_secret` and cannot be decrypted; `TrendingSubmissions` logs the failure and falls back to the manual DOI list.
+The Altmetric API key is stored encrypted by `classes/DataEncryption.php`, which uses Laravel's `Crypt` (the OJS `app_key`). Keys stored by the 3.3 version are re-encrypted by the migration. A key that still fails to decrypt (for example after `app_key` changes) is reported as absent by `TabSettings::hasApiKey`, and `TrendingSubmissions` logs the failure and falls back to the manual DOI list.
 
 ### Settings model
 

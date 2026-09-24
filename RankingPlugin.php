@@ -4,6 +4,7 @@ namespace APP\plugins\generic\rankingPlugin;
 
 use APP\core\Application;
 use APP\plugins\generic\rankingPlugin\classes\HookCallback;
+use APP\plugins\generic\rankingPlugin\classes\migrations\LegacySettingsMigration;
 use APP\plugins\generic\rankingPlugin\classes\settings\Actions;
 use APP\plugins\generic\rankingPlugin\classes\settings\Manage;
 use APP\plugins\generic\rankingPlugin\classes\tasks\RankingCacheUpdateTask;
@@ -41,6 +42,11 @@ class RankingPlugin extends GenericPlugin implements HasTaskScheduler
             ->daily()
             ->name(RankingCacheUpdateTask::class)
             ->withoutOverlapping();
+    }
+
+    public function getInstallMigration()
+    {
+        return new LegacySettingsMigration();
     }
 
     public function getDisplayName()

@@ -57,7 +57,18 @@ class TabSettings
 
     public function hasApiKey(): bool
     {
-        return !empty($this->plugin->getSetting($this->contextId, self::API_KEY_SETTING));
+        $storedKey = $this->plugin->getSetting($this->contextId, self::API_KEY_SETTING);
+        if (empty($storedKey)) {
+            return false;
+        }
+
+        try {
+            $this->getDataEncryption()->decryptString($storedKey);
+        } catch (Exception $e) {
+            return false;
+        }
+
+        return true;
     }
 
     public function validate(array $input): array
