@@ -1,11 +1,14 @@
 <?php
 
-import('lib.pkp.tests.PKPTestCase');
-import('plugins.generic.rankingPlugin.classes.cache.TrendingSubmissions');
-import('plugins.generic.rankingPlugin.classes.cache.BestAltmetricsScoreDois');
-import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
-import('plugins.generic.rankingPlugin.lib.APIKeyEncryption.APIKeyEncryption');
-import('plugins.generic.rankingPlugin.RankingPlugin');
+namespace APP\plugins\generic\rankingPlugin\tests;
+
+use APP\plugins\generic\rankingPlugin\RankingPlugin;
+use APP\plugins\generic\rankingPlugin\classes\DataEncryption;
+use APP\plugins\generic\rankingPlugin\classes\RankingSubmissionService;
+use APP\plugins\generic\rankingPlugin\classes\cache\BestAltmetricsScoreDois;
+use APP\plugins\generic\rankingPlugin\classes\cache\TrendingSubmissions;
+use PHPUnit\Framework\Attributes\Test;
+use PKP\tests\PKPTestCase;
 
 class TrendingSubmissionsTest extends PKPTestCase
 {
@@ -42,16 +45,14 @@ class TrendingSubmissionsTest extends PKPTestCase
         return $plugin;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldCallAltmetricApiWithDecryptedKeyWhenKeyIsConfigured()
     {
         $plugin = $this->buildPluginMock([
             'altmetricsApiKey_trending' => self::ENCRYPTED_API_KEY,
         ]);
 
-        $encryption = $this->createMock(APIKeyEncryption::class);
+        $encryption = $this->createMock(DataEncryption::class);
         $encryption->method('decryptString')
             ->with(self::ENCRYPTED_API_KEY)
             ->willReturn(self::DECRYPTED_API_KEY);
@@ -87,9 +88,7 @@ class TrendingSubmissionsTest extends PKPTestCase
         $trending->refreshCache(self::CONTEXT_ID, self::CONTEXT_PATH, self::LIMIT);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldUseManualDoisAndSkipAltmetricWhenNoKey()
     {
         $manualDois = [
@@ -101,7 +100,7 @@ class TrendingSubmissionsTest extends PKPTestCase
             'trendingDois_trending' => $manualDois,
         ]);
 
-        $encryption = $this->createMock(APIKeyEncryption::class);
+        $encryption = $this->createMock(DataEncryption::class);
         $encryption->expects($this->never())->method('decryptString');
 
         $bestDois = $this->createMock(BestAltmetricsScoreDois::class);
@@ -133,9 +132,7 @@ class TrendingSubmissionsTest extends PKPTestCase
         $trending->refreshCache(self::CONTEXT_ID, self::CONTEXT_PATH, self::LIMIT);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldFallBackToManualDoisWhenDecryptionFails()
     {
         $manualDois = [
@@ -147,7 +144,7 @@ class TrendingSubmissionsTest extends PKPTestCase
             'trendingDois_trending' => $manualDois,
         ]);
 
-        $encryption = $this->createMock(APIKeyEncryption::class);
+        $encryption = $this->createMock(DataEncryption::class);
         $encryption->method('decryptString')
             ->with(self::ENCRYPTED_API_KEY)
             ->willThrowException(new \Exception('Failed to decrypt string'));
@@ -186,9 +183,7 @@ class TrendingSubmissionsTest extends PKPTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldRespectLimitWhenUsingManualDois()
     {
         $manualDois = [

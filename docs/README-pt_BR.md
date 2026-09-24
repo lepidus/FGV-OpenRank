@@ -2,7 +2,7 @@
 
 # FGV OpenRank
 
-[![OJS compatibility](https://img.shields.io/badge/ojs-3.3.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_3_0)
+[![OJS compatibility](https://img.shields.io/badge/ojs-3.5.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_5_0)
 [![License type](https://img.shields.io/badge/license-GPL--3.0-blue)](https://www.gnu.org/licenses/gpl-3.0)
 
 Este plugin adiciona um bloco de ranqueamento à página inicial de revistas que usam o [OJS](https://pkp.sfu.ca/software/ojs/). O bloco lista artigos em abas — **Mais recentes**, **Mais lidos**, **Mais citados**, **Em alta** e uma aba de conteúdo livre, **Destaque** — e o editor-gerente decide quais abas aparecem, em que ordem, com qual título, descrição e quantidade de itens.
@@ -93,7 +93,7 @@ Ou, se a política for declarada em uma tag `<meta>` do tema:
 
 ### 5. Configure as abas
 
-Abra as *Configurações* do plugin. Uma grade lista as cinco abas: use o botão de status para habilitar ou desabilitar cada uma, arraste as linhas para mudar a ordem em que aparecem e clique em uma aba para editá-la.
+Abra as *Configurações* do plugin. A tabela **Abas** lista as cinco abas: marque **Habilitado** para exibir ou ocultar cada uma, use as setas para mudar a ordem em que aparecem e clique em **Editar** para configurar uma aba. As mudanças na tabela são salvas na hora.
 
 ## Configuração de cada aba
 
@@ -114,7 +114,7 @@ Algumas abas têm configurações próprias:
 
 A aba funciona de duas formas:
 
-- **Com uma chave de API do Altmetric.** Os artigos são buscados na API do Altmetric pelo ISSN da revista e ordenados por pontuação. A chave é validada no momento em que você salva e armazenada de forma criptografada — o que exige o `api_key_secret` configurado no `config.inc.php` ([como gerar um](https://forum.pkp.sfu.ca/t/how-to-generate-a-api-key-secret-code-in-ojs-3/72008)).
+- **Com uma chave de API do Altmetric.** Os artigos são buscados na API do Altmetric pelo ISSN da revista e ordenados por pontuação. A chave é validada no momento em que você salva e armazenada de forma criptografada com o `app_key` do `config.inc.php`, que toda instalação do OJS 3.5 já possui.
 - **Com uma lista manual de DOIs.** Sem chave armazenada, a aba exibe os DOIs que você listar, na ordem em que foram cadastrados. Só são aceitos DOIs de artigos publicados nesta revista.
 
 > [!NOTE]
@@ -122,21 +122,20 @@ A aba funciona de duas formas:
 
 ## Cache e atualização diária
 
-As abas são servidas a partir de um cache em arquivo, por revista. Uma tarefa agendada — *Atualização de cache do FGV OpenRank* — atualiza todas as abas de todas as revistas habilitadas diariamente à meia-noite. Por isso, mantenha o plugin **Acron** habilitado ou coloque o `runScheduledTasks.php` no crontab do servidor ([Guia do Administrador da PKP](https://docs.pkp.sfu.ca/admin-guide/)). Se o cache estiver vazio quando um leitor acessar a página, os dados são buscados na hora.
+As abas são servidas a partir de um cache por revista, guardado no cache do OJS. Uma tarefa agendada, *Atualização de cache do FGV OpenRank*, atualiza todas as abas de todas as revistas habilitadas diariamente à meia-noite. O OJS 3.5 executa as tarefas agendadas sozinho ao fim das requisições web enquanto `task_runner` estiver `On` na seção `[schedule]` do `config.inc.php` (o padrão); sites com muito acesso devem desligá-lo e executar `php lib/pkp/tools/scheduler.php run` a cada minuto pelo crontab do servidor. Se o cache estiver vazio quando um leitor acessar a página, os dados são buscados na hora.
 
 Para atualizar manualmente, a partir da raiz do OJS:
 
 ```bash
-php tools/runScheduledTasks.php
+php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\rankingPlugin\classes\tasks\RankingCacheUpdateTask'
 ```
 
 ## Requisitos
 
-- **OJS 3.3.0.x**
+- **OJS 3.5.0.x**, a partir do 3.5.0-1.
 - **`allowed_hosts`** incluindo o host da revista.
 - **ISSN** cadastrado na revista — necessário para *Mais citados* e para *Em alta* quando há chave de API.
 - **DOIs** atribuídos aos artigos — *Mais citados* e *Em alta* identificam os artigos pelo DOI, então um artigo sem DOI nunca aparece nessas abas.
-- **`api_key_secret`** no `config.inc.php`, apenas se você for armazenar uma chave de API do Altmetric.
 - **Domínios do Altmetric liberados na CSP**, apenas se o servidor web envia uma *Content Security Policy* personalizada e a aba *Em alta* está em uso.
 
 ## Solução de problemas
@@ -186,9 +185,29 @@ Não há acessos registrados no período. Aumente o valor de *Dias para mais lid
 <details>
 <summary><strong>A chave do Altmetric foi recusada ao salvar</strong></summary>
 
-Ou a chave não é válida para a API do Altmetric, ou o `api_key_secret` não está configurado no `config.inc.php` — nesse caso, a chave não pode ser armazenada de forma criptografada.
+A chave não é válida para a API do Altmetric. O plugin a verifica na API antes de armazená-la, então uma chave recusada pela API nunca é salva.
 
 </details>
+
+## Atualização a partir da versão para OJS 3.3
+
+- **Informe a chave de API do Altmetric de novo.** A versão 3.3 a criptografava com o `api_key_secret`, que o OJS 3.5 não usa mais, então a chave armazenada não pode ser lida. Até que uma nova chave seja salva, a aba Em alta usa a lista manual de DOIs.
+- No OJS 3.5 os DOIs deixaram de ser um plugin: são configurados em *Configurações → Distribuição → DOIs*.
+
+## Desenvolvimento
+
+A tela de configurações é um componente Vue compilado com Vite em `public/build`, que fica versionado para o pacote de release funcionar sem etapa de build. Depois de alterar algo em `resources/js`, execute no diretório do plugin:
+
+```bash
+npm install
+npm run build
+```
+
+Os testes unitários rodam a partir da raiz do OJS:
+
+```bash
+php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml plugins/generic/rankingPlugin/tests
+```
 
 ## Créditos
 

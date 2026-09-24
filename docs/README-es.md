@@ -2,7 +2,7 @@
 
 # FGV OpenRank
 
-[![OJS compatibility](https://img.shields.io/badge/ojs-3.3.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_3_0)
+[![OJS compatibility](https://img.shields.io/badge/ojs-3.5.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_5_0)
 [![License type](https://img.shields.io/badge/license-GPL--3.0-blue)](https://www.gnu.org/licenses/gpl-3.0)
 
 Este módulo añade un bloque de ranking a la página de inicio de revistas que usan [OJS](https://pkp.sfu.ca/software/ojs/). El bloque presenta artículos en pestañas — **Más recientes**, **Más leídos**, **Más citados**, **En tendencia** y una pestaña de contenido libre, **Destacado** — y el gestor de la revista decide qué pestañas aparecen, en qué orden, con qué título, descripción y cantidad de elementos.
@@ -93,7 +93,7 @@ O bien, si la política se declara en una etiqueta `<meta>` del tema:
 
 ### 5. Configure las pestañas
 
-Abra los *Ajustes* del módulo. Una cuadrícula muestra las cinco pestañas: use el botón de estado para habilitar o deshabilitar cada una, arrastre las filas para cambiar el orden en que aparecen y haga clic en una pestaña para editarla.
+Abra los *Ajustes* del módulo. La tabla **Pestañas** muestra las cinco pestañas: marque **Habilitado** para mostrar u ocultar cada una, use las flechas para cambiar el orden en que aparecen y haga clic en **Editar** para configurar una pestaña. Los cambios en la tabla se guardan al instante.
 
 ## Configuración de cada pestaña
 
@@ -114,7 +114,7 @@ Algunas pestañas tienen ajustes propios:
 
 La pestaña funciona de dos maneras:
 
-- **Con una clave de API de Altmetric.** Los artículos se obtienen de la API de Altmetric por el ISSN de la revista y se ordenan por puntuación. La clave se valida al guardarla y se almacena cifrada, lo que exige tener configurado `api_key_secret` en `config.inc.php` ([cómo generarlo](https://forum.pkp.sfu.ca/t/how-to-generate-a-api-key-secret-code-in-ojs-3/72008)).
+- **Con una clave de API de Altmetric.** Los artículos se obtienen de la API de Altmetric por el ISSN de la revista y se ordenan por puntuación. La clave se valida al guardarla y se almacena cifrada con el `app_key` de `config.inc.php`, que toda instalación de OJS 3.5 ya tiene.
 - **Con una lista manual de DOI.** Sin clave almacenada, la pestaña muestra los DOI que usted registre, en el orden en que fueron agregados. Solo se aceptan DOI de artículos publicados en esta revista.
 
 > [!NOTE]
@@ -122,21 +122,20 @@ La pestaña funciona de dos maneras:
 
 ## Caché y actualización diaria
 
-Las pestañas se sirven desde una caché en archivo, por revista. Una tarea programada — *Actualización de caché de FGV OpenRank* — actualiza todas las pestañas de todas las revistas habilitadas diariamente a medianoche, así que mantenga habilitado el módulo **Acron** o incluya `runScheduledTasks.php` en el crontab del servidor ([Guía del Administrador de PKP](https://docs.pkp.sfu.ca/admin-guide/)). Si la caché está vacía cuando alguien visita la página, los datos se obtienen en ese momento.
+Las pestañas se sirven desde una caché por revista, guardada en la caché de OJS. Una tarea programada, *Actualización de caché de FGV OpenRank*, actualiza todas las pestañas de todas las revistas habilitadas diariamente a medianoche. OJS 3.5 ejecuta las tareas programadas por sí mismo al final de las solicitudes web mientras `task_runner` esté en `On` en la sección `[schedule]` de `config.inc.php` (el valor predeterminado); los sitios con mucho tráfico deben desactivarlo y ejecutar `php lib/pkp/tools/scheduler.php run` cada minuto desde el crontab del servidor. Si la caché está vacía cuando alguien visita la página, los datos se obtienen en ese momento.
 
 Para actualizar manualmente, desde la raíz de OJS:
 
 ```bash
-php tools/runScheduledTasks.php
+php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\rankingPlugin\classes\tasks\RankingCacheUpdateTask'
 ```
 
 ## Requisitos
 
-- **OJS 3.3.0.x**
+- **OJS 3.5.0.x**, a partir de 3.5.0-1.
 - **`allowed_hosts`** con el host de la revista.
 - **Un ISSN** registrado en la revista — necesario para *Más citados* y para *En tendencia* cuando se usa una clave de API.
 - **DOI** asignados a los artículos — *Más citados* y *En tendencia* identifican los artículos por su DOI, por lo que un artículo sin DOI nunca aparece en ellas.
-- **`api_key_secret`** en `config.inc.php`, solo si va a almacenar una clave de API de Altmetric.
 - **Dominios de Altmetric autorizados en la CSP**, solo si el servidor web envía una *Content Security Policy* personalizada y la pestaña *En tendencia* está en uso.
 
 ## Solución de problemas
@@ -186,9 +185,29 @@ No hay visitas registradas en el período. Aumente el valor de *Días para más 
 <details>
 <summary><strong>La clave de Altmetric fue rechazada al guardar</strong></summary>
 
-O la clave no es válida para la API de Altmetric, o `api_key_secret` no está configurado en `config.inc.php`, en cuyo caso la clave no puede almacenarse cifrada.
+La clave no es válida para la API de Altmetric. El módulo la verifica en la API antes de almacenarla, así que una clave rechazada por la API nunca se guarda.
 
 </details>
+
+## Actualización desde la versión para OJS 3.3
+
+- **Introduzca de nuevo la clave de API de Altmetric.** La versión 3.3 la cifraba con `api_key_secret`, que OJS 3.5 ya no usa, así que la clave almacenada no puede leerse. Hasta que se guarde una nueva clave, la pestaña Tendencias usa la lista manual de DOI.
+- En OJS 3.5 los DOI dejaron de ser un módulo: se configuran en *Ajustes → Distribución → DOI*.
+
+## Desarrollo
+
+La pantalla de ajustes es un componente Vue compilado con Vite en `public/build`, que se versiona para que el paquete de publicación funcione sin paso de compilación. Después de cambiar algo en `resources/js`, ejecute en el directorio del módulo:
+
+```bash
+npm install
+npm run build
+```
+
+Las pruebas unitarias se ejecutan desde la raíz de OJS:
+
+```bash
+php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml plugins/generic/rankingPlugin/tests
+```
 
 ## Créditos
 

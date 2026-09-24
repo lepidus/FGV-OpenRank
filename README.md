@@ -2,7 +2,7 @@
 
 # FGV OpenRank
 
-[![OJS compatibility](https://img.shields.io/badge/ojs-3.3.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_3_0)
+[![OJS compatibility](https://img.shields.io/badge/ojs-3.5.0.x-brightgreen)](https://github.com/pkp/ojs/tree/stable-3_5_0)
 [![License type](https://img.shields.io/badge/license-GPL--3.0-blue)](https://www.gnu.org/licenses/gpl-3.0)
 
 This plugin adds a ranking block to the homepage of a journal running [OJS](https://pkp.sfu.ca/software/ojs/). The block lists articles in tabs — **Most recent**, **Most read**, **Most cited**, **Trending** and a free-content **Highlight** tab — and the journal manager decides which tabs appear, in what order, with which title, description and number of items.
@@ -93,7 +93,7 @@ Or, if the policy is declared in a `<meta>` tag of the theme:
 
 ### 5. Configure the tabs
 
-Open the plugin's *Settings*. A grid lists the five tabs: use the toggle to enable or disable each one, drag the rows to change the order they appear in, and click a tab to edit it.
+Open the plugin's *Settings*. The **Tabs** table lists the five tabs: tick **Enabled** to show or hide each one, use the arrows to change the order they appear in, and click **Edit** to configure a tab. Changes to the table are saved at once.
 
 ## Configuring a tab
 
@@ -114,7 +114,7 @@ Some tabs have their own extra settings:
 
 The tab works in either of two ways:
 
-- **With an Altmetric API key.** Articles are fetched from the Altmetric API by the journal's ISSN and ordered by score. The key is checked when you save it, and stored encrypted — which requires `api_key_secret` to be set in `config.inc.php` ([how to set one](https://forum.pkp.sfu.ca/t/how-to-generate-a-api-key-secret-code-in-ojs-3/72008)).
+- **With an Altmetric API key.** Articles are fetched from the Altmetric API by the journal's ISSN and ordered by score. The key is checked when you save it and stored encrypted with the OJS `app_key` from `config.inc.php`, which every OJS 3.5 installation already has.
 - **With a manual DOI list.** With no key stored, the tab shows the DOIs you list, in the order you list them. Only DOIs of articles published in this journal are accepted.
 
 > [!NOTE]
@@ -122,21 +122,20 @@ The tab works in either of two ways:
 
 ## Cache and daily update
 
-The tabs are served from a file cache per journal. A scheduled task — *FGV OpenRank cache update* — refreshes every tab of every enabled journal daily at midnight, so keep the **Acron** plugin enabled, or have `runScheduledTasks.php` in your server's crontab ([PKP Administrator's Guide](https://docs.pkp.sfu.ca/admin-guide/)). If a cache is empty when a reader arrives, the data is fetched on the spot.
+The tabs are served from a per-journal cache kept in the OJS cache. A scheduled task, *FGV OpenRank cache update*, refreshes every tab of every enabled journal daily at midnight. OJS 3.5 runs scheduled tasks by itself at the end of web requests while `task_runner` is `On` in the `[schedule]` section of `config.inc.php` (the default); busy sites should turn it off and run `php lib/pkp/tools/scheduler.php run` every minute from the server's crontab instead. If a cache is empty when a reader arrives, the data is fetched on the spot.
 
 To refresh by hand, from the OJS root:
 
 ```bash
-php tools/runScheduledTasks.php
+php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\rankingPlugin\classes\tasks\RankingCacheUpdateTask'
 ```
 
 ## Requirements
 
-- **OJS 3.3.0.x**
+- **OJS 3.5.0.x**, from 3.5.0-1 on.
 - **`allowed_hosts`** including the journal's host.
 - **An ISSN** registered for the journal — needed by *Most cited*, and by *Trending* when an API key is used.
 - **DOIs** assigned to the articles — *Most cited* and *Trending* identify articles by DOI, so an article without one never appears in them.
-- **`api_key_secret`** in `config.inc.php`, only if you are going to store an Altmetric API key.
 - **Altmetric's domains released in the CSP**, only if your web server sends a custom *Content Security Policy* and the *Trending* tab is in use.
 
 ## Troubleshooting
@@ -186,9 +185,29 @@ There are no recorded views in the period. Increase *Days for most read*, or che
 <details>
 <summary><strong>The Altmetric key was rejected when saving</strong></summary>
 
-Either the key is not valid for the Altmetric API, or `api_key_secret` is not configured in `config.inc.php`, in which case the key cannot be stored encrypted.
+The key is not valid for the Altmetric API. The plugin checks it against the API before storing it, so a key that the API rejects is never saved.
 
 </details>
+
+## Upgrading from the OJS 3.3 version
+
+- **Enter the Altmetric API key again.** The 3.3 version encrypted it with `api_key_secret`, which OJS 3.5 no longer uses, so the stored key cannot be read. Until a new key is saved, the Trending tab falls back to the manual DOI list.
+- DOIs are no longer a plugin in OJS 3.5: they are set up in *Settings → Distribution → DOIs*.
+
+## Development
+
+The settings screen is a Vue component built with Vite into `public/build`, which is committed so the release package works without a build step. After changing anything in `resources/js`, run from the plugin directory:
+
+```bash
+npm install
+npm run build
+```
+
+Unit tests run from the OJS root:
+
+```bash
+php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml plugins/generic/rankingPlugin/tests
+```
 
 ## Credits
 

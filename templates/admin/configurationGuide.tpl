@@ -121,13 +121,17 @@
             <h3>{translate key="plugins.generic.rankingPlugin.configurationGuide.where"}</h3>
             <p>{translate key="plugins.generic.rankingPlugin.configurationGuide.step4.pathEnable"}</p>
             <p>{translate key="plugins.generic.rankingPlugin.configurationGuide.step4.pathPrefix"}</p>
+            <p>{translate key="plugins.generic.rankingPlugin.configurationGuide.step4.pathAssign"}</p>
             <h3>{translate key="plugins.generic.rankingPlugin.configurationGuide.expected"}</h3>
             <p>{translate key="plugins.generic.rankingPlugin.configurationGuide.step4.expected"}</p>
         </div>
 
         <div class="cmp_rankingPlugin_guide_links">
-            <a class="cmp_rankingPlugin_guide_open" data-guide-link="installedPlugins" href="{$guideInstalledPluginsUrl}" target="_blank" rel="noopener noreferrer">
-                {translate key="plugins.generic.rankingPlugin.configurationGuide.link.installedPlugins"}
+            <a class="cmp_rankingPlugin_guide_open" data-guide-link="doiSetup" href="{$guideDoiSetupUrl}" target="_blank" rel="noopener noreferrer">
+                {translate key="plugins.generic.rankingPlugin.configurationGuide.link.dois"}
+            </a>
+            <a class="cmp_rankingPlugin_guide_open" data-guide-link="doiManagement" href="{$guideDoiManagementUrl}" target="_blank" rel="noopener noreferrer">
+                {translate key="plugins.generic.rankingPlugin.configurationGuide.link.doiManagement"}
             </a>
         </div>
 
@@ -173,15 +177,13 @@
 
         <div class="cmp_rankingPlugin_guide_instruction">
             <h3>{translate key="plugins.generic.rankingPlugin.configurationGuide.where"}</h3>
-            <p>{translate key="plugins.generic.rankingPlugin.configurationGuide.step6.pathAcron"}</p>
+            <p>{translate key="plugins.generic.rankingPlugin.configurationGuide.step6.pathTaskRunner"}</p>
+            <p>{translate key="plugins.generic.rankingPlugin.configurationGuide.step6.pathCrontab"}</p>
             <h3>{translate key="plugins.generic.rankingPlugin.configurationGuide.expected"}</h3>
             <p>{translate key="plugins.generic.rankingPlugin.configurationGuide.step6.expected"}</p>
         </div>
 
         <div class="cmp_rankingPlugin_guide_links">
-            <a class="cmp_rankingPlugin_guide_open" data-guide-link="installedPlugins" href="{$guideInstalledPluginsUrl}" target="_blank" rel="noopener noreferrer">
-                {translate key="plugins.generic.rankingPlugin.configurationGuide.link.installedPlugins"}
-            </a>
             <a class="cmp_rankingPlugin_guide_open" data-guide-link="homepage" href="{$guideHomepageUrl}" target="_blank" rel="noopener noreferrer">
                 {translate key="plugins.generic.rankingPlugin.configurationGuide.link.homepage"}
             </a>

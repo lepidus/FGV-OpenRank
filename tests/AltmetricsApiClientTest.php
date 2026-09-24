@@ -1,28 +1,29 @@
 <?php
 
-import('lib.pkp.tests.PKPTestCase');
-import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
-import('plugins.generic.rankingPlugin.tests.helpers.ClientInterfaceForTests');
+namespace APP\plugins\generic\rankingPlugin\tests;
 
-use GuzzleHttp\Exception\ServerException;
+use APP\plugins\generic\rankingPlugin\classes\clients\Altmetrics;
+use APP\plugins\generic\rankingPlugin\tests\helpers\ClientInterfaceForTests;
+use Exception;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\TransferException;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\Attributes\Test;
+use PKP\tests\PKPTestCase;
 
 class AltmetricsApiClientTest extends PKPTestCase
 {
     private const ISSN = '1234-5678';
     private const LIMIT = 4;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldReturnServerErrorWhenTryToRetrieveBestScoreSubmissions()
     {
         $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
         $httpClientMock->method('request')
-            ->willThrowException(new ServerException('Server error', new Request('GET', 'https://api.altmetric.com/v1/citations/at')));
+            ->willThrowException(new ServerException('Server error', new Request('GET', 'https://api.altmetric.com/v1/citations/at'), new Response(500)));
 
         $apiClient = new Altmetrics($httpClientMock);
         $this->expectException(Exception::class);
@@ -32,14 +33,12 @@ class AltmetricsApiClientTest extends PKPTestCase
         $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldReturnClientErrorWhenTryToRetrieveBestScoreSubmissions()
     {
         $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
         $httpClientMock->method('request')
-            ->willThrowException(new ClientException('Client error', new Request('GET', 'https://api.altmetric.com/v1/citations/at')));
+            ->willThrowException(new ClientException('Client error', new Request('GET', 'https://api.altmetric.com/v1/citations/at'), new Response(400)));
 
         $apiClient = new Altmetrics($httpClientMock);
         $this->expectException(Exception::class);
@@ -49,9 +48,7 @@ class AltmetricsApiClientTest extends PKPTestCase
         $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldReturnTransferErrorWhenTryToRetrieveBestScoreSubmissions()
     {
         $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
@@ -66,9 +63,7 @@ class AltmetricsApiClientTest extends PKPTestCase
         $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldSendApiKeyWhenProvided()
     {
         $response = new Response(200, [], json_encode(['results' => []]));
@@ -92,9 +87,7 @@ class AltmetricsApiClientTest extends PKPTestCase
         $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT, 'xyz');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldOmitApiKeyWhenNotProvided()
     {
         $response = new Response(200, [], json_encode(['results' => []]));
