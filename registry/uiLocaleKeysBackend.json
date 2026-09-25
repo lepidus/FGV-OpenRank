@@ -1,6 +1,6 @@
 [
-  "common.back",
   "common.cancel",
+  "common.changesSaved",
   "common.delete",
   "common.edit",
   "common.loading",
@@ -8,7 +8,6 @@
   "common.order",
   "common.orderDown",
   "common.orderUp",
-  "form.saved",
   "plugins.generic.rankingPlugin.configuration.grid.column.customDescription",
   "plugins.generic.rankingPlugin.configuration.grid.column.customTitle",
   "plugins.generic.rankingPlugin.configuration.grid.column.defaultTitle",
@@ -22,5 +21,6 @@
   "plugins.generic.rankingPlugin.trendingDois.add",
   "plugins.generic.rankingPlugin.trendingDois.deleteConfirm",
   "plugins.generic.rankingPlugin.trendingDois.doi",
+  "plugins.generic.rankingPlugin.trendingDois.edit",
   "plugins.generic.rankingPlugin.trendingDois.title"
 ]

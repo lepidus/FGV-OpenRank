@@ -130,6 +130,9 @@ msgstr "Manual DOI list (Trending tab)"
 msgid "plugins.generic.rankingPlugin.trendingDois.add"
 msgstr "Add DOI"
 
+msgid "plugins.generic.rankingPlugin.trendingDois.edit"
+msgstr "Edit DOI"
+
 msgid "plugins.generic.rankingPlugin.trendingDois.doi"
 msgstr "DOI"
 

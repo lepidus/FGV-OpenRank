@@ -3,14 +3,6 @@
 		<PkpSpinner />
 		{{ t('common.loading') }}
 	</div>
-	<RankingTabSettings
-		v-else-if="editedTab"
-		:tab="editedTab"
-		:form-config="settings.tabForms[editedTab.id]"
-		:settings-api-url="settingsApiUrl"
-		@saved="closeTabSettings"
-		@back="closeTabSettings"
-	/>
 	<div v-else class="rankingPluginSettings" data-cy="ranking-plugin-settings">
 		<section class="rankingPluginSettings__intro" data-cy="ranking-plugin-settings-intro">
 			<h2>{{ t('plugins.generic.rankingPlugin.settings.intro.title') }}</h2>
@@ -25,7 +17,7 @@
 		<RankingTabsTable :tabs="settings.tabs" @save="saveTabs" @edit="openTabSettings" />
 
 		<div data-cy="ranking-plugin-display-position">
-			<PkpForm v-bind="displayPositionForm" @set="setDisplayPositionForm" @success="setSettings" />
+			<PkpForm v-bind="displayPositionForm" @set="setDisplayPositionForm" @success="displayPositionSaved" />
 		</div>
 	</div>
 </template>
@@ -33,19 +25,20 @@
 <script setup>
 import {ref, watch} from 'vue';
 import RankingTabsTable from './RankingTabsTable.vue';
-import RankingTabSettings from './RankingTabSettings.vue';
+import {useSettingsModal} from './useSettingsModal.js';
 
 const props = defineProps({
 	settingsApiUrl: {type: String, required: true},
+	tabSettingsUrl: {type: String, required: true},
 });
 
 const {t} = pkp.modules.useLocalize.useLocalize();
 const {useFetch} = pkp.modules.useFetch;
 const {notify} = pkp.modules.useNotify.useNotify();
+const {openSettingsModal} = useSettingsModal();
 
 const settings = ref(null);
 const displayPositionForm = ref(null);
-const editedTab = ref(null);
 
 const {data, fetch: fetchSettings} = useFetch(props.settingsApiUrl);
 watch(data, (newData) => newData && setSettings(newData));
@@ -71,19 +64,25 @@ async function saveTabs(tabs) {
 
 	if (savedSettings.value) {
 		setSettings(savedSettings.value);
-		notify(t('form.saved'), 'success');
+		notify(t('common.changesSaved'), 'success');
 	} else {
 		fetchSettings();
 	}
 }
 
-function openTabSettings(tab) {
-	editedTab.value = tab;
+function displayPositionSaved(savedSettings) {
+	setSettings(savedSettings);
+	notify(t('common.changesSaved'), 'success');
 }
 
-function closeTabSettings() {
-	editedTab.value = null;
-	fetchSettings();
+function openTabSettings(tab) {
+	openSettingsModal({
+		title: tab.customTitle || tab.label,
+		url: props.tabSettingsUrl,
+		params: {tabId: tab.id},
+		formId: settings.value.tabForms[tab.id].id,
+		onClose: fetchSettings,
+	});
 }
 </script>
 

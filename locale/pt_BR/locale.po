@@ -130,6 +130,9 @@ msgstr "Lista manual de DOIs (aba Trending)"
 msgid "plugins.generic.rankingPlugin.trendingDois.add"
 msgstr "Adicionar DOI"
 
+msgid "plugins.generic.rankingPlugin.trendingDois.edit"
+msgstr "Editar DOI"
+
 msgid "plugins.generic.rankingPlugin.trendingDois.doi"
 msgstr "DOI"
 

@@ -5,7 +5,7 @@
 			<template #top-controls>
 				<PkpButton
 					data-cy="ranking-plugin-trending-doi-add"
-					:is-disabled="!doiForm || !!activeForm"
+					:is-disabled="!doiForm"
 					@click="openDoiForm()"
 				>
 					{{ t('plugins.generic.rankingPlugin.trendingDois.add') }}
@@ -49,32 +49,28 @@
 				</PkpTableRow>
 			</PkpTableBody>
 		</PkpTable>
-
-		<div v-if="activeForm" class="rankingTrendingDois__form" data-cy="ranking-plugin-trending-doi-form">
-			<PkpForm v-bind="activeForm" @set="setActiveForm" @success="doiFormSuccess" />
-			<PkpButton data-cy="ranking-plugin-trending-doi-cancel" @click="activeForm = null">
-				{{ t('common.cancel') }}
-			</PkpButton>
-		</div>
 	</div>
 </template>
 
 <script setup>
 import {ref, watch} from 'vue';
 import RankingOrderButtons from './RankingOrderButtons.vue';
+import {useSettingsModal} from './useSettingsModal.js';
 
 const props = defineProps({
 	settingsApiUrl: {type: String, required: true},
+	trendingDoiUrl: {type: String, required: true},
 });
 
 const {t} = pkp.modules.useLocalize.useLocalize();
 const {useFetch} = pkp.modules.useFetch;
+const {notify} = pkp.modules.useNotify.useNotify();
 const {openDialog} = pkp.modules.useModal.useModal();
+const {openSettingsModal} = useSettingsModal();
 
 const trendingDoisApiUrl = `${props.settingsApiUrl}/trendingDois`;
 const dois = ref([]);
 const doiForm = ref(null);
-const activeForm = ref(null);
 
 const {data, fetch: fetchSettings} = useFetch(props.settingsApiUrl);
 watch(data, (newData) => newData && setSettings(newData));
@@ -90,32 +86,22 @@ async function send(url, method, body = undefined) {
 	await request();
 	if (settings.value) {
 		setSettings(settings.value);
+		notify(t('common.changesSaved'), 'success');
 	} else {
 		fetchSettings();
 	}
 }
 
 function openDoiForm(item = null) {
-	const formConfig = JSON.parse(JSON.stringify(doiForm.value));
-	if (item) {
-		formConfig.action = `${trendingDoisApiUrl}/${item.id}`;
-		formConfig.method = 'PUT';
-		formConfig.fields = formConfig.fields.map((field) =>
-			field.name === 'doi' ? {...field, value: item.doi} : field,
-		);
-	}
-	activeForm.value = formConfig;
-}
-
-function setActiveForm(formId, changes) {
-	if (activeForm.value) {
-		activeForm.value = {...activeForm.value, ...changes};
-	}
-}
-
-function doiFormSuccess(settings) {
-	activeForm.value = null;
-	setSettings(settings);
+	openSettingsModal({
+		title: item
+			? t('plugins.generic.rankingPlugin.trendingDois.edit')
+			: t('plugins.generic.rankingPlugin.trendingDois.add'),
+		url: props.trendingDoiUrl,
+		params: item ? {doiId: item.id} : {},
+		formId: doiForm.value.id,
+		onClose: fetchSettings,
+	});
 }
 
 function confirmDelete(item) {
@@ -157,13 +143,6 @@ function move(index, direction) {
 .rankingTrendingDois__actions {
 	display: flex;
 	justify-content: flex-end;
-	gap: 0.5rem;
-}
-
-.rankingTrendingDois__form {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
 	gap: 0.5rem;
 }
 </style>

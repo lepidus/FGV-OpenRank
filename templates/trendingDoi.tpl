@@ -1,19 +1,19 @@
 {**
- * templates/settings.tpl
+ * templates/trendingDoi.tpl
  *
  * Copyright (c) 2025-2026 Lepidus Tecnologia
  * Copyright (c) 2025-2026 Fundação Getulio Vargas
  * Distributed under the GNU GPL v3. For full terms see the file docs/COPYING.
  *
- * FGV OpenRank settings.
+ * Form to add or edit a DOI of the Trending tab manual list.
  *}
 {assign var="uuid" value=""|uniqid|escape}
-<div id="rankingPluginSettings-{$uuid}">
-	<ranking-plugin-settings
+<div id="rankingTrendingDoi-{$uuid}">
+	<ranking-trending-doi-form
 		settings-api-url="{$settingsApiUrl|escape}"
-		tab-settings-url="{$tabSettingsUrl|escape}"
-	></ranking-plugin-settings>
+		doi-id="{$doiId|escape}"
+	></ranking-trending-doi-form>
 </div>
 <script type="text/javascript">
-	pkp.registry.init('rankingPluginSettings-{$uuid}', 'Container', {ldelim}{rdelim});
+	pkp.registry.init('rankingTrendingDoi-{$uuid}', 'Container', {ldelim}{rdelim});
 </script>
