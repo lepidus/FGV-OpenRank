@@ -4,6 +4,7 @@ namespace APP\plugins\generic\rankingPlugin\tests;
 
 use APP\plugins\generic\rankingPlugin\RankingPlugin;
 use APP\plugins\generic\rankingPlugin\classes\RankingDisplayPosition;
+use APP\plugins\generic\rankingPlugin\classes\settings\DisplayPositionSettings;
 use APP\plugins\generic\rankingPlugin\tests\helpers\HookCallbackForTests;
 use PHPUnit\Framework\Attributes\Test;
 use PKP\tests\PKPTestCase;
@@ -156,14 +157,12 @@ class RankingDisplayPositionTest extends PKPTestCase
             RankingDisplayPosition::SETTING_NAME => RankingDisplayPosition::AFTER_SECTION,
             RankingDisplayPosition::SECTION_SETTING_NAME => '2',
         ]);
-        $hookCallback = new HookCallbackForTests($plugin, self::CONTEXT_ID);
-
         $this->assertSame(
             [
                 'displayPosition' => RankingDisplayPosition::AFTER_SECTION,
                 'displayPositionSection' => 2,
             ],
-            $hookCallback->getDisplayPositionSettings(self::CONTEXT_ID)
+            (new DisplayPositionSettings($plugin, self::CONTEXT_ID))->get()
         );
     }
 
@@ -171,14 +170,12 @@ class RankingDisplayPositionTest extends PKPTestCase
     public function itShouldHandSafeDefaultsToTheFrontendWhenNothingIsConfigured()
     {
         $plugin = $this->buildPluginMock([]);
-        $hookCallback = new HookCallbackForTests($plugin, self::CONTEXT_ID);
-
         $this->assertSame(
             [
                 'displayPosition' => RankingDisplayPosition::ADDITIONAL_CONTENT,
                 'displayPositionSection' => 1,
             ],
-            $hookCallback->getDisplayPositionSettings(self::CONTEXT_ID)
+            (new DisplayPositionSettings($plugin, self::CONTEXT_ID))->get()
         );
     }
 

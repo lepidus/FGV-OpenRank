@@ -24,6 +24,11 @@ class TrendingDois
         return $this->plugin->getSetting($this->contextId, self::SETTING_NAME) ?: [];
     }
 
+    public function has(string $doiId): bool
+    {
+        return array_key_exists($doiId, $this->getStored());
+    }
+
     public function getItems(): array
     {
         return self::buildItems($this->getStored());

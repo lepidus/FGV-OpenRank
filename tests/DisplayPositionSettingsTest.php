@@ -31,13 +31,18 @@ class DisplayPositionSettingsTest extends PKPTestCase
 
     private function getFieldValue(array $settings, string $fieldName)
     {
-        $form = new DisplayPositionForm(self::ACTION, $this->buildPluginMock($settings), self::CONTEXT_ID);
+        $form = new DisplayPositionForm(self::ACTION, $this->getStoredValues($settings));
         foreach ($form->getConfig()['fields'] as $field) {
             if ($field['name'] === $fieldName) {
                 return $field['value'];
             }
         }
         return null;
+    }
+
+    private function getStoredValues(array &$settings): array
+    {
+        return (new DisplayPositionSettings($this->buildPluginMock($settings), self::CONTEXT_ID))->get();
     }
 
     private function save(array &$settings, array $input): void
@@ -82,7 +87,7 @@ class DisplayPositionSettingsTest extends PKPTestCase
     public function itShouldOnlyShowTheSectionFieldForAfterSection()
     {
         $settings = [];
-        $form = new DisplayPositionForm(self::ACTION, $this->buildPluginMock($settings), self::CONTEXT_ID);
+        $form = new DisplayPositionForm(self::ACTION, $this->getStoredValues($settings));
         $sectionField = array_values(array_filter(
             $form->getConfig()['fields'],
             fn ($field) => $field['name'] === RankingDisplayPosition::SECTION_SETTING_NAME

@@ -2,148 +2,58 @@
 
 namespace APP\plugins\generic\rankingPlugin\classes\cache;
 
-use APP\core\Application;
-use APP\plugins\generic\rankingPlugin\classes\DataEncryption;
-use APP\plugins\generic\rankingPlugin\classes\RankingSubmissionService;
+use APP\plugins\generic\rankingPlugin\classes\factory\RankingSubmission;
+use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
 use APP\plugins\generic\rankingPlugin\classes\settings\TrendingDois;
-use PKP\plugins\PluginRegistry;
 
 class TrendingSubmissions
 {
-    private const DEFAULT_LIMIT = 4;
-
-    private $plugin;
     private $bestAltmetricsScoreDois;
-    private $dataEncryption;
     private RankingCache $cache;
 
-    public function __construct($plugin = null, $bestAltmetricsScoreDois = null, $dataEncryption = null)
-    {
-        $this->plugin = $plugin;
+    public function __construct(
+        private int $contextId,
+        private ?string $issn,
+        private AltmetricsApiKey $altmetricsApiKey,
+        private TrendingDois $trendingDois,
+        private RankingSubmission $rankingSubmission,
+        $bestAltmetricsScoreDois = null
+    ) {
         $this->bestAltmetricsScoreDois = $bestAltmetricsScoreDois;
-        $this->dataEncryption = $dataEncryption;
         $this->cache = new RankingCache('trending_submissions');
     }
 
-    public function getTrendingSubmissions($contextId, $contextPath, $limit = null)
+    public function getTrendingSubmissions(int $limit): array
     {
-        return $this->cache->get($contextId)
-            ?? $this->refreshCache($contextId, $contextPath, $limit);
+        return $this->cache->get($this->contextId)
+            ?? $this->refreshCache($limit);
     }
 
-    public function refreshCache($contextId, $contextPath, $limit = null)
+    public function refreshCache(int $limit): array
     {
-        $this->cache->forget($contextId);
+        $this->cache->forget($this->contextId);
 
-        $effectiveLimit = $limit ?? self::DEFAULT_LIMIT;
-        $apiKey = $this->getStoredApiKey($contextId);
+        $apiKey = $this->altmetricsApiKey->get();
+        $dois = $apiKey !== null
+            ? $this->getDoisFromApi($limit, $apiKey)
+            : array_slice(array_values($this->trendingDois->getStored()), 0, $limit);
 
-        if ($apiKey !== null) {
-            $trendingSubmissions = $this->refreshFromApi($contextId, $contextPath, $effectiveLimit, $apiKey);
-        } else {
-            $trendingSubmissions = $this->refreshFromManualDois($contextId, $contextPath, $effectiveLimit);
-        }
+        $trendingSubmissions = empty($dois) ? [] : $this->rankingSubmission->getTrending($dois);
 
-        return $this->cache->put($contextId, $trendingSubmissions);
+        return $this->cache->put($this->contextId, $trendingSubmissions);
     }
 
-    private function getStoredApiKey($contextId): ?string
+    private function getDoisFromApi(int $limit, string $apiKey): array
     {
-        $plugin = $this->getPlugin();
-        if ($plugin === null) {
-            return null;
-        }
-        $encrypted = $plugin->getSetting($contextId, 'altmetricsApiKey_trending');
-        if (empty($encrypted)) {
-            return null;
-        }
-        try {
-            return $this->getDataEncryption()->decryptString($encrypted);
-        } catch (\Exception $e) {
-            error_log(sprintf(
-                '[rankingPlugin] Failed to decrypt Altmetric API key for context %s: %s',
-                $contextId,
-                $e->getMessage()
-            ));
-            return null;
-        }
-    }
-
-    private function refreshFromApi($contextId, $contextPath, $limit, $apiKey): array
-    {
-        $issn = $this->getContextIssn($contextId);
-        if (empty($issn)) {
+        if (empty($this->issn)) {
             return [];
         }
 
-        $bestScoreDois = $this->getBestAltmetricsScoreDois()
-            ->refreshCache($contextId, $issn, $limit, $apiKey);
-
-        if (empty($bestScoreDois)) {
-            return [];
-        }
-
-        return $this->resolveSubmissionsFromDois($bestScoreDois, $contextId, $contextPath, $limit);
-    }
-
-    private function refreshFromManualDois($contextId, $contextPath, $limit): array
-    {
-        $plugin = $this->getPlugin();
-        if ($plugin === null) {
-            return [];
-        }
-        $storedDois = $plugin->getSetting($contextId, TrendingDois::SETTING_NAME) ?: [];
-        $dois = array_slice(array_values($storedDois), 0, $limit);
-
-        if (empty($dois)) {
-            return [];
-        }
-
-        return $this->resolveSubmissionsFromDois($dois, $contextId, $contextPath, $limit);
-    }
-
-    private function resolveSubmissionsFromDois(array $dois, $contextId, $contextPath, $limit): array
-    {
-        $request = Application::get()->getRequest();
-        $service = $this->createRankingSubmissionService($contextId, $contextPath, $limit);
-        return $service->getBestAltmetricsScoreSubmissions($dois, $request);
-    }
-
-    private function getPlugin()
-    {
-        if ($this->plugin === null) {
-            $this->plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
-        }
-        return $this->plugin;
+        return $this->getBestAltmetricsScoreDois()->refreshCache($this->contextId, $this->issn, $limit, $apiKey);
     }
 
     private function getBestAltmetricsScoreDois(): BestAltmetricsScoreDois
     {
-        if ($this->bestAltmetricsScoreDois === null) {
-            $this->bestAltmetricsScoreDois = new BestAltmetricsScoreDois();
-        }
-        return $this->bestAltmetricsScoreDois;
-    }
-
-    private function getDataEncryption(): DataEncryption
-    {
-        if ($this->dataEncryption === null) {
-            $this->dataEncryption = new DataEncryption();
-        }
-        return $this->dataEncryption;
-    }
-
-    protected function getContextIssn($contextId): ?string
-    {
-        $context = app()->get('context')->get($contextId);
-        if (!$context) {
-            return null;
-        }
-        return $context->getData('printIssn') ?: $context->getData('onlineIssn');
-    }
-
-    protected function createRankingSubmissionService($contextId, $contextPath, $limit)
-    {
-        return new RankingSubmissionService($contextId, $contextPath, $limit);
+        return $this->bestAltmetricsScoreDois ??= new BestAltmetricsScoreDois();
     }
 }

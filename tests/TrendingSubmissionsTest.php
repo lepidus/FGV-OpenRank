@@ -2,22 +2,20 @@
 
 namespace APP\plugins\generic\rankingPlugin\tests;
 
-use APP\plugins\generic\rankingPlugin\RankingPlugin;
-use APP\plugins\generic\rankingPlugin\classes\DataEncryption;
-use APP\plugins\generic\rankingPlugin\classes\RankingSubmissionService;
 use APP\plugins\generic\rankingPlugin\classes\cache\BestAltmetricsScoreDois;
 use APP\plugins\generic\rankingPlugin\classes\cache\TrendingSubmissions;
+use APP\plugins\generic\rankingPlugin\classes\factory\RankingSubmission;
+use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
+use APP\plugins\generic\rankingPlugin\classes\settings\TrendingDois;
 use PHPUnit\Framework\Attributes\Test;
 use PKP\tests\PKPTestCase;
 
 class TrendingSubmissionsTest extends PKPTestCase
 {
     private const CONTEXT_ID = 1;
-    private const CONTEXT_PATH = 'rbgdp';
     private const LIMIT = 4;
     private const JOURNAL_PRINT_ISSN = '2179-7560';
 
-    private const ENCRYPTED_API_KEY = 'base64:encrypted-blob';
     private const DECRYPTED_API_KEY = 'altmetric-api-key-plaintext';
 
     private const FIRST_OPTION_ID = '64f1a0b7c2d31';
@@ -35,195 +33,114 @@ class TrendingSubmissionsTest extends PKPTestCase
     private const ALTMETRIC_RETURNED_DOI_FIRST = '10.4322/2179-7560.2023.011';
     private const ALTMETRIC_RETURNED_DOI_SECOND = '10.4322/2179-7560.2023.012';
 
-    private function buildPluginMock(array $settings)
+    private function buildApiKeyMock(?string $apiKey): AltmetricsApiKey
     {
-        $plugin = $this->createMock(RankingPlugin::class);
-        $plugin->method('getSetting')
-            ->willReturnCallback(function ($contextId, $key) use ($settings) {
-                return $settings[$key] ?? null;
-            });
-        return $plugin;
+        $altmetricsApiKey = $this->createMock(AltmetricsApiKey::class);
+        $altmetricsApiKey->method('get')->willReturn($apiKey);
+        return $altmetricsApiKey;
+    }
+
+    private function buildTrendingDoisMock(array $storedDois): TrendingDois
+    {
+        $trendingDois = $this->createMock(TrendingDois::class);
+        $trendingDois->method('getStored')->willReturn($storedDois);
+        return $trendingDois;
     }
 
     #[Test]
     public function itShouldCallAltmetricApiWithDecryptedKeyWhenKeyIsConfigured()
     {
-        $plugin = $this->buildPluginMock([
-            'altmetricsApiKey_trending' => self::ENCRYPTED_API_KEY,
-        ]);
-
-        $encryption = $this->createMock(DataEncryption::class);
-        $encryption->method('decryptString')
-            ->with(self::ENCRYPTED_API_KEY)
-            ->willReturn(self::DECRYPTED_API_KEY);
+        $altmetricDois = [self::ALTMETRIC_RETURNED_DOI_FIRST, self::ALTMETRIC_RETURNED_DOI_SECOND];
 
         $bestDois = $this->createMock(BestAltmetricsScoreDois::class);
         $bestDois->expects($this->once())
             ->method('refreshCache')
             ->with(self::CONTEXT_ID, self::JOURNAL_PRINT_ISSN, self::LIMIT, self::DECRYPTED_API_KEY)
-            ->willReturn([self::ALTMETRIC_RETURNED_DOI_FIRST, self::ALTMETRIC_RETURNED_DOI_SECOND]);
+            ->willReturn($altmetricDois);
 
-        $service = $this->createMock(RankingSubmissionService::class);
-        $service->method('getBestAltmetricsScoreSubmissions')->willReturn([]);
+        $rankingSubmission = $this->createMock(RankingSubmission::class);
+        $rankingSubmission->expects($this->once())
+            ->method('getTrending')
+            ->with($altmetricDois)
+            ->willReturn([]);
 
-        $trending = new class ($plugin, $bestDois, $encryption, self::JOURNAL_PRINT_ISSN, $service) extends TrendingSubmissions {
-            private $issn;
-            private $service;
-            public function __construct($plugin, $bestDois, $encryption, $issn, $service)
-            {
-                parent::__construct($plugin, $bestDois, $encryption);
-                $this->issn = $issn;
-                $this->service = $service;
-            }
-            protected function getContextIssn($contextId): ?string
-            {
-                return $this->issn;
-            }
-            protected function createRankingSubmissionService($cid, $cp, $l)
-            {
-                return $this->service;
-            }
-        };
-
-        $trending->refreshCache(self::CONTEXT_ID, self::CONTEXT_PATH, self::LIMIT);
+        (new TrendingSubmissions(
+            self::CONTEXT_ID,
+            self::JOURNAL_PRINT_ISSN,
+            $this->buildApiKeyMock(self::DECRYPTED_API_KEY),
+            $this->buildTrendingDoisMock([]),
+            $rankingSubmission,
+            $bestDois
+        ))->refreshCache(self::LIMIT);
     }
 
     #[Test]
     public function itShouldUseManualDoisAndSkipAltmetricWhenNoKey()
     {
-        $manualDois = [
-            self::FIRST_OPTION_ID => self::FIRST_TRENDING_DOI,
-            self::SECOND_OPTION_ID => self::SECOND_TRENDING_DOI,
-        ];
-        $plugin = $this->buildPluginMock([
-            'altmetricsApiKey_trending' => '',
-            'trendingDois_trending' => $manualDois,
-        ]);
-
-        $encryption = $this->createMock(DataEncryption::class);
-        $encryption->expects($this->never())->method('decryptString');
-
         $bestDois = $this->createMock(BestAltmetricsScoreDois::class);
         $bestDois->expects($this->never())->method('refreshCache');
 
-        $service = $this->createMock(RankingSubmissionService::class);
-        $service->expects($this->once())
-            ->method('getBestAltmetricsScoreSubmissions')
-            ->with([self::FIRST_TRENDING_DOI, self::SECOND_TRENDING_DOI], $this->anything())
+        $rankingSubmission = $this->createMock(RankingSubmission::class);
+        $rankingSubmission->expects($this->once())
+            ->method('getTrending')
+            ->with([self::FIRST_TRENDING_DOI, self::SECOND_TRENDING_DOI])
             ->willReturn([]);
 
-        $trending = new class ($plugin, $bestDois, $encryption, $service) extends TrendingSubmissions {
-            private $service;
-            public function __construct($plugin, $bestDois, $encryption, $service)
-            {
-                parent::__construct($plugin, $bestDois, $encryption);
-                $this->service = $service;
-            }
-            protected function getContextIssn($contextId): ?string
-            {
-                return null;
-            }
-            protected function createRankingSubmissionService($cid, $cp, $l)
-            {
-                return $this->service;
-            }
-        };
-
-        $trending->refreshCache(self::CONTEXT_ID, self::CONTEXT_PATH, self::LIMIT);
+        (new TrendingSubmissions(
+            self::CONTEXT_ID,
+            null,
+            $this->buildApiKeyMock(null),
+            $this->buildTrendingDoisMock([
+                self::FIRST_OPTION_ID => self::FIRST_TRENDING_DOI,
+                self::SECOND_OPTION_ID => self::SECOND_TRENDING_DOI,
+            ]),
+            $rankingSubmission,
+            $bestDois
+        ))->refreshCache(self::LIMIT);
     }
 
     #[Test]
-    public function itShouldFallBackToManualDoisWhenDecryptionFails()
+    public function itShouldNotCallAltmetricWhenTheJournalHasNoIssn()
     {
-        $manualDois = [
-            self::FIRST_OPTION_ID => self::FIRST_TRENDING_DOI,
-            self::SECOND_OPTION_ID => self::SECOND_TRENDING_DOI,
-        ];
-        $plugin = $this->buildPluginMock([
-            'altmetricsApiKey_trending' => self::ENCRYPTED_API_KEY,
-            'trendingDois_trending' => $manualDois,
-        ]);
-
-        $encryption = $this->createMock(DataEncryption::class);
-        $encryption->method('decryptString')
-            ->with(self::ENCRYPTED_API_KEY)
-            ->willThrowException(new \Exception('Failed to decrypt string'));
-
         $bestDois = $this->createMock(BestAltmetricsScoreDois::class);
         $bestDois->expects($this->never())->method('refreshCache');
 
-        $service = $this->createMock(RankingSubmissionService::class);
-        $service->expects($this->once())
-            ->method('getBestAltmetricsScoreSubmissions')
-            ->with([self::FIRST_TRENDING_DOI, self::SECOND_TRENDING_DOI], $this->anything())
-            ->willReturn([]);
+        $rankingSubmission = $this->createMock(RankingSubmission::class);
+        $rankingSubmission->expects($this->never())->method('getTrending');
 
-        $trending = new class ($plugin, $bestDois, $encryption, $service) extends TrendingSubmissions {
-            private $service;
-            public function __construct($plugin, $bestDois, $encryption, $service)
-            {
-                parent::__construct($plugin, $bestDois, $encryption);
-                $this->service = $service;
-            }
-            protected function getContextIssn($contextId): ?string
-            {
-                return null;
-            }
-            protected function createRankingSubmissionService($cid, $cp, $l)
-            {
-                return $this->service;
-            }
-        };
+        $trendingSubmissions = (new TrendingSubmissions(
+            self::CONTEXT_ID,
+            null,
+            $this->buildApiKeyMock(self::DECRYPTED_API_KEY),
+            $this->buildTrendingDoisMock([self::FIRST_OPTION_ID => self::FIRST_TRENDING_DOI]),
+            $rankingSubmission,
+            $bestDois
+        ))->refreshCache(self::LIMIT);
 
-        $previousErrorLog = ini_set('error_log', '/dev/null');
-        try {
-            $trending->refreshCache(self::CONTEXT_ID, self::CONTEXT_PATH, self::LIMIT);
-        } finally {
-            ini_set('error_log', $previousErrorLog);
-        }
+        $this->assertSame([], $trendingSubmissions);
     }
 
     #[Test]
     public function itShouldRespectLimitWhenUsingManualDois()
     {
-        $manualDois = [
-            self::FIRST_OPTION_ID => self::FIRST_TRENDING_DOI,
-            self::SECOND_OPTION_ID => self::SECOND_TRENDING_DOI,
-            self::THIRD_OPTION_ID => self::THIRD_TRENDING_DOI,
-            self::FOURTH_OPTION_ID => self::FOURTH_TRENDING_DOI,
-            self::FIFTH_OPTION_ID => self::FIFTH_TRENDING_DOI,
-        ];
-        $plugin = $this->buildPluginMock([
-            'altmetricsApiKey_trending' => null,
-            'trendingDois_trending' => $manualDois,
-        ]);
-
-        $service = $this->createMock(RankingSubmissionService::class);
-        $service->expects($this->once())
-            ->method('getBestAltmetricsScoreSubmissions')
-            ->with(
-                [self::FIRST_TRENDING_DOI, self::SECOND_TRENDING_DOI, self::THIRD_TRENDING_DOI],
-                $this->anything()
-            )
+        $rankingSubmission = $this->createMock(RankingSubmission::class);
+        $rankingSubmission->expects($this->once())
+            ->method('getTrending')
+            ->with([self::FIRST_TRENDING_DOI, self::SECOND_TRENDING_DOI, self::THIRD_TRENDING_DOI])
             ->willReturn([]);
 
-        $trending = new class ($plugin, null, null, $service) extends TrendingSubmissions {
-            private $service;
-            public function __construct($plugin, $bestDois, $encryption, $service)
-            {
-                parent::__construct($plugin, $bestDois, $encryption);
-                $this->service = $service;
-            }
-            protected function getContextIssn($contextId): ?string
-            {
-                return null;
-            }
-            protected function createRankingSubmissionService($cid, $cp, $l)
-            {
-                return $this->service;
-            }
-        };
-
-        $trending->refreshCache(self::CONTEXT_ID, self::CONTEXT_PATH, 3);
+        (new TrendingSubmissions(
+            self::CONTEXT_ID,
+            null,
+            $this->buildApiKeyMock(null),
+            $this->buildTrendingDoisMock([
+                self::FIRST_OPTION_ID => self::FIRST_TRENDING_DOI,
+                self::SECOND_OPTION_ID => self::SECOND_TRENDING_DOI,
+                self::THIRD_OPTION_ID => self::THIRD_TRENDING_DOI,
+                self::FOURTH_OPTION_ID => self::FOURTH_TRENDING_DOI,
+                self::FIFTH_OPTION_ID => self::FIFTH_TRENDING_DOI,
+            ]),
+            $rankingSubmission
+        ))->refreshCache(3);
     }
 }

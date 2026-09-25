@@ -2,11 +2,10 @@
 
 namespace APP\plugins\generic\rankingPlugin\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\clients\Altmetrics;
 use APP\plugins\generic\rankingPlugin\classes\DataEncryption;
+use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
 use APP\plugins\generic\rankingPlugin\classes\settings\TabSettings;
 use APP\plugins\generic\rankingPlugin\RankingPlugin;
-use Exception;
 use PHPUnit\Framework\Attributes\Test;
 use PKP\tests\PKPTestCase;
 
@@ -30,20 +29,6 @@ class TabSettingsTest extends PKPTestCase
         return $plugin;
     }
 
-    private function buildTabSettings(array &$settings, string $tabId, $dataEncryption = null, $altmetricsClient = null): TabSettings
-    {
-        return new class ($this->buildPluginMock($settings), self::CONTEXT_ID, $tabId, $dataEncryption, $altmetricsClient) extends TabSettings {
-            protected function getContextIssn(): ?string
-            {
-                return '1234-5678';
-            }
-
-            protected function refreshCache(int $limit): void
-            {
-            }
-        };
-    }
-
     private function buildInput(array $apiKeyInput = []): array
     {
         return array_merge([
@@ -55,129 +40,48 @@ class TabSettingsTest extends PKPTestCase
     }
 
     #[Test]
-    public function itShouldStoreEncryptedApiKeyWhenProvided()
+    public function itShouldDelegateApiKeyValidationAndStorageForTheTrendingTab()
     {
         $settings = [];
-        $encryption = $this->createMock(DataEncryption::class);
-        $encryption->expects($this->once())
-            ->method('encryptString')
-            ->with('my-plaintext-key')
-            ->willReturn('encrypted-value');
+        $input = $this->buildInput(['altmetricsApiKey' => 'my-key']);
+        $altmetricsApiKey = $this->createMock(AltmetricsApiKey::class);
+        $altmetricsApiKey->expects($this->once())
+            ->method('validate')
+            ->with($input, self::ISSN)
+            ->willReturn(['altmetricsApiKey' => ['invalid']]);
+        $altmetricsApiKey->expects($this->once())->method('save')->with($input);
 
-        $this->buildTabSettings($settings, 'trending', $encryption)
-            ->save($this->buildInput(['altmetricsApiKey' => 'my-plaintext-key', 'removeAltmetricsApiKey' => 'false']));
+        $tabSettings = new TabSettings($this->buildPluginMock($settings), self::CONTEXT_ID, 'trending', $altmetricsApiKey);
 
-        $this->assertSame('encrypted-value', $settings[TabSettings::API_KEY_SETTING]);
-    }
-
-    #[Test]
-    public function itShouldClearApiKeyWhenRemoveCheckboxIsTrue()
-    {
-        $settings = [TabSettings::API_KEY_SETTING => 'previous-key'];
-        $encryption = $this->createMock(DataEncryption::class);
-        $encryption->expects($this->never())->method('encryptString');
-
-        $this->buildTabSettings($settings, 'trending', $encryption)
-            ->save($this->buildInput(['altmetricsApiKey' => '', 'removeAltmetricsApiKey' => 'true']));
-
-        $this->assertSame('', $settings[TabSettings::API_KEY_SETTING]);
-    }
-
-    #[Test]
-    public function itShouldPreserveExistingKeyWhenBothEmpty()
-    {
-        $settings = [TabSettings::API_KEY_SETTING => 'previous-key'];
-        $encryption = $this->createMock(DataEncryption::class);
-        $encryption->expects($this->never())->method('encryptString');
-
-        $this->buildTabSettings($settings, 'trending', $encryption)
-            ->save($this->buildInput(['altmetricsApiKey' => '', 'removeAltmetricsApiKey' => 'false']));
-
-        $this->assertSame('previous-key', $settings[TabSettings::API_KEY_SETTING]);
-    }
-
-    #[Test]
-    public function itShouldFailValidationWhenAltmetricRejectsTheKey()
-    {
-        $settings = [];
-        $altmetricsClient = $this->createMock(Altmetrics::class);
-        $altmetricsClient->expects($this->once())
-            ->method('fetchBestScoreSubmissions')
-            ->with(self::ISSN, $this->anything(), 'bad-key')
-            ->willThrowException(new Exception(__('plugins.generic.rankingPlugin.client.altmetrics.clientError')));
-
-        $errors = $this->buildTabSettings($settings, 'trending', null, $altmetricsClient)
-            ->validate($this->buildInput(['altmetricsApiKey' => 'bad-key']));
-
-        $this->assertArrayHasKey('altmetricsApiKey', $errors);
-        $this->assertArrayNotHasKey(TabSettings::API_KEY_SETTING, $settings);
-    }
-
-    #[Test]
-    public function itShouldPassValidationWhenAltmetricAcceptsTheKey()
-    {
-        $settings = [];
-        $altmetricsClient = $this->createMock(Altmetrics::class);
-        $altmetricsClient->expects($this->once())
-            ->method('fetchBestScoreSubmissions')
-            ->with(self::ISSN, $this->anything(), 'good-key')
-            ->willReturn(['results' => []]);
-
-        $errors = $this->buildTabSettings($settings, 'trending', null, $altmetricsClient)
-            ->validate($this->buildInput(['altmetricsApiKey' => 'good-key']));
-
-        $this->assertSame([], $errors);
-    }
-
-    #[Test]
-    public function itShouldNotCallAltmetricWhenKeyIsBeingRemoved()
-    {
-        $settings = [TabSettings::API_KEY_SETTING => 'previous-key'];
-        $altmetricsClient = $this->createMock(Altmetrics::class);
-        $altmetricsClient->expects($this->never())->method('fetchBestScoreSubmissions');
-
-        $errors = $this->buildTabSettings($settings, 'trending', null, $altmetricsClient)
-            ->validate($this->buildInput(['altmetricsApiKey' => 'some-key', 'removeAltmetricsApiKey' => 'true']));
-
-        $this->assertSame([], $errors);
+        $this->assertSame(['altmetricsApiKey' => ['invalid']], $tabSettings->validate($input, self::ISSN));
+        $tabSettings->save($input);
     }
 
     #[Test]
     public function itShouldIgnoreApiKeyFieldsForNonTrendingTabs()
     {
         $settings = [];
-        $encryption = $this->createMock(DataEncryption::class);
-        $encryption->expects($this->never())->method('encryptString');
-        $altmetricsClient = $this->createMock(Altmetrics::class);
-        $altmetricsClient->expects($this->never())->method('fetchBestScoreSubmissions');
+        $altmetricsApiKey = $this->createMock(AltmetricsApiKey::class);
+        $altmetricsApiKey->expects($this->never())->method('validate');
+        $altmetricsApiKey->expects($this->never())->method('save');
 
-        $tabSettings = $this->buildTabSettings($settings, 'mostRead', $encryption, $altmetricsClient);
+        $tabSettings = new TabSettings($this->buildPluginMock($settings), self::CONTEXT_ID, 'mostRead', $altmetricsApiKey);
         $input = $this->buildInput(['altmetricsApiKey' => 'my-key']);
 
-        $this->assertSame([], $tabSettings->validate($input));
+        $this->assertSame([], $tabSettings->validate($input, self::ISSN));
         $tabSettings->save($input);
-        $this->assertArrayNotHasKey(TabSettings::API_KEY_SETTING, $settings);
+        $this->assertArrayNotHasKey(AltmetricsApiKey::SETTING_NAME, $settings);
     }
 
     #[Test]
     public function itShouldExposeHasAltmetricsApiKeyFlagWithoutLeakingValue()
     {
-        $settings = [TabSettings::API_KEY_SETTING => (new DataEncryption())->encryptString('stored')];
+        $settings = [AltmetricsApiKey::SETTING_NAME => (new DataEncryption())->encryptString('stored')];
 
-        $values = $this->buildTabSettings($settings, 'trending')->getValues();
+        $values = (new TabSettings($this->buildPluginMock($settings), self::CONTEXT_ID, 'trending'))->getValues();
 
         $this->assertTrue($values['hasAltmetricsApiKey']);
         $this->assertArrayNotHasKey('altmetricsApiKey', $values);
-    }
-
-    #[Test]
-    public function itShouldReportAStoredKeyOnlyWhenItStillDecrypts()
-    {
-        $settings = [TabSettings::API_KEY_SETTING => 'base64:encrypted-with-the-old-api-key-secret'];
-        $this->assertFalse($this->buildTabSettings($settings, 'trending', new DataEncryption())->hasApiKey());
-
-        $settings = [TabSettings::API_KEY_SETTING => (new DataEncryption())->encryptString('valid-key')];
-        $this->assertTrue($this->buildTabSettings($settings, 'trending', new DataEncryption())->hasApiKey());
     }
 
     #[Test]
@@ -185,7 +89,7 @@ class TabSettingsTest extends PKPTestCase
     {
         $settings = [];
 
-        $this->buildTabSettings($settings, 'mostRead')->save([
+        (new TabSettings($this->buildPluginMock($settings), self::CONTEXT_ID, 'mostRead'))->save([
             'itemsPerTab' => '0',
             'itemsPerPage' => '-3',
             'mostReadDays' => '',

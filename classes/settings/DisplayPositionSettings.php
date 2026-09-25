@@ -12,6 +12,18 @@ class DisplayPositionSettings
     ) {
     }
 
+    public function get(): array
+    {
+        return [
+            RankingDisplayPosition::SETTING_NAME => RankingDisplayPosition::normalize(
+                $this->plugin->getSetting($this->contextId, RankingDisplayPosition::SETTING_NAME)
+            ),
+            RankingDisplayPosition::SECTION_SETTING_NAME => RankingDisplayPosition::normalizeSection(
+                $this->plugin->getSetting($this->contextId, RankingDisplayPosition::SECTION_SETTING_NAME)
+            ),
+        ];
+    }
+
     public function save(array $input): void
     {
         $this->plugin->updateSetting(

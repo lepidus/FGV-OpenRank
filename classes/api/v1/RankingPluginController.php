@@ -2,12 +2,8 @@
 
 namespace APP\plugins\generic\rankingPlugin\classes\api\v1;
 
-use APP\plugins\generic\rankingPlugin\classes\cache\MostCitedDois;
-use APP\plugins\generic\rankingPlugin\classes\cache\MostRead;
-use APP\plugins\generic\rankingPlugin\classes\cache\MostRecent;
-use APP\plugins\generic\rankingPlugin\classes\cache\TrendingSubmissions;
-use APP\plugins\generic\rankingPlugin\classes\RankingSubmissionService;
 use APP\plugins\generic\rankingPlugin\classes\RankingTabs;
+use APP\plugins\generic\rankingPlugin\classes\services\RankingTabService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -54,63 +50,33 @@ class RankingPluginController extends PKPBaseController
 
     public function getMostRecentSubmissions(): JsonResponse
     {
-        $request = $this->getRequest();
-        $context = $request->getContext();
-        $limit = $this->getRankingTabs()->getItemsPerTab(RankingTabs::MOST_RECENT);
-
-        return $this->respond('mostRecentSubmissions', fn () => (new MostRecent())->getMostRecentSubmissions($context, $request, $limit));
+        return $this->respond('mostRecentSubmissions', RankingTabs::MOST_RECENT);
     }
 
     public function getMostReadSubmissions(): JsonResponse
     {
-        $request = $this->getRequest();
-        $context = $request->getContext();
-        $limit = $this->getRankingTabs()->getItemsPerTab(RankingTabs::MOST_READ);
-
-        return $this->respond('mostReadSubmissions', fn () => (new MostRead($this->plugin))->getMostReadSubmissions($context, $request, $limit));
+        return $this->respond('mostReadSubmissions', RankingTabs::MOST_READ);
     }
 
     public function getMostCited(): JsonResponse
     {
-        $request = $this->getRequest();
-        $context = $request->getContext();
-        $limit = $this->getRankingTabs()->getItemsPerTab(RankingTabs::MOST_CITED);
-        $issn = $context->getData('onlineIssn') ?: $context->getData('printIssn');
-
-        return $this->respond('mostCitedSubmissions', function () use ($request, $context, $limit, $issn) {
-            if (!$issn) {
-                return [];
-            }
-
-            $mostCitedDois = (new MostCitedDois())->getMostCitedSubmissionsDois($context->getId(), $issn, $limit);
-            $rankingSubmissionService = new RankingSubmissionService($context->getId(), $context->getPath(), $limit);
-
-            return $rankingSubmissionService->getAListOfMostCitedSubmissionsByCachedDois($mostCitedDois, $request);
-        });
+        return $this->respond('mostCitedSubmissions', RankingTabs::MOST_CITED);
     }
 
     public function getTrendingSubmissions(): JsonResponse
     {
-        $context = $this->getRequest()->getContext();
-        $limit = $this->getRankingTabs()->getItemsPerTab(RankingTabs::TRENDING);
-
-        return $this->respond(
-            'trendingSubmissions',
-            fn () => (new TrendingSubmissions($this->plugin))->getTrendingSubmissions($context->getId(), $context->getPath(), $limit)
-        );
+        return $this->respond('trendingSubmissions', RankingTabs::TRENDING);
     }
 
-    private function respond(string $key, callable $getSubmissions): JsonResponse
+    private function respond(string $key, string $tabId): JsonResponse
     {
+        $request = $this->getRequest();
+        $rankingTabService = new RankingTabService($this->plugin, $request->getContext(), $request);
+
         try {
-            return response()->json([$key => $getSubmissions()], Response::HTTP_OK);
+            return response()->json([$key => $rankingTabService->getSubmissions($tabId)], Response::HTTP_OK);
         } catch (Exception $e) {
             return response()->json(['errorMessage' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private function getRankingTabs(): RankingTabs
-    {
-        return new RankingTabs($this->plugin, $this->getRequest()->getContext()->getId());
     }
 }

@@ -14,20 +14,16 @@ class DisplayPositionForm extends FormComponent
     public $id = self::FORM_DISPLAY_POSITION;
     public $method = 'PUT';
 
-    public function __construct(string $action, $plugin, int $contextId)
+    public function __construct(string $action, array $values)
     {
         $this->action = $action;
-
-        $position = RankingDisplayPosition::normalize(
-            $plugin->getSetting($contextId, RankingDisplayPosition::SETTING_NAME)
-        );
 
         $this->addField(new FieldOptions(RankingDisplayPosition::SETTING_NAME, [
             'label' => __('plugins.generic.rankingPlugin.settings.displayPosition'),
             'description' => __('plugins.generic.rankingPlugin.settings.displayPosition.description'),
             'type' => 'radio',
             'options' => self::getPositionOptions(),
-            'value' => $position,
+            'value' => $values[RankingDisplayPosition::SETTING_NAME],
         ]))
             ->addField(new FieldText(RankingDisplayPosition::SECTION_SETTING_NAME, [
                 'label' => __('plugins.generic.rankingPlugin.settings.displayPositionSection'),
@@ -35,9 +31,7 @@ class DisplayPositionForm extends FormComponent
                 'inputType' => 'number',
                 'size' => 'small',
                 'showWhen' => [RankingDisplayPosition::SETTING_NAME, RankingDisplayPosition::AFTER_SECTION],
-                'value' => RankingDisplayPosition::normalizeSection(
-                    $plugin->getSetting($contextId, RankingDisplayPosition::SECTION_SETTING_NAME)
-                ),
+                'value' => $values[RankingDisplayPosition::SECTION_SETTING_NAME],
             ]));
     }
 

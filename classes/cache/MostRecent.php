@@ -2,34 +2,30 @@
 
 namespace APP\plugins\generic\rankingPlugin\classes\cache;
 
-use APP\plugins\generic\rankingPlugin\classes\RankingSubmissionService;
+use APP\plugins\generic\rankingPlugin\classes\factory\RankingSubmission;
 
 class MostRecent
 {
     private RankingCache $cache;
 
-    public function __construct()
-    {
+    public function __construct(
+        private int $contextId,
+        private RankingSubmission $rankingSubmission
+    ) {
         $this->cache = new RankingCache('most_recent_submissions');
     }
 
-    public function getMostRecentSubmissions($context, $request, $limit = null)
+    public function getMostRecentSubmissions(int $limit): array
     {
-        return $this->cache->get($context->getId())
-            ?? $this->refreshCache($context, $request, $limit);
+        return $this->cache->get($this->contextId)
+            ?? $this->refreshCache($limit);
     }
 
-    public function refreshCache($context, $request, $limit = null)
+    public function refreshCache(int $limit): array
     {
-        $rankingSubmissionService = new RankingSubmissionService(
-            $context->getId(),
-            $context->getPath(),
-            $limit
-        );
-
         return $this->cache->put(
-            $context->getId(),
-            $rankingSubmissionService->getMostRecent($request)
+            $this->contextId,
+            $this->rankingSubmission->getMostRecent($limit)
         );
     }
 }

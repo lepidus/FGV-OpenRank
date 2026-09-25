@@ -4,10 +4,11 @@ namespace APP\plugins\generic\rankingPlugin\classes\api\v1;
 
 use APP\core\Application;
 use APP\plugins\generic\rankingPlugin\classes\RankingTabs;
-use APP\plugins\generic\rankingPlugin\classes\cache\TrendingSubmissions;
 use APP\plugins\generic\rankingPlugin\classes\components\forms\DisplayPositionForm;
 use APP\plugins\generic\rankingPlugin\classes\components\forms\TabSettingsForm;
 use APP\plugins\generic\rankingPlugin\classes\components\forms\TrendingDoiForm;
+use APP\plugins\generic\rankingPlugin\classes\services\RankingTabService;
+use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
 use APP\plugins\generic\rankingPlugin\classes\settings\DisplayPositionSettings;
 use APP\plugins\generic\rankingPlugin\classes\settings\TabSettings;
 use APP\plugins\generic\rankingPlugin\classes\settings\TrendingDois;
@@ -113,12 +114,13 @@ class RankingPluginSettingsController extends PKPBaseController
         $tabSettings = new TabSettings($this->plugin, $this->getContextId(), $tabId);
         $input = $illuminateRequest->all();
 
-        $errors = $tabSettings->validate($input);
+        $errors = $tabSettings->validate($input, $this->getRankingTabService()->getAltmetricsIssn());
         if (!empty($errors)) {
             return response()->json($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $tabSettings->save($input);
+        $this->refreshTab($tabId);
 
         return response()->json($this->getSettingsState(), Response::HTTP_OK);
     }
@@ -131,7 +133,7 @@ class RankingPluginSettingsController extends PKPBaseController
     public function editTrendingDoi(IlluminateRequest $illuminateRequest): JsonResponse
     {
         $doiId = $illuminateRequest->route('doiId');
-        if (!$this->trendingDoiExists($doiId)) {
+        if (!$this->getTrendingDois()->has($doiId)) {
             return response()->json(['error' => __('api.404.resourceNotFound')], Response::HTTP_NOT_FOUND);
         }
 
@@ -141,12 +143,12 @@ class RankingPluginSettingsController extends PKPBaseController
     public function deleteTrendingDoi(IlluminateRequest $illuminateRequest): JsonResponse
     {
         $doiId = $illuminateRequest->route('doiId');
-        if (!$this->trendingDoiExists($doiId)) {
+        if (!$this->getTrendingDois()->has($doiId)) {
             return response()->json(['error' => __('api.404.resourceNotFound')], Response::HTTP_NOT_FOUND);
         }
 
         $this->getTrendingDois()->remove($doiId);
-        $this->refreshTrendingCache();
+        $this->refreshTab(RankingTabs::TRENDING);
 
         return response()->json($this->getSettingsState(), Response::HTTP_OK);
     }
@@ -154,7 +156,7 @@ class RankingPluginSettingsController extends PKPBaseController
     public function orderTrendingDois(IlluminateRequest $illuminateRequest): JsonResponse
     {
         $this->getTrendingDois()->reorder((array) $illuminateRequest->input('ids', []));
-        $this->refreshTrendingCache();
+        $this->refreshTab(RankingTabs::TRENDING);
 
         return response()->json($this->getSettingsState(), Response::HTTP_OK);
     }
@@ -170,7 +172,7 @@ class RankingPluginSettingsController extends PKPBaseController
         }
 
         $trendingDois->save($doi, $doiId);
-        $this->refreshTrendingCache();
+        $this->refreshTab(RankingTabs::TRENDING);
 
         return response()->json($this->getSettingsState(), Response::HTTP_OK);
     }
@@ -187,33 +189,35 @@ class RankingPluginSettingsController extends PKPBaseController
         $tabs = [];
         $tabForms = [];
         foreach ($rankingTabs->getOrdered() as $tabId) {
+            $tabValues = (new TabSettings($this->plugin, $contextId, $tabId))->getValues();
             $tabs[] = [
                 'id' => $tabId,
                 'label' => __("plugins.generic.rankingPlugin.tabs.{$tabId}.defaultTitle"),
-                'customTitle' => $this->getSettingInLocale("customTitle_{$tabId}", $locale),
-                'customDescription' => $this->getSettingInLocale("customDescription_{$tabId}", $locale),
+                'customTitle' => $this->getInLocale($tabValues['customTitle'], $locale),
+                'customDescription' => $this->getInLocale($tabValues['description'], $locale),
                 'enabled' => $rankingTabs->isEnabled($tabId),
             ];
 
-            $tabValues = (new TabSettings($this->plugin, $contextId, $tabId))->getValues();
             $tabForms[$tabId] = (new TabSettingsForm($this->getApiUrl("tabs/{$tabId}"), $locales, $tabId, $tabValues))->getConfig();
         }
 
         return [
             'tabs' => $tabs,
             'tabForms' => $tabForms,
-            'displayPositionForm' => (new DisplayPositionForm($this->getApiUrl(''), $this->plugin, $contextId))->getConfig(),
+            'displayPositionForm' => (new DisplayPositionForm(
+                $this->getApiUrl(''),
+                (new DisplayPositionSettings($this->plugin, $contextId))->get()
+            ))->getConfig(),
             'trendingDois' => $this->getTrendingDois()->getItems(),
             'trendingDoisApiUrl' => $this->getApiUrl('trendingDois'),
             'trendingDoiForm' => (new TrendingDoiForm($this->getApiUrl('trendingDois')))->getConfig(),
-            'hasAltmetricsApiKey' => (new TabSettings($this->plugin, $contextId, RankingTabs::TRENDING))->hasApiKey(),
+            'hasAltmetricsApiKey' => (new AltmetricsApiKey($this->plugin, $contextId))->has(),
         ];
     }
 
-    private function getSettingInLocale(string $settingName, string $locale): ?string
+    private function getInLocale($localizedValue, string $locale): ?string
     {
-        $value = $this->plugin->getSetting($this->getContextId(), $settingName);
-        return is_array($value) ? ($value[$locale] ?? null) : null;
+        return is_array($localizedValue) ? ($localizedValue[$locale] ?? null) : null;
     }
 
     private function getFormLocales($context): array
@@ -237,26 +241,24 @@ class RankingPluginSettingsController extends PKPBaseController
         );
     }
 
-    private function trendingDoiExists(string $doiId): bool
-    {
-        return array_key_exists($doiId, $this->getTrendingDois()->getStored());
-    }
-
     private function getTrendingDois(): TrendingDois
     {
         return new TrendingDois($this->plugin, $this->getContextId());
     }
 
-    private function refreshTrendingCache(): void
+    private function refreshTab(string $tabId): void
     {
-        $context = $this->getRequest()->getContext();
-        $limit = (new RankingTabs($this->plugin, $context->getId()))->getItemsPerTab(RankingTabs::TRENDING);
-
         try {
-            (new TrendingSubmissions($this->plugin))->refreshCache($context->getId(), $context->getPath(), $limit);
+            $this->getRankingTabService()->refresh($tabId);
         } catch (Exception $error) {
             error_log($error->getMessage());
         }
+    }
+
+    private function getRankingTabService(): RankingTabService
+    {
+        $request = $this->getRequest();
+        return new RankingTabService($this->plugin, $request->getContext(), $request);
     }
 
     private function getContextId(): int

@@ -2,41 +2,30 @@
 
 namespace APP\plugins\generic\rankingPlugin\classes\cache;
 
-use APP\plugins\generic\rankingPlugin\classes\RankingSubmissionService;
-use APP\plugins\generic\rankingPlugin\classes\RankingTabs;
+use APP\plugins\generic\rankingPlugin\classes\factory\RankingSubmission;
 
 class MostRead
 {
     private RankingCache $cache;
 
     public function __construct(
-        private $plugin = null
+        private int $contextId,
+        private RankingSubmission $rankingSubmission
     ) {
         $this->cache = new RankingCache('most_read_submissions');
     }
 
-    public function getMostReadSubmissions($context, $request, $limit = null)
+    public function getMostReadSubmissions(int $limit, int $mostReadDays): array
     {
-        return $this->cache->get($context->getId())
-            ?? $this->refreshCache($context, $request, $limit);
+        return $this->cache->get($this->contextId)
+            ?? $this->refreshCache($limit, $mostReadDays);
     }
 
-    public function refreshCache($context, $request, $limit = null)
+    public function refreshCache(int $limit, int $mostReadDays): array
     {
-        $mostReadDays = RankingTabs::DEFAULT_MOST_READ_DAYS;
-        if ($this->plugin) {
-            $mostReadDays = (new RankingTabs($this->plugin, $context->getId()))->getMostReadDays();
-        }
-
-        $rankingSubmissionService = new RankingSubmissionService(
-            $context->getId(),
-            $context->getPath(),
-            $limit
-        );
-
         return $this->cache->put(
-            $context->getId(),
-            $rankingSubmissionService->getMostRead($request, $mostReadDays)
+            $this->contextId,
+            $this->rankingSubmission->getMostRead($limit, $mostReadDays)
         );
     }
 }

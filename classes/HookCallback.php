@@ -5,6 +5,7 @@ namespace APP\plugins\generic\rankingPlugin\classes;
 use APP\core\Application;
 use APP\plugins\generic\rankingPlugin\classes\api\v1\RankingPluginController;
 use APP\plugins\generic\rankingPlugin\classes\api\v1\RankingPluginSettingsController;
+use APP\plugins\generic\rankingPlugin\classes\settings\DisplayPositionSettings;
 use APP\template\TemplateManager;
 use PKP\core\APIRouter;
 use PKP\core\PKPBaseController;
@@ -112,7 +113,7 @@ class HookCallback
             'orderedTabs' => $tabs,
         ]);
 
-        $rankingPluginJavaScriptVariables = $this->getDisplayPositionSettings($contextId) + [
+        $rankingPluginJavaScriptVariables = (new DisplayPositionSettings($this->plugin, $contextId))->get() + [
             'currentLocale' => $locale,
             'primaryLocale' => $primaryLocale,
             'publishedDateLocaleMessage' => __('plugins.generic.rankingPlugin.tabs.content.publishedDate'),
@@ -143,27 +144,15 @@ class HookCallback
             return false;
         }
 
-        $settings = $this->getDisplayPositionSettings($contextId);
+        $settings = (new DisplayPositionSettings($this->plugin, $contextId))->get();
 
-        if (!RankingDisplayPosition::needsPlaceholder($settings['displayPosition'])) {
+        if (!RankingDisplayPosition::needsPlaceholder($settings[RankingDisplayPosition::SETTING_NAME])) {
             return false;
         }
 
         $args[2] .= RankingDisplayPosition::PLACEHOLDER;
 
         return false;
-    }
-
-    public function getDisplayPositionSettings($contextId): array
-    {
-        return [
-            'displayPosition' => RankingDisplayPosition::normalize(
-                $this->plugin->getSetting($contextId, RankingDisplayPosition::SETTING_NAME)
-            ),
-            'displayPositionSection' => RankingDisplayPosition::normalizeSection(
-                $this->plugin->getSetting($contextId, RankingDisplayPosition::SECTION_SETTING_NAME)
-            ),
-        ];
     }
 
     protected function getContextId()

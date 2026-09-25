@@ -2,7 +2,7 @@
 
 namespace APP\plugins\generic\rankingPlugin\classes\migrations;
 
-use APP\plugins\generic\rankingPlugin\classes\settings\TabSettings;
+use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
 use Exception;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Encryption\Encrypter;
@@ -80,7 +80,7 @@ class LegacySettingsMigration extends Migration
     {
         $settings = DB::table('plugin_settings')
             ->where('plugin_name', self::PLUGIN_NAME)
-            ->where('setting_name', TabSettings::API_KEY_SETTING)
+            ->where('setting_name', AltmetricsApiKey::SETTING_NAME)
             ->where('setting_value', 'like', self::LEGACY_BASE64_PREFIX . '%')
             ->get();
 

@@ -3,11 +3,7 @@
 namespace APP\plugins\generic\rankingPlugin\classes\tasks;
 
 use APP\core\Application;
-use APP\plugins\generic\rankingPlugin\classes\cache\MostCitedDois;
-use APP\plugins\generic\rankingPlugin\classes\cache\MostRead;
-use APP\plugins\generic\rankingPlugin\classes\cache\MostRecent;
-use APP\plugins\generic\rankingPlugin\classes\cache\TrendingSubmissions;
-use APP\plugins\generic\rankingPlugin\classes\RankingTabs;
+use APP\plugins\generic\rankingPlugin\classes\services\RankingTabService;
 use Exception;
 use PKP\plugins\PluginRegistry;
 use PKP\scheduledTask\ScheduledTask;
@@ -47,21 +43,8 @@ class RankingCacheUpdateTask extends ScheduledTask
             ScheduledTaskHelper::SCHEDULED_TASK_MESSAGE_TYPE_NOTICE
         );
 
-        $rankingTabs = new RankingTabs($plugin, $context->getId());
-        $issn = $context->getData('onlineIssn') ?: $context->getData('printIssn');
-
         try {
-            (new MostRecent())->refreshCache($context, $request, $rankingTabs->getItemsPerTab(RankingTabs::MOST_RECENT));
-            (new MostRead($plugin))->refreshCache($context, $request, $rankingTabs->getItemsPerTab(RankingTabs::MOST_READ));
-
-            if ($issn) {
-                (new MostCitedDois())->refreshCache($context->getId(), $issn, $rankingTabs->getItemsPerTab(RankingTabs::MOST_CITED));
-                (new TrendingSubmissions($plugin))->refreshCache(
-                    $context->getId(),
-                    $context->getPath(),
-                    $rankingTabs->getItemsPerTab(RankingTabs::TRENDING)
-                );
-            }
+            (new RankingTabService($plugin, $context, $request))->refreshAll();
 
             $this->addExecutionLogEntry(
                 __('plugins.generic.rankingPlugin.scheduledTask.updateComplete', ['contextName' => $context->getLocalizedName()]),
