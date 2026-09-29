@@ -1,8 +1,11 @@
 <?php
 
-import('lib.pkp.tests.PKPTestCase');
-import('plugins.generic.rankingPlugin.classes.cache.BestAltmetricsScoreDois');
-import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
+namespace APP\plugins\generic\rankingPlugin\tests;
+
+use APP\plugins\generic\rankingPlugin\classes\cache\BestAltmetricsScoreDois;
+use APP\plugins\generic\rankingPlugin\classes\clients\Altmetrics;
+use PHPUnit\Framework\Attributes\Test;
+use PKP\tests\PKPTestCase;
 
 class BestAltmetricsScoreDoisTest extends PKPTestCase
 {
@@ -10,9 +13,7 @@ class BestAltmetricsScoreDoisTest extends PKPTestCase
     private const ISSN = '1234-5678';
     private const LIMIT = 4;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldPassApiKeyToAltmetricsClient()
     {
         $altmetricsMock = $this->createMock(Altmetrics::class);
@@ -25,9 +26,7 @@ class BestAltmetricsScoreDoisTest extends PKPTestCase
         $bestDois->refreshCache(self::CONTEXT_ID, self::ISSN, self::LIMIT, 'my-api-key');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldPassNullWhenNoApiKeyProvided()
     {
         $altmetricsMock = $this->createMock(Altmetrics::class);

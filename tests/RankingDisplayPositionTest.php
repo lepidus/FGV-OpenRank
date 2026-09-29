@@ -1,9 +1,13 @@
 <?php
 
-import('lib.pkp.tests.PKPTestCase');
-import('plugins.generic.rankingPlugin.classes.RankingDisplayPosition');
-import('plugins.generic.rankingPlugin.tests.helpers.HookCallbackForTests');
-import('plugins.generic.rankingPlugin.RankingPlugin');
+namespace APP\plugins\generic\rankingPlugin\tests;
+
+use APP\plugins\generic\rankingPlugin\RankingPlugin;
+use APP\plugins\generic\rankingPlugin\classes\RankingDisplayPosition;
+use APP\plugins\generic\rankingPlugin\classes\settings\DisplayPositionSettings;
+use APP\plugins\generic\rankingPlugin\tests\helpers\HookCallbackForTests;
+use PHPUnit\Framework\Attributes\Test;
+use PKP\tests\PKPTestCase;
 
 class RankingDisplayPositionTest extends PKPTestCase
 {
@@ -31,9 +35,7 @@ class RankingDisplayPositionTest extends PKPTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldDefaultToAdditionalContentWhenValueIsAbsent()
     {
         $this->assertSame(
@@ -42,9 +44,7 @@ class RankingDisplayPositionTest extends PKPTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldFallBackToAdditionalContentForUnknownValues()
     {
         $this->assertSame(
@@ -53,9 +53,7 @@ class RankingDisplayPositionTest extends PKPTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldKeepKnownValues()
     {
         foreach (RankingDisplayPosition::getAll() as $position) {
@@ -66,9 +64,7 @@ class RankingDisplayPositionTest extends PKPTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldDefaultTheSectionNumberToTheFirstOne()
     {
         $this->assertSame(1, RankingDisplayPosition::normalizeSection(null));
@@ -76,27 +72,21 @@ class RankingDisplayPositionTest extends PKPTestCase
         $this->assertSame(1, RankingDisplayPosition::normalizeSection('not a number'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldRejectSectionNumbersBelowTheFirstOne()
     {
         $this->assertSame(1, RankingDisplayPosition::normalizeSection(0));
         $this->assertSame(1, RankingDisplayPosition::normalizeSection(-4));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldKeepValidSectionNumbers()
     {
         $this->assertSame(3, RankingDisplayPosition::normalizeSection(3));
         $this->assertSame(3, RankingDisplayPosition::normalizeSection('3'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldOnlyNeedAPlaceholderWhenThePluginOwnsThePosition()
     {
         $this->assertFalse(
@@ -114,9 +104,7 @@ class RankingDisplayPositionTest extends PKPTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldNotOutputThePlaceholderWhenPositionIsAdditionalContent()
     {
         $plugin = $this->buildPluginMock([
@@ -130,9 +118,7 @@ class RankingDisplayPositionTest extends PKPTestCase
         $this->assertNull($output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldNotOutputThePlaceholderWhenPositionWasNeverConfigured()
     {
         $plugin = $this->buildPluginMock([]);
@@ -143,9 +129,7 @@ class RankingDisplayPositionTest extends PKPTestCase
         $this->assertNull($output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldOutputThePlaceholderForEveryPluginOwnedPosition()
     {
         $positions = [
@@ -166,46 +150,36 @@ class RankingDisplayPositionTest extends PKPTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldHandTheNormalizedPositionToTheFrontend()
     {
         $plugin = $this->buildPluginMock([
             RankingDisplayPosition::SETTING_NAME => RankingDisplayPosition::AFTER_SECTION,
             RankingDisplayPosition::SECTION_SETTING_NAME => '2',
         ]);
-        $hookCallback = new HookCallbackForTests($plugin, self::CONTEXT_ID);
-
         $this->assertSame(
             [
                 'displayPosition' => RankingDisplayPosition::AFTER_SECTION,
                 'displayPositionSection' => 2,
             ],
-            $hookCallback->getDisplayPositionSettings(self::CONTEXT_ID)
+            (new DisplayPositionSettings($plugin, self::CONTEXT_ID))->get()
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldHandSafeDefaultsToTheFrontendWhenNothingIsConfigured()
     {
         $plugin = $this->buildPluginMock([]);
-        $hookCallback = new HookCallbackForTests($plugin, self::CONTEXT_ID);
-
         $this->assertSame(
             [
                 'displayPosition' => RankingDisplayPosition::ADDITIONAL_CONTENT,
                 'displayPositionSection' => 1,
             ],
-            $hookCallback->getDisplayPositionSettings(self::CONTEXT_ID)
+            (new DisplayPositionSettings($plugin, self::CONTEXT_ID))->get()
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldPreserveOutputFromOtherPluginsOnTheSameHook()
     {
         $plugin = $this->buildPluginMock([
@@ -221,9 +195,7 @@ class RankingDisplayPositionTest extends PKPTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldNotOutputThePlaceholderWithoutAContext()
     {
         $plugin = $this->buildPluginMock([
@@ -236,9 +208,7 @@ class RankingDisplayPositionTest extends PKPTestCase
         $this->assertNull($output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldNotStopOtherCallbacksRegisteredOnTheSameHook()
     {
         $plugin = $this->buildPluginMock([

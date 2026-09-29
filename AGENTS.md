@@ -2,100 +2,101 @@
 
 ## What this is
 
-**FGV OpenRank** is a generic OJS (Open Journal Systems) plugin targeting **OJS 3.3.0**. "FGV OpenRank" is a proper name and stays untranslated in every locale; `rankingPlugin` remains the technical identifier used by the directory name, locale keys, class names and CI variables. It lives at `plugins/generic/rankingPlugin/` inside an OJS checkout — it is not a standalone project. All `import(...)` paths (`plugins.generic.rankingPlugin.*`, `lib.pkp.classes.*`, `classes.*`) resolve relative to the OJS root, so the plugin cannot be built, linted, or tested outside that checkout.
+**FGV OpenRank** is a generic OJS (Open Journal Systems) plugin targeting **OJS 3.5.0**, from 3.5.0-1 on. "FGV OpenRank" is a proper name and stays untranslated in every locale; `rankingPlugin` remains the technical identifier used by the directory name, locale keys and CI variables. It lives at `plugins/generic/rankingPlugin/` inside an OJS checkout and is not a standalone project: classes are namespaced under `APP\plugins\generic\rankingPlugin` and autoloaded by OJS, so the plugin cannot be tested outside that checkout.
 
-The plugin adds a homepage widget (five tabs: mostRecent, mostRead, mostCited, trending, highlight) rendered inside a `<div class="rankingTabs"></div>` placeholder — either emitted by the plugin on the journal index page or placed by hand in the journal's Additional Content, depending on the `displayPosition` setting.
+The main class is `RankingPlugin` in `RankingPlugin.php`, and `index.php` returns an instance of it. **Do not delete `index.php`**: `PluginRegistry::instantiatePlugin` derives the class name from the directory (`rankingPlugin` becomes `RankingPluginPlugin`), and when that class does not exist it falls back to `index.php`. Without it the plugin silently disappears from Installed Plugins. The `pflPlugin` shipped with OJS 3.5 does the same for the same reason.
+
+The plugin adds a homepage widget (five tabs: mostRecent, mostRead, mostCited, trending, highlight) rendered inside a `<div class="rankingTabs"></div>` placeholder, either emitted by the plugin on the journal index page or placed by hand in the journal's Additional Content, depending on the `displayPosition` setting.
 
 ## Development commands
 
-Run all commands from the **OJS root** (`../../../` relative to this plugin), not from the plugin directory.
+Run PHP commands from the **OJS root** (`../../../` relative to this plugin), and npm commands from the plugin directory.
 
 ### Tests
 
-The plugin's PHPUnit tests live in `tests/`. Tests are wired through the PKP test harness, so run them via OJS's bundled PHPUnit with the PKP env config:
-
 ```bash
-# From the OJS root:
-php lib/pkp/lib/vendor/phpunit/phpunit/phpunit \
-    --configuration lib/pkp/tests/phpunit-env2.xml \
-    -v plugins/generic/rankingPlugin/tests
+# All plugin tests
+php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml plugins/generic/rankingPlugin/tests
 
-# Single test file
-php lib/pkp/lib/vendor/phpunit/phpunit/phpunit \
-    --configuration lib/pkp/tests/phpunit-env2.xml \
-    -v plugins/generic/rankingPlugin/tests/AltmetricsApiClientTest.php
-
-# Single test method (filter by method name)
-php lib/pkp/lib/vendor/phpunit/phpunit/phpunit \
-    --configuration lib/pkp/tests/phpunit-env2.xml \
-    --filter itShouldReturnServerError \
-    -v plugins/generic/rankingPlugin/tests
-
-# The standard PKP runner also works:
-lib/pkp/tools/runAllTests.sh -p     # runs every plugin's tests
+# Single test method
+php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml \
+    --filter itShouldReturnServerError plugins/generic/rankingPlugin/tests
 ```
 
-CI (`.gitlab-ci.yml`) pulls shared templates from `documentacao-e-tarefas/modelosparaintegracaocontinua` on ref `stable-3_3_0` (`pkp_plugin.yml` + `ojs/unit_tests.yml`) — mirror those pipelines if reproducing CI locally.
+Tests use PHPUnit 11 `#[Test]` attributes. CI (`.gitlab-ci.yml`) pulls shared templates from `documentacao-e-tarefas/modelosparaintegracaocontinua` on ref `stable-3_5_0`; they also run `php-cs-fixer` with `@PSR12` and check that `package.json` versions are not older than the ones in the OJS `package.json`.
+
+### Settings UI build
+
+The settings screen is Vue, built by Vite (`vite.config.js`, `i18nExtractKeys.vite.js`) from `resources/js` into `public/build`. `public/build` and `registry/uiLocaleKeysBackend.json` are committed, because the release package is copied without a build step. `vue` is pinned to the version the OJS bundle ships, since it is only used as a template compiler and the runtime comes from `pkp.modules.vue`.
+
+```bash
+npm install
+npm run build
+```
 
 ### Running the scheduled cache refresh by hand
 
 ```bash
-# From OJS root — executes every plugin's due scheduled tasks, including this one
-php tools/runScheduledTasks.php
+php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\rankingPlugin\classes\tasks\RankingCacheUpdateTask'
 ```
 
 ## Architecture
 
 ### Request flow
 
-The plugin hooks OJS at five points, registered in `RankingPlugin::register` (RankingPlugin.inc.php:15-23) and dispatched through `classes/HookCallback.inc.php`:
+`RankingPlugin::register` registers three hooks, dispatched through `classes/HookCallback.php`, and adds the settings bundle (`public/build`) to backend pages:
 
-1. **`TemplateManager::display`** (frontend) — on `frontend/pages/indexJournal.tpl`, `HookCallback::handleMetricsData` injects per-tab settings, localized titles/descriptions, the fetched `ranking.tpl` HTML, and a `window.app` JS blob; then enqueues `js/insertRankingTemplate.js` + `styles/*.css`.
-2. **`Templates::Index::journal`** (frontend) — `HookCallback::insertRankingPlaceholder` appends `<div class="rankingTabs"></div>` to the hook output for every plugin-owned `displayPosition` (`top`, `afterSection`, `bottom`), which lands it as the first child of whatever element the theme uses for the homepage. It is the only frontend template hook on that page; themes that override `indexJournal.tpl` keep the `{call_hook}` they copied from core. When the setting is `additionalContent` (the default) the callback emits nothing and the manager's own placeholder is used.
-3. **`Dispatcher::dispatch`** (API) — `HookCallback::setupRankingPluginAPIHandler` intercepts any path matching `api/v1/rankingPlugin`, loads `api/v1/rankingPlugin/RankingPluginHandler.inc.php`, runs its Slim app, and `exit`s. The plugin never registers through OJS's normal API discovery — **all routing for this plugin is the hook's responsibility**.
-4. **`LoadComponentHandler`** (admin) — enables `RankingConfigurationGridHandler` for the settings grid.
-5. **`Schema::get::submission`** — appends an `altmetricsScore` (nullable number, `apiSummary: true`) property to the submission JSON schema.
+1. **`TemplateManager::display`** (frontend): on `frontend/pages/indexJournal.tpl`, `HookCallback::handleMetricsData` injects per-tab settings, localized titles/descriptions, the fetched `ranking.tpl` HTML, and a `window.app` JS blob; then enqueues `js/insertRankingTemplate.js` + `styles/*.css`.
+2. **`Templates::Index::journal`** (frontend): `HookCallback::insertRankingPlaceholder` appends `<div class="rankingTabs"></div>` to the hook output for every plugin-owned `displayPosition` (`top`, `afterSection`, `bottom`), which lands it as the first child of whatever element the theme uses for the homepage. When the setting is `additionalContent` (the default) the callback emits nothing and the manager's own placeholder is used.
+3. **`Dispatcher::dispatch`** (API): `HookCallback::setupApiControllers` wraps one of two `PKPBaseController`s in an `APIHandler`, runs its routes and `exit`s. `RankingPluginController` (`api/v1/rankingPlugin/{mostRecent,mostRead,mostCitedSubmissions,trendingSubmissions}`) is public and only needs a context. `RankingPluginSettingsController` (`api/v1/plugins/rankingplugin/settings`) needs a logged-in manager or site admin. The settings controller is matched first, because its path also starts with the plugin name. The plugin does not use `APIHandler::endpoints::plugin`, and it does not extend `PluginSettingsController` or use `PublicAccessPolicy`, because those only exist from 3.5.0-4 on.
 
-There's also an `AcronPlugin::parseCronTab` hook (registered directly on the plugin, not the callback object) that appends `scheduledTasks.xml` so Acron picks up `RankingCacheUpdateTask`.
+Route parameters must be read with `$illuminateRequest->route('name')`: the API router passes the context path as the first positional argument, so a `string $tabId` method parameter receives the journal path instead.
+
+The scheduled task is registered through `HasTaskScheduler::registerSchedules` (daily at midnight).
+
+`classes/migrations/LegacySettingsMigration.php` carries the 3.3 settings over: it renames the locale keys (`en_US`, `es_ES`, ...) of `customTitle_*`, `customDescription_*` and `highlightContent_*` (the OJS 3.4 upgrade only does that for customBlockManager), and re-encrypts `altmetricsApiKey_trending` from the 3.3 `api_key_secret` format (`base64:` prefix) to `Crypt`, removing it when `api_key_secret` is no longer in `config.inc.php`. It runs from two places, because OJS runs them on different paths: `getInstallMigration()`, fired by `Installer::postInstall` on the OJS `upgrade.php` and on a fresh plugin install, and `upgrade.xml`, which `PluginHelper::upgradePlugin` runs when a new plugin version is uploaded. `upgrade.xml` has no `version` attribute on purpose, so the installer never writes a version row from it. The migration writes to `plugin_settings` directly, so it ends by reloading the `PluginSettingsDAO` cache (24 hours otherwise). Keep it idempotent: any plugin upload that ships an `upgrade.xml` fires every plugin's install migration again.
 
 ### The four-tab pipeline
 
-Each tab is a pair of **cache class** (in `classes/cache/`) + **factory method** on `RankingSubmission` (`classes/factory/RankingSubmission.inc.php`). All caches use OJS's `CacheManager::getFileCache` keyed on context id. The pattern is: `get*` reads the cache and, on miss, calls `refreshCache`; `refreshCache` hits the source, writes the cache, returns the fresh data.
+Each tab is a pair of **cache class** (in `classes/cache/`) + **query method** on `RankingSubmission` (`classes/factory/RankingSubmission.php`), which is built per context with the request and resolves submissions from the collector, the usage stats or a DOI list. All caches go through `RankingCache`, a thin wrapper on Laravel's `Cache` facade keyed `rankingPlugin-{name}-{contextId}` and stored forever. The pattern is: `get*` reads the cache and, on miss or empty list, calls `refreshCache`; `refreshCache` hits the source, writes the cache, returns the fresh data.
 
 | Tab         | Source                                  | Cache class                   | DOI-indirection |
 |-------------|-----------------------------------------|-------------------------------|-----------------|
-| mostRecent  | `Services::get('submission')->getMany`  | `MostRecent`                  | no              |
-| mostRead    | `Services::get('stats')->getOrderedObjects` | `MostRead`                | no              |
-| mostCited   | Crossref API (`clients/Crossref`)       | `MostCitedDois` → `RankingSubmissionService::getAListOfMostCitedSubmissionsByCachedDois` | **yes** — cache stores DOIs, submissions are resolved on read via `SubmissionDAO::getByPubId('doi', ...)` |
-| trending    | Altmetric API (`clients/Altmetrics`)    | `BestAltmetricsScoreDois` → `TrendingSubmissions` | **yes** — same DOI-indirection as mostCited |
+| mostRecent  | `Repo::submission()->getCollector()`    | `MostRecent`                  | no              |
+| mostRead    | `app()->get('publicationStats')->getTotals` | `MostRead`                | no              |
+| mostCited   | Crossref API (`clients/Crossref`)       | `MostCitedDois` → `RankingSubmission::getMostCited` | **yes**: cache stores DOIs, submissions are resolved on read via `Repo::submission()->getByDoi` |
+| trending    | Altmetric API (`clients/Altmetrics`) or the manual DOI list | `BestAltmetricsScoreDois` → `TrendingSubmissions` | **yes**, same DOI-indirection as mostCited |
 
-`RankingSubmissionService` (`classes/RankingSubmissionService.inc.php`) is the thin entry point that `RankingPluginHandler` and the scheduled task both call; it forwards to `RankingSubmission::get($functionName, $params)` which dispatches to the correct `get*` factory method. `RankingSubmission::formatSubmissionData` is the shared shape — **any field added there shows up in every tab's JSON response**, so edit it when introducing new display fields.
+`classes/services/RankingTabService.php` is the only place that knows which cache serves a tab, with which limit (`itemsPerTab_{tabId}`), and whether it needs an ISSN. `getSubmissions($tabId)` is the read path (cache, then source on miss) and `refresh($tabId)` / `refreshAll()` the write path. The public controller, the settings controller (after a tab or the manual DOI list is saved) and the scheduled task all go through it; none of them instantiates a cache. `RankingSubmission::formatSubmissionData` is the shared shape: **any field added there shows up in every tab's JSON response**.
 
-The **scheduled task** `classes/tasks/RankingCacheUpdateTask.inc.php` iterates enabled contexts and calls each cache's `refreshCache` directly. `scheduledTasks.xml` sets `frequency hour="0"` (once per day at midnight). The Altmetric and Crossref API calls happen only inside the scheduled path and inside the HTTP-request cache-miss path — the frontend AJAX never calls the external APIs directly.
+The **scheduled task** `classes/tasks/RankingCacheUpdateTask.php` iterates enabled contexts and calls `RankingTabService::refreshAll`. mostCited is skipped when the journal has no ISSN; trending still refreshes the manual DOI list, and only its Altmetric path needs an ISSN. The Altmetric and Crossref API calls happen only inside the scheduled path, the cache-miss path and when a tab is saved; the frontend AJAX never calls the external APIs directly.
 
-**Trending-tab ISSN quirk**: `TrendingSubmissions::refreshCache` prefers `printIssn` and falls back to `onlineIssn`, while `RankingCacheUpdateTask::updateTrendingCache` (and `getMostCited` in the API handler) prefer `onlineIssn` with `printIssn` fallback. Keep them aligned if you touch one.
+**ISSN preference**: both rules live in `RankingTabService`. Altmetric (`getAltmetricsIssn`, used to fetch trending and to validate the API key) prefers `printIssn`; Crossref (mostCited) prefers `onlineIssn`. Both fall back to the other.
+
+The Altmetric API key is stored encrypted by `classes/DataEncryption.php`, which uses Laravel's `Crypt` (the OJS `app_key`). Keys stored by the 3.3 version are re-encrypted by the migration. A key that still fails to decrypt (for example after `app_key` changes) is reported as absent by `AltmetricsApiKey::has`, and `AltmetricsApiKey::get` logs the failure and returns null, so `TrendingSubmissions` falls back to the manual DOI list. `classes/settings/AltmetricsApiKey.php` is the only class that reads, writes, decrypts or validates the key.
 
 ### Settings model
 
-Settings are stored per context (journal) via `plugin->getSetting($contextId, $key)`. The tab grid writes keys with suffixes:
+Settings are stored per context (journal) via `plugin->getSetting($contextId, $key)`, with plugin name `rankingplugin`. `classes/RankingTabs.php` owns the tab list and the per-index keys:
 
-- `tabEnabled_{index}`, `tabSequence_{index}` — `index` is the position in `['mostRecent', 'mostRead', 'mostCited', 'trending', 'highlight']` from `HookCallback::getOrderedTabs`. Tab ordering is derived from these two per-index keys; a `tabEnabled_{index}` that's never set counts as enabled (check is `!== false`).
-- `customTitle_{tabId}`, `customDescription_{tabId}`, `highlightContent_{tabId}` — localized values. `getLocalizedValue` falls back current locale → primary locale → first non-empty.
-- `itemsPerTab` / `itemsPerPage` are global defaults (4); `itemsPerTab_{tabId}` / `itemsPerPage_{tabId}` override per tab.
-- `displayPosition` — `top`, `afterSection`, `bottom` or `additionalContent` (the default and the fallback for unknown/absent values) — and `displayPositionSection`, the 1-based section number `afterSection` counts to (`normalizeSection` clamps anything below 1 to 1). Both live in `classes/RankingDisplayPosition.inc.php`; `HookCallback` and `RankingPluginSettingsForm` both go through its `normalize`/`normalizeSection`/`needsPlaceholder`, so add new positions there.
+- `tabEnabled_{index}`, `tabSequence_{index}`: `index` is the position in `RankingTabs::getAll()`. A `tabEnabled_{index}` that's never set counts as enabled (check is `!== false`). `RankingTabs::save` rewrites both for all tabs from the ordered list the settings table sends.
+- `customTitle_{tabId}`, `customDescription_{tabId}`, `highlightContent_{tabId}`: localized values. `RankingTabs::localize` falls back current locale → primary locale → first non-empty.
+- `itemsPerTab_{tabId}` / `itemsPerPage_{tabId}` (default 4), `mostReadDays_mostRead` (default 120), `altmetricsApiKey_trending`, `trendingDois_trending` (`{id: doi}` in display order).
+- `displayPosition`: `top`, `afterSection`, `bottom` or `additionalContent` (the default and the fallback for unknown/absent values), and `displayPositionSection`, the 1-based section number `afterSection` counts to. Both live in `classes/RankingDisplayPosition.php`, so add new positions there. `DisplayPositionSettings` is the only class that reads (`get`) and writes them; `HookCallback` and the settings controller take the values from it, and `DisplayPositionForm` receives them instead of reading settings.
 
-The settings admin UI is a PKP `GridHandler` (`controllers/grid/RankingConfigurationGridHandler.inc.php`) with actions `editTab`, `updateTab`, `saveSequence`, `saveTabSetting` restricted to `ROLE_ID_MANAGER`. The "main" plugin settings form (`classes/settings/RankingPluginSettingsForm.inc.php`) holds only `displayPosition` + `displayPositionSection`; actual per-tab config lives in the grid + `RankingCustomizationForm`, which `templates/settings/form.tpl` loads below the position radios. `templates/settings/form.tpl` also opens with a `.cmp_rankingPlugin_intro` block (`settings.intro.*` keys) that explains where each tab's data comes from and points at the configuration guide. The plugin-list description is deliberately one sentence, so that detail lives here instead.
+The settings UI stays in the usual plugin flow: **Settings** on the plugin row is an `AjaxModal` to `manage` verb `settings`, which renders `templates/settings.tpl`. That template only mounts the `RankingPluginSettings` Vue component with `pkp.registry.init(id, 'Container', {})`, the same way core does in `assignToIssue.tpl`. The component loads everything from `GET settings`: the tab list, one `FormComponent` config per tab (`TabSettingsForm`), the position form (`DisplayPositionForm`) and the manual DOI list with its form (`TrendingDoiForm`). **Edit** on a tab and **Add DOI**/**Edit** on the manual list open nested side modals the way core opens "Select an issue" from the workflow: `useSettingsModal` calls `openSideModal('LegacyAjax', {legacyOptions: {title, url, closeOnFormSuccessId}}, {onClose})`, the URL is the same `manage` handler with verb `tabSettings` (`tabId`) or `trendingDoi` (`doiId`), and those verbs render `templates/tabSettings.tpl` / `templates/trendingDoi.tpl`, which mount `RankingTabSettings` / `RankingTrendingDoiForm` with `pkp.registry.init`. `closeOnFormSuccessId` is the `FormComponent` id, so the core closes the modal a second after the form succeeds, and `onClose` refetches `GET settings` in the level below. Do not render a side modal body of the plugin's own: `PkpSideModalBody`, `PkpSideModalLayoutBasic`, `PkpTableCellOrder` and `PkpFormModal` are not exposed to plugins in 3.5.0-1, and a copy of `SideModalBody` breaks because from 3.5.0-2 on the core `SideModal` uses reka-ui and the positioned `DialogContent` lives inside the body. Every save, reorder and delete calls `notify(t('common.changesSaved'), 'success')`, the toast the legacy forms show; validation errors get the core's own warning toast from `PkpForm`. Ordering uses the plugin's own `RankingOrderButtons`. Every element the tests may need carries a `data-cy` attribute. Validation lives in `TabSettings` (which delegates the API key to `AltmetricsApiKey`) and `TrendingDois`, which return `{field: [message]}` with status 422 so `PkpForm` shows the errors inline.
+
 
 ### Configuration guide
 
-`classes/settings/Actions.inc.php` puts two `LinkAction`s on the plugin row when the plugin is enabled: **Settings** (verb `settings`) and **Configuration guide** (verb `configurationGuide`), in that order. `classes/settings/Manage.inc.php` dispatches both; its `default` branch calls `RankingPlugin::parentManage()`, which is the only way back to `GenericPlugin::manage()` — calling `manage()` there would route straight into `Manage::execute()` again.
+`classes/settings/Actions.php` puts two `LinkAction`s on the plugin row when the plugin is enabled: **Settings** (verb `settings`) and **Configuration guide** (verb `configurationGuide`), in that order. `classes/settings/Manage.php` dispatches both; its `default` branch calls `RankingPlugin::parentManage()`, which is the only way back to `GenericPlugin::manage()` — calling `manage()` there would route straight into `Manage::execute()` again.
 
-The guide itself is `classes/settings/ConfigurationGuide.inc.php` rendering `templates/admin/configurationGuide.tpl` into an `AjaxModal`: eight `[data-guide-panel]` sections (intro, six steps, conclusion) toggled by `hidden` through `js/configurationGuide.js`, styled by `styles/admin/configurationGuide.css`. Both assets are injected as plain tags inside the modal, so `RankingPlugin::getAssetVersion()` appends the `?v=` that `addJavaScript()`/`addStyleSheet()` would otherwise add — jQuery fetches injected scripts with `cache: true`. The settings modal injects `styles/admin/settingsIntro.css` the same way, through the same method.
+The guide itself is `classes/settings/ConfigurationGuide.php` rendering `templates/admin/configurationGuide.tpl` into an `AjaxModal`: eight `[data-guide-panel]` sections (intro, six steps, conclusion) toggled by `hidden` through `js/configurationGuide.js`, styled by `styles/admin/configurationGuide.css`. Both assets are injected as plain tags inside the modal, so `RankingPlugin::getAssetVersion()` appends the `?v=` that `addJavaScript()`/`addStyleSheet()` would otherwise add — jQuery fetches injected scripts with `cache: true`.
 
 Things that break silently if changed carelessly:
 
 - **`data-guide-target` is a panel index**, not an id. Inserting a step means renumbering every following button and the `total=` of `configurationGuide.progress`.
-- **Every path segment is a core OJS label**, resolved from the `.po` of each locale rather than translated by hand (`manager.setup.masthead` is "Equipe Editorial" in pt_BR, `common.plugins` is "Módulos" in es_ES). The deep links are built by `Dispatcher` with the tab anchors of OJS 3.3 (`#plugins/installedPlugins`, `#appearance/advanced`, `#masthead`); confirm them against `lib/pkp/templates/management/website.tpl` and `templates/management/context.tpl` before changing.
+- **Every path segment is a core OJS label**, resolved from the `.po` of each locale rather than translated by hand (`manager.setup.masthead` is "Expediente" in pt_BR, `common.plugins` is "Módulos" in es). The deep links are built by `Dispatcher` with the tab anchors of OJS 3.5 (`#plugins/installedPlugins`, `#appearance/advanced`, `#masthead`, `distribution#dois/doisSetup`, and the `dois` page); confirm them against `lib/pkp/templates/management/website.tpl`, `lib/pkp/templates/management/distribution.tpl` and `templates/management/context.tpl` before changing.
 - **A path starts where its button lands**, not at the sidebar — `Installed Plugins → FGV OpenRank → Settings → …`, because the step's link already opened that tab. So a `configurationGuide.link.*` label, the anchor of the URL behind it and the first segment of the path it sits next to are one unit: change the link and the path has to move with it.
 - **Additional Content is a TinyMCE field**, so the guide sends the operator through its "Source code" button. TinyMCE ships no langs here, so that label is English in every locale. It pads `<div class="rankingTabs"></div>` to `<div class="rankingTabs">&nbsp;</div>` on save; the element survives, the class is kept.
 - There is no page URL for the plugin's own settings modal — it is a component call returning JSON — so the steps about it link to **Installed Plugins** and the link labels say so.
@@ -106,7 +107,7 @@ All guide strings live under `plugins.generic.rankingPlugin.configurationGuide.*
 
 `js/insertRankingTemplate.js` replaces the first `.rankingTabs` div with `window.app.rankingTemplate`, then fires four parallel AJAX calls to `window.app.rankingPluginApiBaseUrl + /{mostRecent,mostRead,mostCitedSubmissions,trendingSubmissions}`. Error messages per tab are pre-localized into `window.app` (mostRecentFailedMessage, …). The `highlight` tab is content-only and has no API call.
 
-**Positioning is split between PHP and JS.** PHP only guarantees the placeholder exists at the start of the homepage container; `moveToConfiguredPosition` in `js/insertRankingTemplate.js` then moves it, before filling it, using `placeholder.parentElement` as the anchor and `window.app.displayPosition` / `displayPositionSection` (both injected by `HookCallback::getDisplayPositionSettings`) as the offset. `afterSection` counts **every** element child of that parent, so the homepage image counts as a section and a theme wrapper (`saudeEmDebate`'s `.saude_home_content`) collapses several visual sections into one slot — the settings help text and the READMEs say so, keep them honest if the counting changes. It deliberately matches **no** CSS classes: the local themes disagree on all of them (`rieja` has no current-issue section and renders `.additional_content` first; `saudeEmDebate` uses `.saude_announcements`/`.saude_articles` instead of `.cmp_announcements`/`.current_issue`), so counting the container's own children is the only theme-agnostic anchor. Keep it that way when adding positions.
+**Positioning is split between PHP and JS.** PHP only guarantees the placeholder exists at the start of the homepage container; `moveToConfiguredPosition` in `js/insertRankingTemplate.js` then moves it, before filling it, using `placeholder.parentElement` as the anchor and `window.app.displayPosition` / `displayPositionSection` (both injected by `HookCallback::handleMetricsData` from `DisplayPositionSettings::get`) as the offset. `afterSection` counts **every** element child of that parent, so the homepage image counts as a section and a theme wrapper (`saudeEmDebate`'s `.saude_home_content`) collapses several visual sections into one slot — the settings help text and the READMEs say so, keep them honest if the counting changes. It deliberately matches **no** CSS classes: the local themes disagree on all of them (`rieja` has no current-issue section and renders `.additional_content` first; `saudeEmDebate` uses `.saude_announcements`/`.saude_articles` instead of `.cmp_announcements`/`.current_issue`), so counting the container's own children is the only theme-agnostic anchor. Keep it that way when adding positions.
 
 **Scoping is what makes the widget theme-agnostic, and it has to hold on both sides.** Every rule in `styles/ranking.css` and `styles/pagination.css` is prefixed with `.rankingTabs`, and the tab click handlers in `js/insertRankingTemplate.js` query from the `rankingTabsDiv` element rather than from `document`. The placeholder div survives `innerHTML =` and is always the widget's outermost element, so both are safe anchors. The reason is that the markup in `ranking.tpl` uses Bootstrap's generic names — `.nav-tabs`, `.tab-content`, `.tab-pane`, `.article-item` — which a theme or another plugin may also use on the homepage. Unscoped, the CSS restyled their elements and, worse, the click handler bound their tab links and stripped `.active` off their `li`s and panes on every tab switch. Keep new selectors and new DOM queries scoped the same way.
 
@@ -118,8 +119,8 @@ With `displayPosition` left at `additionalContent`, the journal operator must ad
 
 ## Conventions
 
-- OJS 3.3 PHP: no namespaces, files are `.inc.php`, classes are autoloaded via `import('plugins.generic.rankingPlugin.…')`. New files must follow this convention or they won't load.
+- OJS 3.5 PHP: namespace `APP\plugins\generic\rankingPlugin\...` matching the directory, one class per `.php` file. Before using a core class, check that it exists in the `3_5_0-1` tag of `lib/pkp` (`git -C lib/pkp cat-file -e 3_5_0-1:classes/...`), since that is the lowest supported version.
 - `version.xml` must be bumped (and `<date>` updated) for any release — OJS decides whether to run upgrade logic from that version string.
 - The plugin is `lazy-load=1`: a context-level enable flag (`getEnabled()`) gates every hook; all runtime code must assume the plugin may be disabled.
-- External API errors are caught in `classes/clients/*.inc.php` and re-thrown as localized `\Exception` messages keyed `plugins.generic.rankingPlugin.client.{altmetrics,crossref}.{server,client,transfer}Error`. `RankingPluginHandler` translates those into `{errorMessage: ...}` 500 JSON responses — keep that pattern when adding new endpoints so the JS error branches render the right text.
-- Tests mock the HTTP client via `tests/helpers/ClientInterfaceForTests.inc.php` (a thin Guzzle-compatible interface) rather than mocking Guzzle directly.
+- External API errors are caught in `classes/clients/*.php` and re-thrown as localized `\Exception` messages keyed `plugins.generic.rankingPlugin.client.{altmetrics,crossref}.{server,client,transfer}Error`. `RankingPluginController` translates those into `{errorMessage: ...}` 500 JSON responses — keep that pattern when adding new endpoints so the JS error branches render the right text.
+- Tests mock the HTTP client via `tests/helpers/ClientInterfaceForTests.php` (a thin Guzzle-compatible interface) rather than mocking Guzzle directly.
