@@ -190,6 +190,15 @@ Ou a chave não é válida para a API do Altmetric, ou o `api_key_secret` não e
 
 </details>
 
+## Atualização a partir da versão 0.0.5.3 ou anterior (`rankingPlugin`)
+
+A partir da versão 0.0.6.0, o plugin fica em `plugins/generic/fgvOpenRank`, e não mais em `plugins/generic/rankingPlugin`. O OJS o trata como outro plugin, por isso o **Atualizar plugin** da linha antiga recusa o pacote ("O version.xml no plugin carregado contém um nome de plugin que não se encaixa no nome do plugin atualizado"). Para atualizar, como administrador do site:
+
+1. Em *Configurações → Website → Plugins → Plugins instalados*, clique em **Excluir** no FGV OpenRank. As configurações dele continuam no banco.
+2. Acesse *Enviar novo plugin* e envie o novo `.tar.gz`. As configurações de todas as revistas (habilitação, abas, textos, chave de API do Altmetric, lista manual de DOIs e posição) passam para o plugin novo, que já fica habilitado onde o antigo estava.
+
+As duas versões não podem funcionar ao mesmo tempo. Se a nova for enviada com a antiga ainda instalada, ela aparece como "FGV OpenRank (aguardando a exclusão da versão anterior)" e fica inativa, enquanto a antiga continua funcionando. Exclua a antiga e a nova assume as configurações dela. O marcador `<div class="rankingTabs"></div>` não mudou, então o Conteúdo adicional não precisa ser editado.
+
 ## Créditos
 
 Este plugin foi idealizado e financiado pela [Fundação Getulio Vargas (FGV)](https://periodicos.fgv.br/index) e desenvolvido pela [Lepidus Tecnologia](https://lepidus.com.br/). Ele está em produção no [Portal de Periódicos da FGV](https://periodicos.fgv.br/index).

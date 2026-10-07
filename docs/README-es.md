@@ -190,6 +190,15 @@ O la clave no es válida para la API de Altmetric, o `api_key_secret` no está c
 
 </details>
 
+## Actualización desde la versión 0.0.5.3 o anterior (`rankingPlugin`)
+
+A partir de la versión 0.0.6.0, el módulo está en `plugins/generic/fgvOpenRank` y ya no en `plugins/generic/rankingPlugin`. OJS lo trata como otro módulo, por lo que **Actualizar módulo** en la fila antigua rechaza el paquete ("El archivo version.xml del módulo que ha cargado contiene un nombre que no se ajusta al nombre del módulo actualizado"). Para actualizar, como administrador/a del sitio:
+
+1. En *Ajustes → Sitio web → Módulos → Módulos instalados*, haga clic en **Eliminar** en FGV OpenRank. Sus ajustes siguen en la base de datos.
+2. Vaya a *Cargar un nuevo módulo* y envíe el nuevo `.tar.gz`. Los ajustes de todas las revistas (habilitación, pestañas, textos, clave de API de Altmetric, lista manual de DOI y posición) pasan al módulo nuevo, que ya queda habilitado donde estaba el antiguo.
+
+Las dos versiones no pueden funcionar al mismo tiempo. Si la nueva se carga con la antigua todavía instalada, aparece como "FGV OpenRank (esperando que se elimine la versión anterior)" y queda inactiva, mientras la antigua sigue funcionando. Elimine la antigua y la nueva asumirá sus ajustes. El marcador `<div class="rankingTabs"></div>` no cambió, así que el Contenido adicional no necesita ninguna edición.
+
 ## Créditos
 
 Este módulo fue ideado y financiado por la [Fundação Getulio Vargas (FGV)](https://periodicos.fgv.br/index) y desarrollado por [Lepidus Tecnologia](https://lepidus.com.br/). Está en producción en el [Portal de Periódicos de la FGV](https://periodicos.fgv.br/index).
