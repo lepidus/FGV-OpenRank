@@ -127,7 +127,7 @@ The tabs are served from a per-journal cache kept in the OJS cache. A scheduled 
 To refresh by hand, from the OJS root:
 
 ```bash
-php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\rankingPlugin\classes\tasks\RankingCacheUpdateTask'
+php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\fgvOpenRank\classes\tasks\RankingCacheUpdateTask'
 ```
 
 ## Requirements
@@ -189,8 +189,18 @@ The key is not valid for the Altmetric API. The plugin checks it against the API
 
 </details>
 
+## Upgrading from version 1.0.0.0 (`rankingPlugin`)
+
+From version 1.1.0.0 on, the plugin lives in `plugins/generic/fgvOpenRank` instead of `plugins/generic/rankingPlugin`. OJS sees it as a different plugin, so **Upgrade Plugin** on the old row refuses the package ("The version.xml in the uploaded plugin contains a plugin name that does not fit the name of the upgraded plugin"). To upgrade, as site administrator:
+
+1. Go to *Settings → Website → Plugins → Upload A New Plugin* and send the new `.tar.gz`. The settings of every journal (enabled state, tabs, texts, Altmetric API key, manual DOI list and position) move to the new plugin, and the old one is left disabled.
+2. *Installed Plugins* now lists FGV OpenRank twice: the old one, disabled, and the new one, enabled. Click **Delete** on the disabled one. Do not enable it again, or the block shows up twice.
+
+Deleting the old plugin first and uploading the new one afterwards works too, since its settings stay in the database. If `plugins/generic/rankingPlugin` is removed straight from the server, the old entry is cleared the next time OJS installs a plugin or is upgraded. The `<div class="rankingTabs"></div>` placeholder did not change, so Additional Content needs no edit.
+
 ## Upgrading from the OJS 3.3 version
 
+- **Plugin directory.** The plugin is now `plugins/generic/fgvOpenRank`. Do not copy `plugins/generic/rankingPlugin` from the 3.3 installation; install the new plugin instead, and the OJS upgrade carries its settings over.
 - **Altmetric API key.** The 3.3 version encrypted it with `api_key_secret`, which OJS 3.5 no longer uses. The upgrade re-encrypts it with the OJS `app_key` as long as `api_key_secret` is still in `config.inc.php`; otherwise the key is removed and must be entered again, and until then the Trending tab falls back to the manual DOI list.
 - DOIs are no longer a plugin in OJS 3.5: they are set up in *Settings → Distribution → DOIs*.
 
@@ -206,7 +216,7 @@ npm run build
 Unit tests run from the OJS root:
 
 ```bash
-php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml plugins/generic/rankingPlugin/tests
+php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml plugins/generic/fgvOpenRank/tests
 ```
 
 ## Credits

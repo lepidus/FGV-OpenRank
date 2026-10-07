@@ -127,7 +127,7 @@ Las pestañas se sirven desde una caché por revista, guardada en la caché de O
 Para actualizar manualmente, desde la raíz de OJS:
 
 ```bash
-php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\rankingPlugin\classes\tasks\RankingCacheUpdateTask'
+php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\fgvOpenRank\classes\tasks\RankingCacheUpdateTask'
 ```
 
 ## Requisitos
@@ -189,8 +189,18 @@ La clave no es válida para la API de Altmetric. El módulo la verifica en la AP
 
 </details>
 
+## Actualización desde la versión 1.0.0.0 (`rankingPlugin`)
+
+A partir de la versión 1.1.0.0, el módulo está en `plugins/generic/fgvOpenRank` y ya no en `plugins/generic/rankingPlugin`. OJS lo trata como otro módulo, por lo que **Actualizar módulo** en la fila antigua rechaza el paquete ("El archivo version.xml del módulo que ha cargado contiene un nombre que no se ajusta al nombre del módulo actualizado"). Para actualizar, como administrador/a del sitio:
+
+1. Vaya a *Ajustes → Sitio web → Módulos → Cargar un nuevo módulo* y envíe el nuevo `.tar.gz`. Los ajustes de todas las revistas (habilitación, pestañas, textos, clave de API de Altmetric, lista manual de DOI y posición) pasan al módulo nuevo, y el antiguo queda desactivado.
+2. En *Módulos instalados*, FGV OpenRank aparece dos veces: el antiguo, desactivado, y el nuevo, habilitado. Haga clic en **Eliminar** en el desactivado. No lo vuelva a habilitar, o el bloque aparecerá dos veces.
+
+También funciona eliminar primero el antiguo y cargar el nuevo después, porque los ajustes siguen en la base de datos. Si `plugins/generic/rankingPlugin` se borra directamente del servidor, el registro antiguo se limpia la próxima vez que OJS instale un módulo o se actualice. El marcador `<div class="rankingTabs"></div>` no cambió, así que el Contenido adicional no necesita ninguna edición.
+
 ## Actualización desde la versión para OJS 3.3
 
+- **Directorio del módulo.** El módulo ahora es `plugins/generic/fgvOpenRank`. No copie `plugins/generic/rankingPlugin` de la instalación 3.3; instale el módulo nuevo en su lugar, y la actualización de OJS conserva sus ajustes.
 - **Clave de API de Altmetric.** La versión 3.3 la cifraba con `api_key_secret`, que OJS 3.5 ya no usa. La actualización la vuelve a cifrar con el `app_key` de OJS siempre que `api_key_secret` siga en `config.inc.php`; de lo contrario, la clave se elimina y debe introducirse de nuevo, y hasta entonces la pestaña Tendencias usa la lista manual de DOI.
 - En OJS 3.5 los DOI dejaron de ser un módulo: se configuran en *Ajustes → Distribución → DOI*.
 
@@ -206,7 +216,7 @@ npm run build
 Las pruebas unitarias se ejecutan desde la raíz de OJS:
 
 ```bash
-php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml plugins/generic/rankingPlugin/tests
+php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml plugins/generic/fgvOpenRank/tests
 ```
 
 ## Créditos
