@@ -1,6 +1,6 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.clients.Crossref');
+import('plugins.generic.fgvOpenRank.classes.clients.Crossref');
 
 class MostCitedDois
 {

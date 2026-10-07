@@ -1,37 +1,52 @@
 <?php
 
 import('lib.pkp.classes.plugins.GenericPlugin');
-import('plugins.generic.rankingPlugin.classes.HookCallback');
-import('plugins.generic.rankingPlugin.classes.settings.Manage');
-import('plugins.generic.rankingPlugin.classes.settings.Actions');
+import('plugins.generic.fgvOpenRank.classes.HookCallback');
+import('plugins.generic.fgvOpenRank.classes.settings.Manage');
+import('plugins.generic.fgvOpenRank.classes.settings.Actions');
+import('plugins.generic.fgvOpenRank.classes.migrations.FgvOpenRankRenameMigration');
 
 define('ONE_DAY_SECONDS', 60 * 60 * 24);
 
-class RankingPlugin extends GenericPlugin
+class FgvOpenRankPlugin extends GenericPlugin
 {
     public function register($category, $path, $mainContextId = null)
     {
         $success = parent::register($category, $path);
+        if ($success && !$this->getEnabled() && FgvOpenRankRenameMigration::hasLegacySettings()) {
+            // Uploaded while rankingPlugin was still installed, the stand-in plugin
+            // ran instead and the install migration was skipped.
+            (new FgvOpenRankRenameMigration())->up();
+        }
+        if ($success) {
+            // Acron rebuilds its crontab in whatever request runs it, often one where the plugin is
+            // not enabled (the installer, another journal); the task itself skips disabled journals.
+            HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'parseCrontab'));
+        }
         if ($success && $this->getEnabled()) {
             $hookCallback = new HookCallback($this);
-            HookRegistry::register('Dispatcher::dispatch', array($hookCallback, 'setupRankingPluginAPIHandler'));
+            HookRegistry::register('Dispatcher::dispatch', array($hookCallback, 'setupFgvOpenRankAPIHandler'));
             HookRegistry::register('TemplateManager::display', [$hookCallback, 'handleMetricsData']);
             HookRegistry::register('Templates::Index::journal', [$hookCallback, 'insertRankingPlaceholder']);
             HookRegistry::register('Schema::get::submission', array($hookCallback, 'addScoreFieldToSubmissionSchema'));
             HookRegistry::register('LoadComponentHandler', array($hookCallback, 'setupRankingConfigurationGridHandler'));
-            HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'parseCrontab'));
         }
         return $success;
     }
 
+    public function getInstallMigration()
+    {
+        return new FgvOpenRankRenameMigration();
+    }
+
     public function getDisplayName()
     {
-        return __('plugins.generic.rankingPlugin.displayName');
+        return __('plugins.generic.fgvOpenRank.displayName');
     }
 
     public function getDescription()
     {
-        return __('plugins.generic.rankingPlugin.description');
+        return __('plugins.generic.fgvOpenRank.description');
     }
 
     public function getAssetVersion(): string

@@ -1,6 +1,6 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
+import('plugins.generic.fgvOpenRank.classes.clients.Altmetrics');
 
 class BestAltmetricsScoreDois
 {

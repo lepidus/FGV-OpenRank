@@ -28,9 +28,9 @@ class Actions
                     'configurationGuide',
                     new AjaxModal(
                         $this->manageUrl($request, $router, 'configurationGuide'),
-                        __('plugins.generic.rankingPlugin.configurationGuide.title')
+                        __('plugins.generic.fgvOpenRank.configurationGuide.title')
                     ),
-                    __('plugins.generic.rankingPlugin.configurationGuide.action'),
+                    __('plugins.generic.fgvOpenRank.configurationGuide.action'),
                     null
                 ),
             ) : array(),

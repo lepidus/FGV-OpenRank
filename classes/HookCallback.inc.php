@@ -1,6 +1,6 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.RankingDisplayPosition');
+import('plugins.generic.fgvOpenRank.classes.RankingDisplayPosition');
 
 class HookCallback
 {
@@ -11,16 +11,16 @@ class HookCallback
         $this->plugin = $plugin;
     }
 
-    public function setupRankingPluginAPIHandler(string $hookname, Request $request)
+    public function setupFgvOpenRankAPIHandler(string $hookname, Request $request)
     {
         $router = $request->getRouter();
         if (!($router instanceof \APIRouter)) {
             return;
         }
 
-        if (str_contains($request->getRequestPath(), 'api/v1/rankingPlugin')) {
-            $this->plugin->import('api.v1.rankingPlugin.RankingPluginHandler');
-            $handler = new RankingPluginHandler();
+        if (str_contains($request->getRequestPath(), 'api/v1/fgvOpenRank')) {
+            $this->plugin->import('api.v1.fgvOpenRank.FgvOpenRankHandler');
+            $handler = new FgvOpenRankHandler();
         }
 
         if (!isset($handler)) {
@@ -44,11 +44,11 @@ class HookCallback
         $request = Application::get()->getRequest();
         $context = $request->getContext();
 
-        $rankingPluginApiBaseUrl = $request->getDispatcher()->url(
+        $fgvOpenRankApiBaseUrl = $request->getDispatcher()->url(
             $request,
             ROUTE_API,
             $context->getPath(),
-            'rankingPlugin/'
+            'fgvOpenRank/'
         );
 
         $contextId = $context->getId();
@@ -121,40 +121,40 @@ class HookCallback
             ];
         }
 
-        $rankingPluginJavaScriptVariables = $this->getDisplayPositionSettings($contextId) + [
+        $fgvOpenRankJavaScriptVariables = $this->getDisplayPositionSettings($contextId) + [
             'currentLocale' => AppLocale::getLocale(),
             'primaryLocale' => AppLocale::getPrimaryLocale(),
-            'publishedDateLocaleMessage' => __("plugins.generic.rankingPlugin.tabs.content.publishedDate"),
+            'publishedDateLocaleMessage' => __("plugins.generic.fgvOpenRank.tabs.content.publishedDate"),
             'rankingTemplate' => $templateMgr->fetch(
                 $this->plugin->getTemplateResource('ranking.tpl')
             ),
-            'rankingPluginApiBaseUrl' => $rankingPluginApiBaseUrl,
+            'fgvOpenRankApiBaseUrl' => $fgvOpenRankApiBaseUrl,
             'itemsPerTab' => $itemsPerTab,
             'itemsPerPage' => $itemsPerPage,
             'tabSettings' => $tabSpecificSettings,
             'previousPageLabel' => "<",
             'nextPageLabel' => ">",
             'mostRecentFailedMessage' => __(
-                'plugins.generic.rankingPlugin.tabs.mostRecentFailed'
+                'plugins.generic.fgvOpenRank.tabs.mostRecentFailed'
             ),
             'mostReadFailedMessage' => __(
-                'plugins.generic.rankingPlugin.tabs.mostReadFailed'
+                'plugins.generic.fgvOpenRank.tabs.mostReadFailed'
             ),
             'mostCitedFailedMessage' => __(
-                'plugins.generic.rankingPlugin.tabs.mostCitedFailed'
+                'plugins.generic.fgvOpenRank.tabs.mostCitedFailed'
             ),
             'trendingFailedMessage' => __(
-                'plugins.generic.rankingPlugin.tabs.trendingFailed'
+                'plugins.generic.fgvOpenRank.tabs.trendingFailed'
             ),
             'noPublicationsFoundMessage' => __(
-                'plugins.generic.rankingPlugin.NoPublicationsFound'
+                'plugins.generic.fgvOpenRank.NoPublicationsFound'
             ),
         ];
 
         $this->loadResources(
             $templateMgr,
             $request,
-            $rankingPluginJavaScriptVariables
+            $fgvOpenRankJavaScriptVariables
         );
 
         return false;
@@ -214,8 +214,8 @@ class HookCallback
     {
         $component = &$params[0];
         $allowed = [
-            'plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridHandler',
-            'plugins.generic.rankingPlugin.controllers.grid.TrendingDoisGridHandler',
+            'plugins.generic.fgvOpenRank.controllers.grid.RankingConfigurationGridHandler',
+            'plugins.generic.fgvOpenRank.controllers.grid.TrendingDoisGridHandler',
         ];
         if (in_array($component, $allowed, true)) {
             return true;
@@ -231,11 +231,11 @@ class HookCallback
         return $context === null ? null : $context->getId();
     }
 
-    private function loadResources($templateMgr, $request, $rankingPluginJavaScriptVariables)
+    private function loadResources($templateMgr, $request, $fgvOpenRankJavaScriptVariables)
     {
         $templateMgr->addJavaScript(
             'AppData',
-            'app = ' . json_encode($rankingPluginJavaScriptVariables) . ';',
+            'app = ' . json_encode($fgvOpenRankJavaScriptVariables) . ';',
             ['inline' => true]
         );
 
@@ -246,19 +246,19 @@ class HookCallback
         );
 
         $templateMgr->addJavaScript(
-            'rankingPluginScript',
+            'fgvOpenRankScript',
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/js/insertRankingTemplate.js',
             ['priority' => STYLE_SEQUENCE_LAST]
         );
 
         $templateMgr->addStyleSheet(
-            'rankingPluginStyles',
+            'fgvOpenRankStyles',
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/ranking.css',
             ['priority' => STYLE_SEQUENCE_LAST]
         );
 
         $templateMgr->addStyleSheet(
-            'rankingPluginPaginationStyles',
+            'fgvOpenRankPaginationStyles',
             $request->getBaseUrl() . '/' . $this->plugin->getPluginPath() . '/styles/pagination.css',
             ['priority' => STYLE_SEQUENCE_LAST]
         );

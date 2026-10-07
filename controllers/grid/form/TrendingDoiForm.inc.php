@@ -29,13 +29,13 @@ class TrendingDoiForm extends Form
             $this,
             'doi',
             'required',
-            'plugins.generic.rankingPlugin.trendingDois.invalidDoi'
+            'plugins.generic.fgvOpenRank.trendingDois.invalidDoi'
         ));
         $this->addCheck(new FormValidatorRegExp(
             $this,
             'doi',
             'required',
-            'plugins.generic.rankingPlugin.trendingDois.invalidDoi',
+            'plugins.generic.fgvOpenRank.trendingDois.invalidDoi',
             self::DOI_REGEX
         ));
         $this->addSecurityValidators();
@@ -78,7 +78,7 @@ class TrendingDoiForm extends Form
         if (!$submission) {
             $this->addError(
                 'doi',
-                __('plugins.generic.rankingPlugin.trendingDois.doiNotInJournal')
+                __('plugins.generic.fgvOpenRank.trendingDois.doiNotInJournal')
             );
             $this->addErrorField('doi');
         }

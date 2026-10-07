@@ -1,8 +1,8 @@
 <?php
 
 import('lib.pkp.classes.form.Form');
-import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
-import('plugins.generic.rankingPlugin.lib.APIKeyEncryption.APIKeyEncryption');
+import('plugins.generic.fgvOpenRank.classes.clients.Altmetrics');
+import('plugins.generic.fgvOpenRank.lib.APIKeyEncryption.APIKeyEncryption');
 
 class RankingCustomizationForm extends Form
 {
@@ -158,7 +158,7 @@ class RankingCustomizationForm extends Form
         if (!$this->getApiKeyEncryption()->secretConfigExists()) {
             $this->addError(
                 'altmetricsApiKey',
-                __('plugins.generic.rankingPlugin.settings.altmetricsApiKey.secretMissing')
+                __('plugins.generic.fgvOpenRank.settings.altmetricsApiKey.secretMissing')
             );
             $this->addErrorField('altmetricsApiKey');
             return;
@@ -175,7 +175,7 @@ class RankingCustomizationForm extends Form
             error_log($error->getMessage());
             $this->addError(
                 'altmetricsApiKey',
-                __('plugins.generic.rankingPlugin.settings.altmetricsApiKey.invalid')
+                __('plugins.generic.fgvOpenRank.settings.altmetricsApiKey.invalid')
             );
             $this->addErrorField('altmetricsApiKey');
         }
@@ -316,27 +316,27 @@ class RankingCustomizationForm extends Form
 
         switch ($tabId) {
             case 'mostRecent':
-                import('plugins.generic.rankingPlugin.classes.cache.MostRecent');
+                import('plugins.generic.fgvOpenRank.classes.cache.MostRecent');
                 $cache = new MostRecent();
                 $cache->refreshCache($context, $request, $limit);
                 break;
             case 'mostRead':
-                import('plugins.generic.rankingPlugin.classes.cache.MostRead');
+                import('plugins.generic.fgvOpenRank.classes.cache.MostRead');
                 $mostRead = new MostRead($this->plugin);
                 $mostRead->refreshCache($context, $request, $limit);
                 break;
             case 'mostCited':
-                import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
+                import('plugins.generic.fgvOpenRank.classes.cache.MostCitedDois');
                 $mostCited = new MostCitedDois();
                 $mostCited->refreshCache($contextId, $issn, $limit);
                 break;
             case 'trending':
-                import('plugins.generic.rankingPlugin.classes.cache.TrendingSubmissions');
+                import('plugins.generic.fgvOpenRank.classes.cache.TrendingSubmissions');
                 $trending = new TrendingSubmissions();
                 $trending->refreshCache($contextId, $context->getPath(), $limit);
                 break;
             case 'highlight':
-                import('plugins.generic.rankingPlugin.classes.cache.BestAltmetricsScoreDois');
+                import('plugins.generic.fgvOpenRank.classes.cache.BestAltmetricsScoreDois');
                 $cache = new BestAltmetricsScoreDois();
                 $cache->refreshCache($contextId, $issn, $limit);
                 break;

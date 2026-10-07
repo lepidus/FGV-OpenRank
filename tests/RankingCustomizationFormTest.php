@@ -1,10 +1,10 @@
 <?php
 
 import('lib.pkp.tests.PKPTestCase');
-import('plugins.generic.rankingPlugin.controllers.grid.form.RankingCustomizationForm');
-import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
-import('plugins.generic.rankingPlugin.lib.APIKeyEncryption.APIKeyEncryption');
-import('plugins.generic.rankingPlugin.RankingPlugin');
+import('plugins.generic.fgvOpenRank.controllers.grid.form.RankingCustomizationForm');
+import('plugins.generic.fgvOpenRank.classes.clients.Altmetrics');
+import('plugins.generic.fgvOpenRank.lib.APIKeyEncryption.APIKeyEncryption');
+import('plugins.generic.fgvOpenRank.FgvOpenRankPlugin');
 
 class TestableRankingCustomizationForm extends RankingCustomizationForm
 {
@@ -28,7 +28,7 @@ class RankingCustomizationFormTest extends PKPTestCase
 
     private function buildPluginMock(&$settings)
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getTemplateResource')->willReturn('form.tpl');
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use (&$settings) {
@@ -150,7 +150,7 @@ class RankingCustomizationFormTest extends PKPTestCase
             ->method('fetchBestScoreSubmissions')
             ->with('1234-5678', $this->anything(), 'bad-key')
             ->willThrowException(new \Exception(
-                __('plugins.generic.rankingPlugin.client.altmetrics.clientError')
+                __('plugins.generic.fgvOpenRank.client.altmetrics.clientError')
             ));
 
         $form = new TestableRankingCustomizationForm(

@@ -35,7 +35,7 @@ class TrendingDoisGridRow extends GridRow
                 'deleteDoi',
                 new RemoteActionConfirmationModal(
                     $request->getSession(),
-                    __('plugins.generic.rankingPlugin.trendingDois.deleteConfirm'),
+                    __('plugins.generic.fgvOpenRank.trendingDois.deleteConfirm'),
                     __('grid.action.delete'),
                     $router->url($request, null, null, 'deleteDoi', null, ['rowId' => $rowId]),
                     'modal_delete'

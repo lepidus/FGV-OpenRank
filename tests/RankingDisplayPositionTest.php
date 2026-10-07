@@ -1,9 +1,9 @@
 <?php
 
 import('lib.pkp.tests.PKPTestCase');
-import('plugins.generic.rankingPlugin.classes.RankingDisplayPosition');
-import('plugins.generic.rankingPlugin.tests.helpers.HookCallbackForTests');
-import('plugins.generic.rankingPlugin.RankingPlugin');
+import('plugins.generic.fgvOpenRank.classes.RankingDisplayPosition');
+import('plugins.generic.fgvOpenRank.tests.helpers.HookCallbackForTests');
+import('plugins.generic.fgvOpenRank.FgvOpenRankPlugin');
 
 class RankingDisplayPositionTest extends PKPTestCase
 {
@@ -11,7 +11,7 @@ class RankingDisplayPositionTest extends PKPTestCase
 
     private function buildPluginMock(array $settings)
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use ($settings) {
                 return $settings[$key] ?? null;

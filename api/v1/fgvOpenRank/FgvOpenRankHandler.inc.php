@@ -1,21 +1,21 @@
 <?php
 
 import('lib.pkp.classes.handler.APIHandler');
-import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
-import('plugins.generic.rankingPlugin.classes.cache.TrendingSubmissions');
-import('plugins.generic.rankingPlugin.classes.cache.MostRecent');
-import('plugins.generic.rankingPlugin.classes.cache.MostRead');
-import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
+import('plugins.generic.fgvOpenRank.classes.cache.MostCitedDois');
+import('plugins.generic.fgvOpenRank.classes.cache.TrendingSubmissions');
+import('plugins.generic.fgvOpenRank.classes.cache.MostRecent');
+import('plugins.generic.fgvOpenRank.classes.cache.MostRead');
+import('plugins.generic.fgvOpenRank.classes.RankingSubmissionService');
 
 define('SESSION_DISABLE_INIT', true);
 
-class RankingPluginHandler extends APIHandler
+class FgvOpenRankHandler extends APIHandler
 {
     private const DEFAULT_LIMIT = 4;
 
     public function __construct()
     {
-        $this->_handlerPath = 'rankingPlugin';
+        $this->_handlerPath = 'fgvOpenRank';
         $this->_endpoints = array(
             'GET' => array(
                 array(
@@ -48,7 +48,7 @@ class RankingPluginHandler extends APIHandler
     {
         $request = $this->getRequest();
         $context = $request->getContext();
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
 
         $contextId = $context->getId();
         $tabLimit = $plugin->getSetting($contextId, 'itemsPerTab_mostRecent') ??
@@ -75,7 +75,7 @@ class RankingPluginHandler extends APIHandler
     {
         $request = $this->getRequest();
         $context = $request->getContext();
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
 
         $contextId = $context->getId();
         $tabLimit = $plugin->getSetting($contextId, 'itemsPerTab_mostRead') ??
@@ -102,7 +102,7 @@ class RankingPluginHandler extends APIHandler
     {
         $request = $this->getRequest();
         $context = $request->getContext();
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
 
         $contextId = $context->getId();
         $tabLimit = $plugin->getSetting($contextId, 'itemsPerTab_mostCited') ??
@@ -145,7 +145,7 @@ class RankingPluginHandler extends APIHandler
     {
         $request = $this->getRequest();
         $context = $request->getContext();
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
 
         $contextId = $context->getId();
         $tabLimit = $plugin->getSetting($contextId, 'itemsPerTab_trending') ??

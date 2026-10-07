@@ -2,8 +2,8 @@
 
 import('lib.pkp.tests.PKPTestCase');
 import('lib.pkp.classes.submission.PKPSubmissionDAO');
-import('plugins.generic.rankingPlugin.controllers.grid.form.TrendingDoiForm');
-import('plugins.generic.rankingPlugin.RankingPlugin');
+import('plugins.generic.fgvOpenRank.controllers.grid.form.TrendingDoiForm');
+import('plugins.generic.fgvOpenRank.FgvOpenRankPlugin');
 
 class TestableTrendingDoiForm extends TrendingDoiForm
 {
@@ -32,7 +32,7 @@ class TrendingDoiFormTest extends PKPTestCase
 
     private function buildPluginMock(&$settings)
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getTemplateResource')->willReturn('form.tpl');
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use (&$settings) {

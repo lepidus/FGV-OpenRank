@@ -2,8 +2,8 @@
 
 import('lib.pkp.classes.controllers.grid.GridHandler');
 import('lib.pkp.classes.core.JSONMessage');
-import('plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridCellProvider');
-import('plugins.generic.rankingPlugin.controllers.grid.form.RankingCustomizationForm');
+import('plugins.generic.fgvOpenRank.controllers.grid.RankingConfigurationGridCellProvider');
+import('plugins.generic.fgvOpenRank.controllers.grid.form.RankingCustomizationForm');
 
 class RankingConfigurationGridHandler extends GridHandler
 {
@@ -56,25 +56,25 @@ class RankingConfigurationGridHandler extends GridHandler
         $columnsInfo = [
             1 => [
                 'id' => 'enabled',
-                'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
+                'title' => 'plugins.generic.fgvOpenRank.configuration.grid.'.
                     'column.enabled',
                 'template' => 'controllers/grid/common/cell/selectStatusCell.tpl'
             ],
             2 => [
                 'id' => 'defaultTitle',
-                'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
+                'title' => 'plugins.generic.fgvOpenRank.configuration.grid.'.
                     'column.defaultTitle',
                 'template' => null
             ],
             3 => [
                 'id' => 'customTitle',
-                'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
+                'title' => 'plugins.generic.fgvOpenRank.configuration.grid.'.
                     'column.customTitle',
                 'template' => null
             ],
             4 => [
                 'id' => 'customDescription',
-                'title' => 'plugins.generic.rankingPlugin.configuration.grid.'.
+                'title' => 'plugins.generic.fgvOpenRank.configuration.grid.'.
                     'column.customDescription',
                 'template' => null
             ],
@@ -99,7 +99,7 @@ class RankingConfigurationGridHandler extends GridHandler
         $context = $request->getContext();
         $this->setupTemplate($request);
 
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
         $rankingCustomizationForm = new RankingCustomizationForm(
             $plugin,
             $context->getId(),
@@ -113,7 +113,7 @@ class RankingConfigurationGridHandler extends GridHandler
     {
         $tabId = isset($args['tabId']) ? $args['tabId'] : null;
         $context = $request->getContext();
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
         $rankingCustomizationForm = new RankingCustomizationForm(
             $plugin,
             $context->getId(),
@@ -137,7 +137,7 @@ class RankingConfigurationGridHandler extends GridHandler
         $rowId = (string) $request->getUserVar('rowId');
         $settingValue = (bool) $request->getUserVar('value');
         $context = $request->getContext();
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
 
         if (!isset($rowId)) {
             return new JSONMessage(false);
@@ -176,13 +176,13 @@ class RankingConfigurationGridHandler extends GridHandler
 
     protected function loadData($request, $filter)
     {
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
         $locale = AppLocale::getLocale();
         $defaultTabs = [
             [
                 'id' => 'mostRecent',
                 'label' => __(
-                    "plugins.generic.rankingPlugin.tabs.mostRecent.defaultTitle"
+                    "plugins.generic.fgvOpenRank.tabs.mostRecent.defaultTitle"
                 ),
                 'customTitle' => $this->getLocalizedSetting(
                     $plugin,
@@ -199,7 +199,7 @@ class RankingConfigurationGridHandler extends GridHandler
             [
                 'id' => 'mostRead',
                 'label' => __(
-                    "plugins.generic.rankingPlugin.tabs.mostRead.defaultTitle"
+                    "plugins.generic.fgvOpenRank.tabs.mostRead.defaultTitle"
                 ),
                 'customTitle' => $this->getLocalizedSetting(
                     $plugin,
@@ -216,7 +216,7 @@ class RankingConfigurationGridHandler extends GridHandler
             [
                 'id' => 'mostCited',
                 'label' => __(
-                    "plugins.generic.rankingPlugin.tabs.mostCited.defaultTitle"
+                    "plugins.generic.fgvOpenRank.tabs.mostCited.defaultTitle"
                 ),
                 'customTitle' => $this->getLocalizedSetting(
                     $plugin,
@@ -233,7 +233,7 @@ class RankingConfigurationGridHandler extends GridHandler
             [
                 'id' => 'trending',
                 'label' => __(
-                    "plugins.generic.rankingPlugin.tabs.trending.defaultTitle"
+                    "plugins.generic.fgvOpenRank.tabs.trending.defaultTitle"
                 ),
                 'customTitle' => $this->getLocalizedSetting(
                     $plugin,
@@ -250,7 +250,7 @@ class RankingConfigurationGridHandler extends GridHandler
             [
                 'id' => 'highlight',
                 'label' => __(
-                    "plugins.generic.rankingPlugin.tabs.highlight.defaultTitle"
+                    "plugins.generic.fgvOpenRank.tabs.highlight.defaultTitle"
                 ),
                 'customTitle' => $this->getLocalizedSetting(
                     $plugin,
@@ -275,7 +275,7 @@ class RankingConfigurationGridHandler extends GridHandler
 
     protected function getRowInstance()
     {
-        import('plugins.generic.rankingPlugin.controllers.grid.RankingConfigurationGridRow');
+        import('plugins.generic.fgvOpenRank.controllers.grid.RankingConfigurationGridRow');
         return new RankingConfigurationGridRow();
     }
 
@@ -287,7 +287,7 @@ class RankingConfigurationGridHandler extends GridHandler
 
     public function getDataElementSequence($row)
     {
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
 
         if (is_array($row) && isset($row['id'])) {
             $tabIndex = $this->getTabIndex($row['id']);
@@ -310,7 +310,7 @@ class RankingConfigurationGridHandler extends GridHandler
 
     public function setDataElementSequence($request, $rowId, $gridDataElement, $newSequence)
     {
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
 
         $position = (int)$rowId;
         if (isset($this->currentGridData[$position]['id'])) {
@@ -331,7 +331,7 @@ class RankingConfigurationGridHandler extends GridHandler
     public function saveSequence($args, $request)
     {
         $data = json_decode($request->getUserVar('data'));
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
 
         if (!$this->currentGridData) {
             $this->loadData($request, array());
@@ -369,7 +369,7 @@ class RankingConfigurationGridHandler extends GridHandler
 
     private function compareTabsBySequence($firstTab, $secondTab)
     {
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
 
         $firstTabSequence = $this->getTabDisplaySequence($firstTab, $plugin);
 

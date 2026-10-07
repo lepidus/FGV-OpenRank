@@ -2,9 +2,13 @@
 
 ## What this is
 
-**FGV OpenRank** is a generic OJS (Open Journal Systems) plugin targeting **OJS 3.3.0**. "FGV OpenRank" is a proper name and stays untranslated in every locale; `rankingPlugin` remains the technical identifier used by the directory name, locale keys, class names and CI variables. It lives at `plugins/generic/rankingPlugin/` inside an OJS checkout — it is not a standalone project. All `import(...)` paths (`plugins.generic.rankingPlugin.*`, `lib.pkp.classes.*`, `classes.*`) resolve relative to the OJS root, so the plugin cannot be built, linted, or tested outside that checkout.
+**FGV OpenRank** is a generic OJS (Open Journal Systems) plugin targeting **OJS 3.3.0**. "FGV OpenRank" is a proper name and stays untranslated in every locale; `fgvOpenRank` is the technical identifier used by the directory name, import paths, locale keys and CI variables, and `fgvopenrankplugin` (the lowercased class name) is the plugin name under which settings are stored. Up to version 0.0.5.3 the plugin was `rankingPlugin` / `RankingPlugin`; names in the `Ranking*` family that remain (`RankingTabs`, `RankingSubmission`, the `.rankingTabs` placeholder) describe the widget, not the plugin, and the placeholder must never change because journals pasted it into Additional Content. It lives at `plugins/generic/fgvOpenRank/` inside an OJS checkout — it is not a standalone project. All `import(...)` paths (`plugins.generic.fgvOpenRank.*`, `lib.pkp.classes.*`, `classes.*`) resolve relative to the OJS root, so the plugin cannot be built, linted, or tested outside that checkout.
 
 The plugin adds a homepage widget (five tabs: mostRecent, mostRead, mostCited, trending, highlight) rendered inside a `<div class="rankingTabs"></div>` placeholder — either emitted by the plugin on the journal index page or placed by hand in the journal's Additional Content, depending on the `displayPosition` setting.
+
+**Two versions cannot be installed side by side.** Both declare the same global classes (`HookCallback`, `MostRecent`, `Manage`, …), so loading `plugins/generic/rankingPlugin` and this plugin in the same request is a fatal `Cannot declare class` on every page that loads all plugins. `index.php` therefore returns `FgvOpenRankPendingRemovalPlugin` (no imports, cannot be enabled) while `plugins/generic/rankingPlugin` exists, and only loads `FgvOpenRankPlugin` once it is gone. Keep that check, and keep the stand-in free of imports.
+
+`classes/migrations/FgvOpenRankRenameMigration.inc.php` carries the old plugin over: it moves every `plugin_settings` row from `rankingplugin` to `fgvopenrankplugin` (a key that already exists under the new name wins), deletes the old task's `scheduled_tasks` row and Acron's cached `crontab` whenever it moved settings or the crontab still names the old task class (Acron rebuilds it on the next request, now with the new task), and marks the `rankingPlugin` row of `versions` as not current only when its directory is gone, because the core **Delete** action needs it current. It runs from `getInstallMigration()` (plugin upload, `installPluginVersion.php`, the OJS `upgrade.php`), from `upgrade.xml` (later uploads of this plugin; the 3.3 installer instantiates it with no arguments) and from `register()` while the plugin is not enabled and legacy settings are left, which is the path when the package was uploaded before the old plugin was deleted. Keep it idempotent.
 
 ## Development commands
 
@@ -18,18 +22,18 @@ The plugin's PHPUnit tests live in `tests/`. Tests are wired through the PKP tes
 # From the OJS root:
 php lib/pkp/lib/vendor/phpunit/phpunit/phpunit \
     --configuration lib/pkp/tests/phpunit-env2.xml \
-    -v plugins/generic/rankingPlugin/tests
+    -v plugins/generic/fgvOpenRank/tests
 
 # Single test file
 php lib/pkp/lib/vendor/phpunit/phpunit/phpunit \
     --configuration lib/pkp/tests/phpunit-env2.xml \
-    -v plugins/generic/rankingPlugin/tests/AltmetricsApiClientTest.php
+    -v plugins/generic/fgvOpenRank/tests/AltmetricsApiClientTest.php
 
 # Single test method (filter by method name)
 php lib/pkp/lib/vendor/phpunit/phpunit/phpunit \
     --configuration lib/pkp/tests/phpunit-env2.xml \
     --filter itShouldReturnServerError \
-    -v plugins/generic/rankingPlugin/tests
+    -v plugins/generic/fgvOpenRank/tests
 
 # The standard PKP runner also works:
 lib/pkp/tools/runAllTests.sh -p     # runs every plugin's tests
@@ -48,15 +52,15 @@ php tools/runScheduledTasks.php
 
 ### Request flow
 
-The plugin hooks OJS at five points, registered in `RankingPlugin::register` (RankingPlugin.inc.php:15-23) and dispatched through `classes/HookCallback.inc.php`:
+The plugin hooks OJS at five points, registered in `FgvOpenRankPlugin::register` and dispatched through `classes/HookCallback.inc.php`:
 
 1. **`TemplateManager::display`** (frontend) — on `frontend/pages/indexJournal.tpl`, `HookCallback::handleMetricsData` injects per-tab settings, localized titles/descriptions, the fetched `ranking.tpl` HTML, and a `window.app` JS blob; then enqueues `js/insertRankingTemplate.js` + `styles/*.css`.
 2. **`Templates::Index::journal`** (frontend) — `HookCallback::insertRankingPlaceholder` appends `<div class="rankingTabs"></div>` to the hook output for every plugin-owned `displayPosition` (`top`, `afterSection`, `bottom`), which lands it as the first child of whatever element the theme uses for the homepage. It is the only frontend template hook on that page; themes that override `indexJournal.tpl` keep the `{call_hook}` they copied from core. When the setting is `additionalContent` (the default) the callback emits nothing and the manager's own placeholder is used.
-3. **`Dispatcher::dispatch`** (API) — `HookCallback::setupRankingPluginAPIHandler` intercepts any path matching `api/v1/rankingPlugin`, loads `api/v1/rankingPlugin/RankingPluginHandler.inc.php`, runs its Slim app, and `exit`s. The plugin never registers through OJS's normal API discovery — **all routing for this plugin is the hook's responsibility**.
+3. **`Dispatcher::dispatch`** (API) — `HookCallback::setupFgvOpenRankAPIHandler` intercepts any path matching `api/v1/fgvOpenRank`, loads `api/v1/fgvOpenRank/FgvOpenRankHandler.inc.php`, runs its Slim app, and `exit`s. The plugin never registers through OJS's normal API discovery — **all routing for this plugin is the hook's responsibility**.
 4. **`LoadComponentHandler`** (admin) — enables `RankingConfigurationGridHandler` for the settings grid.
 5. **`Schema::get::submission`** — appends an `altmetricsScore` (nullable number, `apiSummary: true`) property to the submission JSON schema.
 
-There's also an `AcronPlugin::parseCronTab` hook (registered directly on the plugin, not the callback object) that appends `scheduledTasks.xml` so Acron picks up `RankingCacheUpdateTask`.
+There's also an `AcronPlugin::parseCronTab` hook (registered directly on the plugin, not the callback object, and registered even when the plugin is not enabled in the current request) that appends `scheduledTasks.xml` so Acron picks up `RankingCacheUpdateTask`. Acron rebuilds its crontab in whatever request runs it, often the installer or a journal where the plugin is off, so gating the hook on `getEnabled()` drops the task; the task skips disabled journals itself.
 
 ### The four-tab pipeline
 
@@ -69,7 +73,7 @@ Each tab is a pair of **cache class** (in `classes/cache/`) + **factory method**
 | mostCited   | Crossref API (`clients/Crossref`)       | `MostCitedDois` → `RankingSubmissionService::getAListOfMostCitedSubmissionsByCachedDois` | **yes** — cache stores DOIs, submissions are resolved on read via `SubmissionDAO::getByPubId('doi', ...)` |
 | trending    | Altmetric API (`clients/Altmetrics`)    | `BestAltmetricsScoreDois` → `TrendingSubmissions` | **yes** — same DOI-indirection as mostCited |
 
-`RankingSubmissionService` (`classes/RankingSubmissionService.inc.php`) is the thin entry point that `RankingPluginHandler` and the scheduled task both call; it forwards to `RankingSubmission::get($functionName, $params)` which dispatches to the correct `get*` factory method. `RankingSubmission::formatSubmissionData` is the shared shape — **any field added there shows up in every tab's JSON response**, so edit it when introducing new display fields.
+`RankingSubmissionService` (`classes/RankingSubmissionService.inc.php`) is the thin entry point that `FgvOpenRankHandler` and the scheduled task both call; it forwards to `RankingSubmission::get($functionName, $params)` which dispatches to the correct `get*` factory method. `RankingSubmission::formatSubmissionData` is the shared shape — **any field added there shows up in every tab's JSON response**, so edit it when introducing new display fields.
 
 The **scheduled task** `classes/tasks/RankingCacheUpdateTask.inc.php` iterates enabled contexts and calls each cache's `refreshCache` directly. `scheduledTasks.xml` sets `frequency hour="0"` (once per day at midnight). The Altmetric and Crossref API calls happen only inside the scheduled path and inside the HTTP-request cache-miss path — the frontend AJAX never calls the external APIs directly.
 
@@ -82,15 +86,15 @@ Settings are stored per context (journal) via `plugin->getSetting($contextId, $k
 - `tabEnabled_{index}`, `tabSequence_{index}` — `index` is the position in `['mostRecent', 'mostRead', 'mostCited', 'trending', 'highlight']` from `HookCallback::getOrderedTabs`. Tab ordering is derived from these two per-index keys; a `tabEnabled_{index}` that's never set counts as enabled (check is `!== false`).
 - `customTitle_{tabId}`, `customDescription_{tabId}`, `highlightContent_{tabId}` — localized values. `getLocalizedValue` falls back current locale → primary locale → first non-empty.
 - `itemsPerTab` / `itemsPerPage` are global defaults (4); `itemsPerTab_{tabId}` / `itemsPerPage_{tabId}` override per tab.
-- `displayPosition` — `top`, `afterSection`, `bottom` or `additionalContent` (the default and the fallback for unknown/absent values) — and `displayPositionSection`, the 1-based section number `afterSection` counts to (`normalizeSection` clamps anything below 1 to 1). Both live in `classes/RankingDisplayPosition.inc.php`; `HookCallback` and `RankingPluginSettingsForm` both go through its `normalize`/`normalizeSection`/`needsPlaceholder`, so add new positions there.
+- `displayPosition` — `top`, `afterSection`, `bottom` or `additionalContent` (the default and the fallback for unknown/absent values) — and `displayPositionSection`, the 1-based section number `afterSection` counts to (`normalizeSection` clamps anything below 1 to 1). Both live in `classes/RankingDisplayPosition.inc.php`; `HookCallback` and `FgvOpenRankSettingsForm` both go through its `normalize`/`normalizeSection`/`needsPlaceholder`, so add new positions there.
 
-The settings admin UI is a PKP `GridHandler` (`controllers/grid/RankingConfigurationGridHandler.inc.php`) with actions `editTab`, `updateTab`, `saveSequence`, `saveTabSetting` restricted to `ROLE_ID_MANAGER`. The "main" plugin settings form (`classes/settings/RankingPluginSettingsForm.inc.php`) holds only `displayPosition` + `displayPositionSection`; actual per-tab config lives in the grid + `RankingCustomizationForm`, which `templates/settings/form.tpl` loads below the position radios. `templates/settings/form.tpl` also opens with a `.cmp_rankingPlugin_intro` block (`settings.intro.*` keys) that explains where each tab's data comes from and points at the configuration guide. The plugin-list description is deliberately one sentence, so that detail lives here instead.
+The settings admin UI is a PKP `GridHandler` (`controllers/grid/RankingConfigurationGridHandler.inc.php`) with actions `editTab`, `updateTab`, `saveSequence`, `saveTabSetting` restricted to `ROLE_ID_MANAGER`. The "main" plugin settings form (`classes/settings/FgvOpenRankSettingsForm.inc.php`) holds only `displayPosition` + `displayPositionSection`; actual per-tab config lives in the grid + `RankingCustomizationForm`, which `templates/settings/form.tpl` loads below the position radios. `templates/settings/form.tpl` also opens with a `.cmp_fgvOpenRank_intro` block (`settings.intro.*` keys) that explains where each tab's data comes from and points at the configuration guide. The plugin-list description is deliberately one sentence, so that detail lives here instead.
 
 ### Configuration guide
 
-`classes/settings/Actions.inc.php` puts two `LinkAction`s on the plugin row when the plugin is enabled: **Settings** (verb `settings`) and **Configuration guide** (verb `configurationGuide`), in that order. `classes/settings/Manage.inc.php` dispatches both; its `default` branch calls `RankingPlugin::parentManage()`, which is the only way back to `GenericPlugin::manage()` — calling `manage()` there would route straight into `Manage::execute()` again.
+`classes/settings/Actions.inc.php` puts two `LinkAction`s on the plugin row when the plugin is enabled: **Settings** (verb `settings`) and **Configuration guide** (verb `configurationGuide`), in that order. `classes/settings/Manage.inc.php` dispatches both; its `default` branch calls `FgvOpenRankPlugin::parentManage()`, which is the only way back to `GenericPlugin::manage()` — calling `manage()` there would route straight into `Manage::execute()` again.
 
-The guide itself is `classes/settings/ConfigurationGuide.inc.php` rendering `templates/admin/configurationGuide.tpl` into an `AjaxModal`: eight `[data-guide-panel]` sections (intro, six steps, conclusion) toggled by `hidden` through `js/configurationGuide.js`, styled by `styles/admin/configurationGuide.css`. Both assets are injected as plain tags inside the modal, so `RankingPlugin::getAssetVersion()` appends the `?v=` that `addJavaScript()`/`addStyleSheet()` would otherwise add — jQuery fetches injected scripts with `cache: true`. The settings modal injects `styles/admin/settingsIntro.css` the same way, through the same method.
+The guide itself is `classes/settings/ConfigurationGuide.inc.php` rendering `templates/admin/configurationGuide.tpl` into an `AjaxModal`: eight `[data-guide-panel]` sections (intro, six steps, conclusion) toggled by `hidden` through `js/configurationGuide.js`, styled by `styles/admin/configurationGuide.css`. Both assets are injected as plain tags inside the modal, so `FgvOpenRankPlugin::getAssetVersion()` appends the `?v=` that `addJavaScript()`/`addStyleSheet()` would otherwise add — jQuery fetches injected scripts with `cache: true`. The settings modal injects `styles/admin/settingsIntro.css` the same way, through the same method.
 
 Things that break silently if changed carelessly:
 
@@ -100,11 +104,11 @@ Things that break silently if changed carelessly:
 - **Additional Content is a TinyMCE field**, so the guide sends the operator through its "Source code" button. TinyMCE ships no langs here, so that label is English in every locale. It pads `<div class="rankingTabs"></div>` to `<div class="rankingTabs">&nbsp;</div>` on save; the element survives, the class is kept.
 - There is no page URL for the plugin's own settings modal — it is a component call returning JSON — so the steps about it link to **Installed Plugins** and the link labels say so.
 
-All guide strings live under `plugins.generic.rankingPlugin.configurationGuide.*` in all three locales; the template carries no literal text.
+All guide strings live under `plugins.generic.fgvOpenRank.configurationGuide.*` in all three locales; the template carries no literal text.
 
 ### Frontend
 
-`js/insertRankingTemplate.js` replaces the first `.rankingTabs` div with `window.app.rankingTemplate`, then fires four parallel AJAX calls to `window.app.rankingPluginApiBaseUrl + /{mostRecent,mostRead,mostCitedSubmissions,trendingSubmissions}`. Error messages per tab are pre-localized into `window.app` (mostRecentFailedMessage, …). The `highlight` tab is content-only and has no API call.
+`js/insertRankingTemplate.js` replaces the first `.rankingTabs` div with `window.app.rankingTemplate`, then fires four parallel AJAX calls to `window.app.fgvOpenRankApiBaseUrl + /{mostRecent,mostRead,mostCitedSubmissions,trendingSubmissions}`. Error messages per tab are pre-localized into `window.app` (mostRecentFailedMessage, …). The `highlight` tab is content-only and has no API call.
 
 **Positioning is split between PHP and JS.** PHP only guarantees the placeholder exists at the start of the homepage container; `moveToConfiguredPosition` in `js/insertRankingTemplate.js` then moves it, before filling it, using `placeholder.parentElement` as the anchor and `window.app.displayPosition` / `displayPositionSection` (both injected by `HookCallback::getDisplayPositionSettings`) as the offset. `afterSection` counts **every** element child of that parent, so the homepage image counts as a section and a theme wrapper (`saudeEmDebate`'s `.saude_home_content`) collapses several visual sections into one slot — the settings help text and the READMEs say so, keep them honest if the counting changes. It deliberately matches **no** CSS classes: the local themes disagree on all of them (`rieja` has no current-issue section and renders `.additional_content` first; `saudeEmDebate` uses `.saude_announcements`/`.saude_articles` instead of `.cmp_announcements`/`.current_issue`), so counting the container's own children is the only theme-agnostic anchor. Keep it that way when adding positions.
 
@@ -118,8 +122,8 @@ With `displayPosition` left at `additionalContent`, the journal operator must ad
 
 ## Conventions
 
-- OJS 3.3 PHP: no namespaces, files are `.inc.php`, classes are autoloaded via `import('plugins.generic.rankingPlugin.…')`. New files must follow this convention or they won't load.
+- OJS 3.3 PHP: no namespaces, files are `.inc.php`, classes are autoloaded via `import('plugins.generic.fgvOpenRank.…')`. New files must follow this convention or they won't load.
 - `version.xml` must be bumped (and `<date>` updated) for any release — OJS decides whether to run upgrade logic from that version string.
 - The plugin is `lazy-load=1`: a context-level enable flag (`getEnabled()`) gates every hook; all runtime code must assume the plugin may be disabled.
-- External API errors are caught in `classes/clients/*.inc.php` and re-thrown as localized `\Exception` messages keyed `plugins.generic.rankingPlugin.client.{altmetrics,crossref}.{server,client,transfer}Error`. `RankingPluginHandler` translates those into `{errorMessage: ...}` 500 JSON responses — keep that pattern when adding new endpoints so the JS error branches render the right text.
+- External API errors are caught in `classes/clients/*.inc.php` and re-thrown as localized `\Exception` messages keyed `plugins.generic.fgvOpenRank.client.{altmetrics,crossref}.{server,client,transfer}Error`. `FgvOpenRankHandler` translates those into `{errorMessage: ...}` 500 JSON responses — keep that pattern when adding new endpoints so the JS error branches render the right text.
 - Tests mock the HTTP client via `tests/helpers/ClientInterfaceForTests.inc.php` (a thin Guzzle-compatible interface) rather than mocking Guzzle directly.

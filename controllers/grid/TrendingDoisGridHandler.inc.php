@@ -6,8 +6,8 @@ import('lib.pkp.classes.core.JSONMessage');
 import('lib.pkp.classes.linkAction.LinkAction');
 import('lib.pkp.classes.linkAction.request.AjaxModal');
 import('lib.pkp.classes.linkAction.request.RemoteActionConfirmationModal');
-import('plugins.generic.rankingPlugin.controllers.grid.form.TrendingDoiForm');
-import('plugins.generic.rankingPlugin.controllers.grid.TrendingDoisGridCellProvider');
+import('plugins.generic.fgvOpenRank.controllers.grid.form.TrendingDoiForm');
+import('plugins.generic.fgvOpenRank.controllers.grid.TrendingDoisGridCellProvider');
 
 class TrendingDoisGridHandler extends GridHandler
 {
@@ -45,7 +45,7 @@ class TrendingDoisGridHandler extends GridHandler
 
         AppLocale::requireComponents(LOCALE_COMPONENT_PKP_COMMON);
 
-        $this->setTitle('plugins.generic.rankingPlugin.trendingDois.title');
+        $this->setTitle('plugins.generic.fgvOpenRank.trendingDois.title');
 
         $router = $request->getRouter();
         $this->addAction(
@@ -53,11 +53,11 @@ class TrendingDoisGridHandler extends GridHandler
                 'addDoi',
                 new AjaxModal(
                     $router->url($request, null, null, 'addDoi'),
-                    __('plugins.generic.rankingPlugin.trendingDois.add'),
+                    __('plugins.generic.fgvOpenRank.trendingDois.add'),
                     'modal_add_item',
                     true
                 ),
-                __('plugins.generic.rankingPlugin.trendingDois.add'),
+                __('plugins.generic.fgvOpenRank.trendingDois.add'),
                 'add_item'
             )
         );
@@ -65,7 +65,7 @@ class TrendingDoisGridHandler extends GridHandler
         $this->addColumn(
             new GridColumn(
                 'doi',
-                'plugins.generic.rankingPlugin.trendingDois.doi',
+                'plugins.generic.fgvOpenRank.trendingDois.doi',
                 null,
                 null,
                 new TrendingDoisGridCellProvider()
@@ -82,7 +82,7 @@ class TrendingDoisGridHandler extends GridHandler
 
     protected function getRowInstance()
     {
-        import('plugins.generic.rankingPlugin.controllers.grid.TrendingDoisGridRow');
+        import('plugins.generic.fgvOpenRank.controllers.grid.TrendingDoisGridRow');
         return new TrendingDoisGridRow();
     }
 
@@ -213,12 +213,12 @@ class TrendingDoisGridHandler extends GridHandler
 
     protected function getPlugin()
     {
-        return PluginRegistry::getPlugin('generic', 'rankingplugin');
+        return PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
     }
 
     protected function refreshTrendingCache(): void
     {
-        import('plugins.generic.rankingPlugin.classes.cache.TrendingSubmissions');
+        import('plugins.generic.fgvOpenRank.classes.cache.TrendingSubmissions');
         $plugin = $this->getPlugin();
         $contextDao = Application::getContextDAO();
         $context = $contextDao->getById($this->contextId);

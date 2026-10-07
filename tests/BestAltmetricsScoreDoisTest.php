@@ -1,8 +1,8 @@
 <?php
 
 import('lib.pkp.tests.PKPTestCase');
-import('plugins.generic.rankingPlugin.classes.cache.BestAltmetricsScoreDois');
-import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
+import('plugins.generic.fgvOpenRank.classes.cache.BestAltmetricsScoreDois');
+import('plugins.generic.fgvOpenRank.classes.clients.Altmetrics');
 
 class BestAltmetricsScoreDoisTest extends PKPTestCase
 {
