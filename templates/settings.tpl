@@ -8,12 +8,12 @@
  * FGV OpenRank settings.
  *}
 {assign var="uuid" value=""|uniqid|escape}
-<div id="rankingPluginSettings-{$uuid}">
-	<ranking-plugin-settings
+<div id="fgvOpenRankSettings-{$uuid}">
+	<fgv-open-rank-settings
 		settings-api-url="{$settingsApiUrl|escape}"
 		tab-settings-url="{$tabSettingsUrl|escape}"
-	></ranking-plugin-settings>
+	></fgv-open-rank-settings>
 </div>
 <script type="text/javascript">
-	pkp.registry.init('rankingPluginSettings-{$uuid}', 'Container', {ldelim}{rdelim});
+	pkp.registry.init('fgvOpenRankSettings-{$uuid}', 'Container', {ldelim}{rdelim});
 </script>

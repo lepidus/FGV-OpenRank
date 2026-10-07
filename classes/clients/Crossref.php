@@ -1,6 +1,6 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\clients;
+namespace APP\plugins\generic\fgvOpenRank\classes\clients;
 
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
@@ -36,13 +36,13 @@ class Crossref
             return json_decode($response->getBody()->getContents(), true);
         } catch (ServerException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("plugins.generic.rankingPlugin.client.crossref.serverError"));
+            throw new \Exception(__("plugins.generic.fgvOpenRank.client.crossref.serverError"));
         } catch (ClientException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("plugins.generic.rankingPlugin.client.crossref.clientError"));
+            throw new \Exception(__("plugins.generic.fgvOpenRank.client.crossref.clientError"));
         } catch (TransferException $error) {
             error_log($error->getMessage());
-            throw new \Exception(__("plugins.generic.rankingPlugin.client.crossref.transferError"));
+            throw new \Exception(__("plugins.generic.fgvOpenRank.client.crossref.transferError"));
         } catch (GuzzleException $error) {
             throw new \Exception("Crossref Client Error" . $error->getMessage(), 0, $error);
         }

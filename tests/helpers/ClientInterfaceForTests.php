@@ -1,6 +1,6 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests\helpers;
+namespace APP\plugins\generic\fgvOpenRank\tests\helpers;
 
 class ClientInterfaceForTests
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\api\v1;
+namespace APP\plugins\generic\fgvOpenRank\classes\api\v1;
 
-use APP\plugins\generic\rankingPlugin\classes\RankingTabs;
-use APP\plugins\generic\rankingPlugin\classes\services\RankingTabService;
+use APP\plugins\generic\fgvOpenRank\classes\RankingTabs;
+use APP\plugins\generic\fgvOpenRank\classes\services\RankingTabService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -12,7 +12,7 @@ use PKP\core\PKPBaseController;
 use PKP\core\PKPRequest;
 use PKP\security\authorization\ContextRequiredPolicy;
 
-class RankingPluginController extends PKPBaseController
+class FgvOpenRankController extends PKPBaseController
 {
     public function __construct(
         private $plugin
@@ -21,7 +21,7 @@ class RankingPluginController extends PKPBaseController
 
     public function getHandlerPath(): string
     {
-        return 'rankingPlugin';
+        return 'fgvOpenRank';
     }
 
     public function getRouteGroupMiddleware(): array
@@ -32,13 +32,13 @@ class RankingPluginController extends PKPBaseController
     public function getGroupRoutes(): void
     {
         Route::get('mostRecent', $this->getMostRecentSubmissions(...))
-            ->name('rankingPlugin.mostRecent');
+            ->name('fgvOpenRank.mostRecent');
         Route::get('mostRead', $this->getMostReadSubmissions(...))
-            ->name('rankingPlugin.mostRead');
+            ->name('fgvOpenRank.mostRead');
         Route::get('mostCitedSubmissions', $this->getMostCited(...))
-            ->name('rankingPlugin.mostCited');
+            ->name('fgvOpenRank.mostCited');
         Route::get('trendingSubmissions', $this->getTrendingSubmissions(...))
-            ->name('rankingPlugin.trending');
+            ->name('fgvOpenRank.trending');
     }
 
     public function authorize(PKPRequest $request, array &$args, array $roleAssignments): bool

@@ -1,20 +1,20 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin;
+namespace APP\plugins\generic\fgvOpenRank;
 
 use APP\core\Application;
-use APP\plugins\generic\rankingPlugin\classes\HookCallback;
-use APP\plugins\generic\rankingPlugin\classes\migrations\LegacySettingsMigration;
-use APP\plugins\generic\rankingPlugin\classes\settings\Actions;
-use APP\plugins\generic\rankingPlugin\classes\settings\Manage;
-use APP\plugins\generic\rankingPlugin\classes\tasks\RankingCacheUpdateTask;
+use APP\plugins\generic\fgvOpenRank\classes\HookCallback;
+use APP\plugins\generic\fgvOpenRank\classes\migrations\InstallMigration;
+use APP\plugins\generic\fgvOpenRank\classes\settings\Actions;
+use APP\plugins\generic\fgvOpenRank\classes\settings\Manage;
+use APP\plugins\generic\fgvOpenRank\classes\tasks\RankingCacheUpdateTask;
 use APP\template\TemplateManager;
 use PKP\plugins\GenericPlugin;
 use PKP\plugins\Hook;
 use PKP\plugins\interfaces\HasTaskScheduler;
 use PKP\scheduledTask\PKPScheduler;
 
-class RankingPlugin extends GenericPlugin implements HasTaskScheduler
+class FgvOpenRankPlugin extends GenericPlugin implements HasTaskScheduler
 {
     public function register($category, $path, $mainContextId = null)
     {
@@ -46,17 +46,17 @@ class RankingPlugin extends GenericPlugin implements HasTaskScheduler
 
     public function getInstallMigration()
     {
-        return new LegacySettingsMigration();
+        return new InstallMigration();
     }
 
     public function getDisplayName()
     {
-        return __('plugins.generic.rankingPlugin.displayName');
+        return __('plugins.generic.fgvOpenRank.displayName');
     }
 
     public function getDescription()
     {
-        return __('plugins.generic.rankingPlugin.description');
+        return __('plugins.generic.fgvOpenRank.description');
     }
 
     public function getAssetVersion(): string
@@ -105,7 +105,7 @@ class RankingPlugin extends GenericPlugin implements HasTaskScheduler
         $buildUrl = "{$request->getBaseUrl()}/{$this->getPluginPath()}/public/build";
 
         $templateMgr->addJavaScript(
-            'rankingPluginSettings',
+            'fgvOpenRankSettings',
             "{$buildUrl}/build.iife.js?v={$this->getAssetVersion()}",
             [
                 'inline' => false,
@@ -114,7 +114,7 @@ class RankingPlugin extends GenericPlugin implements HasTaskScheduler
             ]
         );
         $templateMgr->addStyleSheet(
-            'rankingPluginSettings',
+            'fgvOpenRankSettings',
             "{$buildUrl}/build.css?v={$this->getAssetVersion()}",
             ['contexts' => ['backend']]
         );
@@ -122,5 +122,5 @@ class RankingPlugin extends GenericPlugin implements HasTaskScheduler
 }
 
 if (!PKP_STRICT_MODE) {
-    class_alias('\APP\plugins\generic\rankingPlugin\RankingPlugin', '\RankingPlugin');
+    class_alias('\APP\plugins\generic\fgvOpenRank\FgvOpenRankPlugin', '\FgvOpenRankPlugin');
 }

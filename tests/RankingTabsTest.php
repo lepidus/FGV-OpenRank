@@ -1,9 +1,9 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\RankingTabs;
-use APP\plugins\generic\rankingPlugin\RankingPlugin;
+use APP\plugins\generic\fgvOpenRank\classes\RankingTabs;
+use APP\plugins\generic\fgvOpenRank\FgvOpenRankPlugin;
 use PHPUnit\Framework\Attributes\Test;
 use PKP\tests\PKPTestCase;
 
@@ -13,7 +13,7 @@ class RankingTabsTest extends PKPTestCase
 
     private function buildRankingTabs(array &$settings): RankingTabs
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use (&$settings) {
                 return $settings[$key] ?? null;

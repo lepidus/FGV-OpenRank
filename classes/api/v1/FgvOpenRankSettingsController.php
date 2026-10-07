@@ -1,17 +1,17 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\api\v1;
+namespace APP\plugins\generic\fgvOpenRank\classes\api\v1;
 
 use APP\core\Application;
-use APP\plugins\generic\rankingPlugin\classes\RankingTabs;
-use APP\plugins\generic\rankingPlugin\classes\components\forms\DisplayPositionForm;
-use APP\plugins\generic\rankingPlugin\classes\components\forms\TabSettingsForm;
-use APP\plugins\generic\rankingPlugin\classes\components\forms\TrendingDoiForm;
-use APP\plugins\generic\rankingPlugin\classes\services\RankingTabService;
-use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
-use APP\plugins\generic\rankingPlugin\classes\settings\DisplayPositionSettings;
-use APP\plugins\generic\rankingPlugin\classes\settings\TabSettings;
-use APP\plugins\generic\rankingPlugin\classes\settings\TrendingDois;
+use APP\plugins\generic\fgvOpenRank\classes\RankingTabs;
+use APP\plugins\generic\fgvOpenRank\classes\components\forms\DisplayPositionForm;
+use APP\plugins\generic\fgvOpenRank\classes\components\forms\TabSettingsForm;
+use APP\plugins\generic\fgvOpenRank\classes\components\forms\TrendingDoiForm;
+use APP\plugins\generic\fgvOpenRank\classes\services\RankingTabService;
+use APP\plugins\generic\fgvOpenRank\classes\settings\AltmetricsApiKey;
+use APP\plugins\generic\fgvOpenRank\classes\settings\DisplayPositionSettings;
+use APP\plugins\generic\fgvOpenRank\classes\settings\TabSettings;
+use APP\plugins\generic\fgvOpenRank\classes\settings\TrendingDois;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request as IlluminateRequest;
@@ -26,7 +26,7 @@ use PKP\security\authorization\PolicySet;
 use PKP\security\authorization\RoleBasedHandlerOperationPolicy;
 use PKP\security\authorization\UserRolesRequiredPolicy;
 
-class RankingPluginSettingsController extends PKPBaseController
+class FgvOpenRankSettingsController extends PKPBaseController
 {
     public function __construct(
         private $plugin
@@ -50,23 +50,23 @@ class RankingPluginSettingsController extends PKPBaseController
     public function getGroupRoutes(): void
     {
         Route::get('', $this->get(...))
-            ->name('plugin.rankingplugin.settings.get');
+            ->name('plugin.fgvopenrankplugin.settings.get');
         Route::put('', $this->edit(...))
-            ->name('plugin.rankingplugin.settings.edit');
+            ->name('plugin.fgvopenrankplugin.settings.edit');
         Route::put('tabs', $this->editTabs(...))
-            ->name('plugin.rankingplugin.settings.tabs.edit');
+            ->name('plugin.fgvopenrankplugin.settings.tabs.edit');
         Route::put('tabs/{tabId}', $this->editTab(...))
-            ->name('plugin.rankingplugin.settings.tab.edit')
+            ->name('plugin.fgvopenrankplugin.settings.tab.edit')
             ->whereIn('tabId', RankingTabs::getAll());
         Route::post('trendingDois', $this->addTrendingDoi(...))
-            ->name('plugin.rankingplugin.settings.trendingDois.add');
+            ->name('plugin.fgvopenrankplugin.settings.trendingDois.add');
         Route::put('trendingDois/order', $this->orderTrendingDois(...))
-            ->name('plugin.rankingplugin.settings.trendingDois.order');
+            ->name('plugin.fgvopenrankplugin.settings.trendingDois.order');
         Route::put('trendingDois/{doiId}', $this->editTrendingDoi(...))
-            ->name('plugin.rankingplugin.settings.trendingDois.edit')
+            ->name('plugin.fgvopenrankplugin.settings.trendingDois.edit')
             ->whereAlphaNumeric('doiId');
         Route::delete('trendingDois/{doiId}', $this->deleteTrendingDoi(...))
-            ->name('plugin.rankingplugin.settings.trendingDois.delete')
+            ->name('plugin.fgvopenrankplugin.settings.trendingDois.delete')
             ->whereAlphaNumeric('doiId');
     }
 
@@ -192,7 +192,7 @@ class RankingPluginSettingsController extends PKPBaseController
             $tabValues = (new TabSettings($this->plugin, $contextId, $tabId))->getValues();
             $tabs[] = [
                 'id' => $tabId,
-                'label' => __("plugins.generic.rankingPlugin.tabs.{$tabId}.defaultTitle"),
+                'label' => __("plugins.generic.fgvOpenRank.tabs.{$tabId}.defaultTitle"),
                 'customTitle' => $this->getInLocale($tabValues['customTitle'], $locale),
                 'customDescription' => $this->getInLocale($tabValues['description'], $locale),
                 'enabled' => $rankingTabs->isEnabled($tabId),

@@ -1,9 +1,9 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\clients\Altmetrics;
-use APP\plugins\generic\rankingPlugin\tests\helpers\ClientInterfaceForTests;
+use APP\plugins\generic\fgvOpenRank\classes\clients\Altmetrics;
+use APP\plugins\generic\fgvOpenRank\tests\helpers\ClientInterfaceForTests;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
@@ -28,7 +28,7 @@ class AltmetricsApiClientTest extends PKPTestCase
         $apiClient = new Altmetrics($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            __("plugins.generic.rankingPlugin.client.altmetrics.serverError")
+            __("plugins.generic.fgvOpenRank.client.altmetrics.serverError")
         );
         $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
     }
@@ -43,7 +43,7 @@ class AltmetricsApiClientTest extends PKPTestCase
         $apiClient = new Altmetrics($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            __("plugins.generic.rankingPlugin.client.altmetrics.clientError")
+            __("plugins.generic.fgvOpenRank.client.altmetrics.clientError")
         );
         $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
     }
@@ -58,7 +58,7 @@ class AltmetricsApiClientTest extends PKPTestCase
         $apiClient = new Altmetrics($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            __("plugins.generic.rankingPlugin.client.altmetrics.transferError")
+            __("plugins.generic.fgvOpenRank.client.altmetrics.transferError")
         );
         $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
     }

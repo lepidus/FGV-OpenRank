@@ -1,8 +1,8 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\components\forms;
+namespace APP\plugins\generic\fgvOpenRank\classes\components\forms;
 
-use APP\plugins\generic\rankingPlugin\classes\RankingTabs;
+use APP\plugins\generic\fgvOpenRank\classes\RankingTabs;
 use PKP\components\forms\FieldHTML;
 use PKP\components\forms\FieldOptions;
 use PKP\components\forms\FieldRichTextarea;
@@ -16,31 +16,31 @@ class TabSettingsForm extends FormComponent
 
     public function __construct(string $action, array $locales, string $tabId, array $values)
     {
-        $this->id = "rankingPluginTab-{$tabId}";
+        $this->id = "fgvOpenRankTab-{$tabId}";
         $this->action = $action;
         $this->locales = $locales;
 
         $this->addField(new FieldText('customTitle', [
-            'label' => __('plugins.generic.rankingPlugin.configuration.grid.column.customTitle'),
+            'label' => __('plugins.generic.fgvOpenRank.configuration.grid.column.customTitle'),
             'isMultilingual' => true,
             'value' => $values['customTitle'],
         ]))
             ->addField(new FieldTextarea('description', [
-                'label' => __('plugins.generic.rankingPlugin.configuration.grid.column.customDescription'),
+                'label' => __('plugins.generic.fgvOpenRank.configuration.grid.column.customDescription'),
                 'isMultilingual' => true,
                 'size' => 'small',
                 'value' => $values['description'],
             ]))
-            ->addField($this->getNumberField('itemsPerTab', 'plugins.generic.rankingPlugin.configuration.settings.itemsPerTab', $values))
-            ->addField($this->getNumberField('itemsPerPage', 'plugins.generic.rankingPlugin.configuration.settings.itemsPerPage', $values));
+            ->addField($this->getNumberField('itemsPerTab', 'plugins.generic.fgvOpenRank.configuration.settings.itemsPerTab', $values))
+            ->addField($this->getNumberField('itemsPerPage', 'plugins.generic.fgvOpenRank.configuration.settings.itemsPerPage', $values));
 
         if ($tabId === RankingTabs::MOST_READ) {
-            $this->addField($this->getNumberField('mostReadDays', 'plugins.generic.rankingPlugin.configuration.settings.mostReadDays', $values));
+            $this->addField($this->getNumberField('mostReadDays', 'plugins.generic.fgvOpenRank.configuration.settings.mostReadDays', $values));
         }
 
         if ($tabId === RankingTabs::HIGHLIGHT) {
             $this->addField(new FieldRichTextarea('highlightContent', [
-                'label' => __('plugins.generic.rankingPlugin.configuration.settings.highlightContent'),
+                'label' => __('plugins.generic.fgvOpenRank.configuration.settings.highlightContent'),
                 'isMultilingual' => true,
                 'size' => 'large',
                 'toolbar' => 'bold italic superscript subscript | link | blockquote bullist numlist | image | code',
@@ -67,10 +67,10 @@ class TabSettingsForm extends FormComponent
     private function addTrendingFields(bool $hasApiKey): void
     {
         $this->addField(new FieldText('altmetricsApiKey', [
-            'label' => __('plugins.generic.rankingPlugin.settings.altmetricsApiKey'),
+            'label' => __('plugins.generic.fgvOpenRank.settings.altmetricsApiKey'),
             'description' => __($hasApiKey
-                ? 'plugins.generic.rankingPlugin.settings.altmetricsApiKey.stored'
-                : 'plugins.generic.rankingPlugin.settings.altmetricsApiKey.description'),
+                ? 'plugins.generic.fgvOpenRank.settings.altmetricsApiKey.stored'
+                : 'plugins.generic.fgvOpenRank.settings.altmetricsApiKey.description'),
             'inputType' => 'password',
             'value' => '',
         ]));
@@ -81,12 +81,12 @@ class TabSettingsForm extends FormComponent
 
         $this->addField(new FieldOptions('removeAltmetricsApiKey', [
             'options' => [
-                ['value' => true, 'label' => __('plugins.generic.rankingPlugin.settings.altmetricsApiKey.remove')],
+                ['value' => true, 'label' => __('plugins.generic.fgvOpenRank.settings.altmetricsApiKey.remove')],
             ],
             'value' => false,
         ]))
             ->addField(new FieldHTML('manualDoisInactive', [
-                'description' => __('plugins.generic.rankingPlugin.trendingDois.inactiveWhileApiKeySet'),
+                'description' => __('plugins.generic.fgvOpenRank.trendingDois.inactiveWhileApiKeySet'),
             ]));
     }
 }

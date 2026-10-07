@@ -3,7 +3,7 @@
 		<PkpSpinner />
 		{{ t('common.loading') }}
 	</div>
-	<div v-else data-cy="ranking-plugin-trending-doi-form">
+	<div v-else data-cy="fgv-open-rank-trending-doi-form">
 		<PkpForm v-bind="form" @set="setForm" @success="notify(t('common.changesSaved'), 'success')" />
 	</div>
 </template>

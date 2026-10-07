@@ -10,7 +10,7 @@
 (function () {
     'use strict';
 
-    var guides = document.querySelectorAll('[data-rankingplugin-guide]:not([data-guide-initialized])');
+    var guides = document.querySelectorAll('[data-fgvopenrank-guide]:not([data-guide-initialized])');
 
     Array.prototype.forEach.call(guides, function (guide) {
         guide.setAttribute('data-guide-initialized', 'true');

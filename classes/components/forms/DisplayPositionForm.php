@@ -1,15 +1,15 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\components\forms;
+namespace APP\plugins\generic\fgvOpenRank\classes\components\forms;
 
-use APP\plugins\generic\rankingPlugin\classes\RankingDisplayPosition;
+use APP\plugins\generic\fgvOpenRank\classes\RankingDisplayPosition;
 use PKP\components\forms\FieldOptions;
 use PKP\components\forms\FieldText;
 use PKP\components\forms\FormComponent;
 
 class DisplayPositionForm extends FormComponent
 {
-    public const FORM_DISPLAY_POSITION = 'rankingPluginDisplayPosition';
+    public const FORM_DISPLAY_POSITION = 'fgvOpenRankDisplayPosition';
 
     public $id = self::FORM_DISPLAY_POSITION;
     public $method = 'PUT';
@@ -19,15 +19,15 @@ class DisplayPositionForm extends FormComponent
         $this->action = $action;
 
         $this->addField(new FieldOptions(RankingDisplayPosition::SETTING_NAME, [
-            'label' => __('plugins.generic.rankingPlugin.settings.displayPosition'),
-            'description' => __('plugins.generic.rankingPlugin.settings.displayPosition.description'),
+            'label' => __('plugins.generic.fgvOpenRank.settings.displayPosition'),
+            'description' => __('plugins.generic.fgvOpenRank.settings.displayPosition.description'),
             'type' => 'radio',
             'options' => self::getPositionOptions(),
             'value' => $values[RankingDisplayPosition::SETTING_NAME],
         ]))
             ->addField(new FieldText(RankingDisplayPosition::SECTION_SETTING_NAME, [
-                'label' => __('plugins.generic.rankingPlugin.settings.displayPositionSection'),
-                'description' => __('plugins.generic.rankingPlugin.settings.displayPositionSection.description'),
+                'label' => __('plugins.generic.fgvOpenRank.settings.displayPositionSection'),
+                'description' => __('plugins.generic.fgvOpenRank.settings.displayPositionSection.description'),
                 'inputType' => 'number',
                 'size' => 'small',
                 'showWhen' => [RankingDisplayPosition::SETTING_NAME, RankingDisplayPosition::AFTER_SECTION],
@@ -40,7 +40,7 @@ class DisplayPositionForm extends FormComponent
         return array_map(
             fn (string $position) => [
                 'value' => $position,
-                'label' => __("plugins.generic.rankingPlugin.settings.displayPosition.{$position}"),
+                'label' => __("plugins.generic.fgvOpenRank.settings.displayPosition.{$position}"),
             ],
             RankingDisplayPosition::getAll()
         );

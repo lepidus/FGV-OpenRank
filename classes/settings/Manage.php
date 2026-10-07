@@ -1,6 +1,6 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\settings;
+namespace APP\plugins\generic\fgvOpenRank\classes\settings;
 
 use APP\core\Application;
 use APP\template\TemplateManager;

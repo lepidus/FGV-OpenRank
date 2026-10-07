@@ -1,12 +1,12 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\cache\BestAltmetricsScoreDois;
-use APP\plugins\generic\rankingPlugin\classes\cache\TrendingSubmissions;
-use APP\plugins\generic\rankingPlugin\classes\factory\RankingSubmission;
-use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
-use APP\plugins\generic\rankingPlugin\classes\settings\TrendingDois;
+use APP\plugins\generic\fgvOpenRank\classes\cache\BestAltmetricsScoreDois;
+use APP\plugins\generic\fgvOpenRank\classes\cache\TrendingSubmissions;
+use APP\plugins\generic\fgvOpenRank\classes\factory\RankingSubmission;
+use APP\plugins\generic\fgvOpenRank\classes\settings\AltmetricsApiKey;
+use APP\plugins\generic\fgvOpenRank\classes\settings\TrendingDois;
 use PHPUnit\Framework\Attributes\Test;
 use PKP\tests\PKPTestCase;
 

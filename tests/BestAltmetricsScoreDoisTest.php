@@ -1,9 +1,9 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\cache\BestAltmetricsScoreDois;
-use APP\plugins\generic\rankingPlugin\classes\clients\Altmetrics;
+use APP\plugins\generic\fgvOpenRank\classes\cache\BestAltmetricsScoreDois;
+use APP\plugins\generic\fgvOpenRank\classes\clients\Altmetrics;
 use PHPUnit\Framework\Attributes\Test;
 use PKP\tests\PKPTestCase;
 

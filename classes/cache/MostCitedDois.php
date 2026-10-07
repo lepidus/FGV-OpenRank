@@ -1,9 +1,9 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\cache;
+namespace APP\plugins\generic\fgvOpenRank\classes\cache;
 
 use APP\core\Application;
-use APP\plugins\generic\rankingPlugin\classes\clients\Crossref;
+use APP\plugins\generic\fgvOpenRank\classes\clients\Crossref;
 
 class MostCitedDois
 {

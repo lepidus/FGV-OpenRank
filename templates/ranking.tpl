@@ -6,7 +6,7 @@
                     {if $customTitles.$tabId}
                         {$customTitles.$tabId}
                     {else}
-                        {translate key="plugins.generic.rankingPlugin.tabs.{$tabId}.defaultTitle"}
+                        {translate key="plugins.generic.fgvOpenRank.tabs.{$tabId}.defaultTitle"}
                     {/if}
                 </a>
             </li>
@@ -24,7 +24,7 @@
                                 <hr>
                             {else}
                                 {if $tabId != 'highlight'}
-                                    {translate key="plugins.generic.rankingPlugin.tabs.{$tabId}.content.description"}
+                                    {translate key="plugins.generic.fgvOpenRank.tabs.{$tabId}.content.description"}
                                     <hr>
                                 {/if}
                             {/if}
@@ -35,7 +35,7 @@
                     {else}
                         <div id="{if $tabId == 'mostRecent'}mostRecentSubmissions{elseif $tabId == 'mostRead'}mostReadSubmissions{elseif $tabId == 'mostCited'}mostCitedSubmissions{elseif $tabId == 'trending'}trendingSubmissions{else}{$tabId}{/if}Container">
                             <div class="loading-message">
-                                <p>{translate key="plugins.generic.rankingPlugin.loading"}</p>
+                                <p>{translate key="plugins.generic.fgvOpenRank.loading"}</p>
                             </div>
                         </div>
                         <div id="{if $tabId == 'mostRecent'}mostRecentSubmissions{elseif $tabId == 'mostRead'}mostReadSubmissions{elseif $tabId == 'mostCited'}mostCitedSubmissions{elseif $tabId == 'trending'}trendingSubmissions{else}{$tabId}{/if}Pagination" class="ranking-pagination" role="navigation" aria-label="{translate key="common.pagination.label"}"></div>

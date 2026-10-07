@@ -1,8 +1,8 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\DataEncryption;
+use APP\plugins\generic\fgvOpenRank\classes\DataEncryption;
 use Exception;
 use Illuminate\Support\Facades\Crypt;
 use PHPUnit\Framework\Attributes\Test;

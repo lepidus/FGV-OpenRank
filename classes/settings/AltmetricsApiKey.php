@@ -1,10 +1,10 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\settings;
+namespace APP\plugins\generic\fgvOpenRank\classes\settings;
 
 use APP\core\Application;
-use APP\plugins\generic\rankingPlugin\classes\clients\Altmetrics;
-use APP\plugins\generic\rankingPlugin\classes\DataEncryption;
+use APP\plugins\generic\fgvOpenRank\classes\clients\Altmetrics;
+use APP\plugins\generic\fgvOpenRank\classes\DataEncryption;
 use Exception;
 
 class AltmetricsApiKey
@@ -39,7 +39,7 @@ class AltmetricsApiKey
             return $this->decrypt();
         } catch (Exception $e) {
             error_log(sprintf(
-                '[rankingPlugin] Failed to decrypt Altmetric API key for context %s: %s',
+                '[fgvOpenRank] Failed to decrypt Altmetric API key for context %s: %s',
                 $this->contextId,
                 $e->getMessage()
             ));
@@ -58,7 +58,7 @@ class AltmetricsApiKey
             $this->getAltmetricsClient()->fetchBestScoreSubmissions($issn, 1, $apiKey);
         } catch (Exception $error) {
             error_log($error->getMessage());
-            return ['altmetricsApiKey' => [__('plugins.generic.rankingPlugin.settings.altmetricsApiKey.invalid')]];
+            return ['altmetricsApiKey' => [__('plugins.generic.fgvOpenRank.settings.altmetricsApiKey.invalid')]];
         }
 
         return [];

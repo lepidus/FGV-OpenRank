@@ -1,6 +1,6 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes;
+namespace APP\plugins\generic\fgvOpenRank\classes;
 
 use Exception;
 use Illuminate\Support\Facades\Crypt;
