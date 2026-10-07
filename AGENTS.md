@@ -27,7 +27,7 @@ Tests use PHPUnit 11 `#[Test]` attributes. CI (`.gitlab-ci.yml`) pulls shared te
 
 ### Settings UI build
 
-The settings screen is Vue, built by Vite (`vite.config.js`, `i18nExtractKeys.vite.js`) from `resources/js` into `public/build`. `public/build` and `registry/uiLocaleKeysBackend.json` are committed, because the release package is copied without a build step. `vue` is pinned to the version the OJS bundle ships, since it is only used as a template compiler and the runtime comes from `pkp.modules.vue`.
+The settings screen is Vue, built by Vite (`vite.config.js`, `i18nExtractKeys.vite.js`) from `resources/js` into `public/build`. `public/build` and `registry/uiLocaleKeysBackend.json` are committed, because the release package is copied without a build step. `vue` is pinned to an exact version and only used as a template compiler; the runtime is the one the OJS bundle ships (`pkp.modules.vue`, 3.5.13), so after bumping it, check that the build still imports only helpers that runtime exports.
 
 ```bash
 npm install
