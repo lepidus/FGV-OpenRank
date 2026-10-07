@@ -1,6 +1,6 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
+import('plugins.generic.fgvOpenRank.classes.RankingSubmissionService');
 
 class MostRead
 {

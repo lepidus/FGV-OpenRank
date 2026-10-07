@@ -38,17 +38,17 @@ class Altmetrics
         } catch (ServerException $error) {
             error_log($error->getMessage());
             throw new \Exception(
-                __("plugins.generic.rankingPlugin.client.altmetrics.serverError")
+                __("plugins.generic.fgvOpenRank.client.altmetrics.serverError")
             );
         } catch (ClientException $error) {
             error_log($error->getMessage());
             throw new \Exception(
-                __("plugins.generic.rankingPlugin.client.altmetrics.clientError")
+                __("plugins.generic.fgvOpenRank.client.altmetrics.clientError")
             );
         } catch (TransferException $error) {
             error_log($error->getMessage());
             throw new \Exception(
-                __("plugins.generic.rankingPlugin.client.altmetrics.transferError")
+                __("plugins.generic.fgvOpenRank.client.altmetrics.transferError")
             );
         } catch (GuzzleException $error) {
             throw new \Exception(

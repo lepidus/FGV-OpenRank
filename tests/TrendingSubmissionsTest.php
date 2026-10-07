@@ -1,11 +1,11 @@
 <?php
 
 import('lib.pkp.tests.PKPTestCase');
-import('plugins.generic.rankingPlugin.classes.cache.TrendingSubmissions');
-import('plugins.generic.rankingPlugin.classes.cache.BestAltmetricsScoreDois');
-import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
-import('plugins.generic.rankingPlugin.lib.APIKeyEncryption.APIKeyEncryption');
-import('plugins.generic.rankingPlugin.RankingPlugin');
+import('plugins.generic.fgvOpenRank.classes.cache.TrendingSubmissions');
+import('plugins.generic.fgvOpenRank.classes.cache.BestAltmetricsScoreDois');
+import('plugins.generic.fgvOpenRank.classes.RankingSubmissionService');
+import('plugins.generic.fgvOpenRank.lib.APIKeyEncryption.APIKeyEncryption');
+import('plugins.generic.fgvOpenRank.FgvOpenRankPlugin');
 
 class TrendingSubmissionsTest extends PKPTestCase
 {
@@ -34,7 +34,7 @@ class TrendingSubmissionsTest extends PKPTestCase
 
     private function buildPluginMock(array $settings)
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use ($settings) {
                 return $settings[$key] ?? null;

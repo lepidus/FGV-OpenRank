@@ -1,19 +1,19 @@
 <?php
 
 import('lib.pkp.tests.PKPTestCase');
-import('plugins.generic.rankingPlugin.classes.RankingDisplayPosition');
-import('plugins.generic.rankingPlugin.classes.settings.RankingPluginSettingsForm');
-import('plugins.generic.rankingPlugin.RankingPlugin');
+import('plugins.generic.fgvOpenRank.classes.RankingDisplayPosition');
+import('plugins.generic.fgvOpenRank.classes.settings.FgvOpenRankSettingsForm');
+import('plugins.generic.fgvOpenRank.FgvOpenRankPlugin');
 
-class RankingPluginSettingsFormTest extends PKPTestCase
+class FgvOpenRankSettingsFormTest extends PKPTestCase
 {
     private const CONTEXT_ID = 1;
 
     private function buildPluginMock(&$settings)
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getTemplateResource')->willReturn('form.tpl');
-        $plugin->method('getName')->willReturn('rankingplugin');
+        $plugin->method('getName')->willReturn('fgvopenrankplugin');
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use (&$settings) {
                 return $settings[$key] ?? null;
@@ -34,7 +34,7 @@ class RankingPluginSettingsFormTest extends PKPTestCase
         $settings = [];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+        $form = new FgvOpenRankSettingsForm($plugin, self::CONTEXT_ID);
 
         $checks = array_map('get_class', $form->_checks);
 
@@ -50,7 +50,7 @@ class RankingPluginSettingsFormTest extends PKPTestCase
         $settings = [];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+        $form = new FgvOpenRankSettingsForm($plugin, self::CONTEXT_ID);
         $form->initData();
 
         $this->assertSame(
@@ -69,7 +69,7 @@ class RankingPluginSettingsFormTest extends PKPTestCase
         ];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+        $form = new FgvOpenRankSettingsForm($plugin, self::CONTEXT_ID);
         $form->initData();
 
         $this->assertSame(
@@ -86,7 +86,7 @@ class RankingPluginSettingsFormTest extends PKPTestCase
         $settings = [];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+        $form = new FgvOpenRankSettingsForm($plugin, self::CONTEXT_ID);
         $form->setData(
             RankingDisplayPosition::SETTING_NAME,
             RankingDisplayPosition::TOP
@@ -107,7 +107,7 @@ class RankingPluginSettingsFormTest extends PKPTestCase
         $settings = [];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+        $form = new FgvOpenRankSettingsForm($plugin, self::CONTEXT_ID);
         $form->initData();
 
         $this->assertSame(
@@ -124,7 +124,7 @@ class RankingPluginSettingsFormTest extends PKPTestCase
         $settings = [RankingDisplayPosition::SECTION_SETTING_NAME => 3];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+        $form = new FgvOpenRankSettingsForm($plugin, self::CONTEXT_ID);
         $form->initData();
 
         $this->assertSame(
@@ -141,7 +141,7 @@ class RankingPluginSettingsFormTest extends PKPTestCase
         $settings = [];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+        $form = new FgvOpenRankSettingsForm($plugin, self::CONTEXT_ID);
         $form->setData(
             RankingDisplayPosition::SETTING_NAME,
             RankingDisplayPosition::AFTER_SECTION
@@ -163,7 +163,7 @@ class RankingPluginSettingsFormTest extends PKPTestCase
         $settings = [];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+        $form = new FgvOpenRankSettingsForm($plugin, self::CONTEXT_ID);
         $form->setData(
             RankingDisplayPosition::SETTING_NAME,
             RankingDisplayPosition::AFTER_SECTION
@@ -187,7 +187,7 @@ class RankingPluginSettingsFormTest extends PKPTestCase
         ];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+        $form = new FgvOpenRankSettingsForm($plugin, self::CONTEXT_ID);
         $form->setData(RankingDisplayPosition::SETTING_NAME, 'sidebar');
         $form->execute();
 
@@ -205,18 +205,18 @@ class RankingPluginSettingsFormTest extends PKPTestCase
         $settings = [];
         $plugin = $this->buildPluginMock($settings);
 
-        $form = new RankingPluginSettingsForm($plugin, self::CONTEXT_ID);
+        $form = new FgvOpenRankSettingsForm($plugin, self::CONTEXT_ID);
 
         $this->assertSame(
             [
                 RankingDisplayPosition::TOP
-                    => 'plugins.generic.rankingPlugin.settings.displayPosition.top',
+                    => 'plugins.generic.fgvOpenRank.settings.displayPosition.top',
                 RankingDisplayPosition::AFTER_SECTION
-                    => 'plugins.generic.rankingPlugin.settings.displayPosition.afterSection',
+                    => 'plugins.generic.fgvOpenRank.settings.displayPosition.afterSection',
                 RankingDisplayPosition::BOTTOM
-                    => 'plugins.generic.rankingPlugin.settings.displayPosition.bottom',
+                    => 'plugins.generic.fgvOpenRank.settings.displayPosition.bottom',
                 RankingDisplayPosition::ADDITIONAL_CONTENT
-                    => 'plugins.generic.rankingPlugin.settings.displayPosition.additionalContent',
+                    => 'plugins.generic.fgvOpenRank.settings.displayPosition.additionalContent',
             ],
             $form->getPositionOptions()
         );

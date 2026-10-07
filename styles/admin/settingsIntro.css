@@ -7,7 +7,7 @@
  *
  * Styles for the explanatory block at the top of the FGV OpenRank settings modal.
  */
-.cmp_rankingPlugin_intro {
+.cmp_fgvOpenRank_intro {
     --intro-heading: #183f7a;
     --intro-text: #2f3438;
     --intro-muted: #49627d;
@@ -19,17 +19,17 @@
     line-height: 1.6;
 }
 
-.cmp_rankingPlugin_intro h2 {
+.cmp_fgvOpenRank_intro h2 {
     margin: 0 0 0.75rem;
     color: var(--intro-heading);
     font-size: 1.125rem;
 }
 
-.cmp_rankingPlugin_intro p {
+.cmp_fgvOpenRank_intro p {
     margin: 0 0 0.75rem;
 }
 
-.cmp_rankingPlugin_intro p.cmp_rankingPlugin_intro_note {
+.cmp_fgvOpenRank_intro p.cmp_fgvOpenRank_intro_note {
     margin: 0;
     padding: 1rem;
     border: 1px solid var(--intro-border);

@@ -1,7 +1,7 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.clients.Altmetrics');
-import('plugins.generic.rankingPlugin.classes.factory.RankingSubmission');
+import('plugins.generic.fgvOpenRank.classes.clients.Altmetrics');
+import('plugins.generic.fgvOpenRank.classes.factory.RankingSubmission');
 
 class RankingSubmissionService
 {

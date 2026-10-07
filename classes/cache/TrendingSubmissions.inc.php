@@ -1,8 +1,8 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.RankingSubmissionService');
-import('plugins.generic.rankingPlugin.classes.cache.BestAltmetricsScoreDois');
-import('plugins.generic.rankingPlugin.lib.APIKeyEncryption.APIKeyEncryption');
+import('plugins.generic.fgvOpenRank.classes.RankingSubmissionService');
+import('plugins.generic.fgvOpenRank.classes.cache.BestAltmetricsScoreDois');
+import('plugins.generic.fgvOpenRank.lib.APIKeyEncryption.APIKeyEncryption');
 
 class TrendingSubmissions
 {
@@ -76,7 +76,7 @@ class TrendingSubmissions
             return $this->getApiKeyEncryption()->decryptString($encrypted);
         } catch (\Exception $e) {
             error_log(sprintf(
-                '[rankingPlugin] Failed to decrypt Altmetric API key for context %s: %s',
+                '[fgvOpenRank] Failed to decrypt Altmetric API key for context %s: %s',
                 $contextId,
                 $e->getMessage()
             ));
@@ -127,7 +127,7 @@ class TrendingSubmissions
     private function getPlugin()
     {
         if ($this->plugin === null) {
-            $this->plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+            $this->plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
         }
         return $this->plugin;
     }

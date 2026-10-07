@@ -17,13 +17,13 @@ class Manage
 
         switch ($request->getUserVar('verb')) {
             case 'configurationGuide':
-                import('plugins.generic.rankingPlugin.classes.settings.ConfigurationGuide');
+                import('plugins.generic.fgvOpenRank.classes.settings.ConfigurationGuide');
                 $configurationGuide = new ConfigurationGuide($this->plugin);
                 return $configurationGuide->execute($request);
             case 'settings':
                 $context = $request->getContext();
-                import('plugins.generic.rankingPlugin.classes.settings.RankingPluginSettingsForm');
-                $form = new RankingPluginSettingsForm($this->plugin, $context->getId());
+                import('plugins.generic.fgvOpenRank.classes.settings.FgvOpenRankSettingsForm');
+                $form = new FgvOpenRankSettingsForm($this->plugin, $context->getId());
                 $form->initData();
                 if ($request->getUserVar('save')) {
                     $form->readInputData();

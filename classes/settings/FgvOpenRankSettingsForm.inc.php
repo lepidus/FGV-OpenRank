@@ -1,9 +1,9 @@
 <?php
 
 import('lib.pkp.classes.form.Form');
-import('plugins.generic.rankingPlugin.classes.RankingDisplayPosition');
+import('plugins.generic.fgvOpenRank.classes.RankingDisplayPosition');
 
-class RankingPluginSettingsForm extends Form
+class FgvOpenRankSettingsForm extends Form
 {
     private $plugin;
     private $contextId;
@@ -30,7 +30,7 @@ class RankingPluginSettingsForm extends Form
         $options = [];
         foreach (RankingDisplayPosition::getAll() as $position) {
             $options[$position] =
-                "plugins.generic.rankingPlugin.settings.displayPosition.{$position}";
+                "plugins.generic.fgvOpenRank.settings.displayPosition.{$position}";
         }
 
         return $options;

@@ -1,17 +1,17 @@
 <?php
 
 import('lib.pkp.classes.scheduledTask.ScheduledTask');
-import('plugins.generic.rankingPlugin.classes.cache.MostRecent');
-import('plugins.generic.rankingPlugin.classes.cache.MostRead');
-import('plugins.generic.rankingPlugin.classes.cache.MostCitedDois');
-import('plugins.generic.rankingPlugin.classes.cache.TrendingSubmissions');
-import('plugins.generic.rankingPlugin.classes.cache.BestAltmetricsScoreDois');
+import('plugins.generic.fgvOpenRank.classes.cache.MostRecent');
+import('plugins.generic.fgvOpenRank.classes.cache.MostRead');
+import('plugins.generic.fgvOpenRank.classes.cache.MostCitedDois');
+import('plugins.generic.fgvOpenRank.classes.cache.TrendingSubmissions');
+import('plugins.generic.fgvOpenRank.classes.cache.BestAltmetricsScoreDois');
 
 class RankingCacheUpdateTask extends ScheduledTask
 {
     public function getName()
     {
-        return __('plugins.generic.rankingPlugin.scheduledTask.name');
+        return __('plugins.generic.fgvOpenRank.scheduledTask.name');
     }
 
     public function executeActions()
@@ -36,8 +36,8 @@ class RankingCacheUpdateTask extends ScheduledTask
     private function updateContextCaches($context)
     {
         $request = Application::get()->getRequest();
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin')
-            ?? PluginRegistry::loadPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin')
+            ?? PluginRegistry::loadPlugin('generic', 'fgvOpenRank');
 
         if (!$plugin || !$plugin->getEnabled($context->getId())) {
             return;
@@ -45,7 +45,7 @@ class RankingCacheUpdateTask extends ScheduledTask
 
         $this->addExecutionLogEntry(
             __(
-                'plugins.generic.rankingPlugin.scheduledTask.updateStart',
+                'plugins.generic.fgvOpenRank.scheduledTask.updateStart',
                 array('contextName' => $context->getLocalizedName())
             ),
             SCHEDULED_TASK_MESSAGE_TYPE_NOTICE
@@ -59,7 +59,7 @@ class RankingCacheUpdateTask extends ScheduledTask
 
             $this->addExecutionLogEntry(
                 __(
-                    'plugins.generic.rankingPlugin.scheduledTask.updateComplete',
+                    'plugins.generic.fgvOpenRank.scheduledTask.updateComplete',
                     array('contextName' => $context->getLocalizedName())
                 ),
                 SCHEDULED_TASK_MESSAGE_TYPE_NOTICE
@@ -67,7 +67,7 @@ class RankingCacheUpdateTask extends ScheduledTask
         } catch (Exception $e) {
             $this->addExecutionLogEntry(
                 __(
-                    'plugins.generic.rankingPlugin.scheduledTask.updateError',
+                    'plugins.generic.fgvOpenRank.scheduledTask.updateError',
                     array('contextName' => $context->getLocalizedName(), 'error' => $e->getMessage())
                 ),
                 SCHEDULED_TASK_MESSAGE_TYPE_ERROR
@@ -77,7 +77,7 @@ class RankingCacheUpdateTask extends ScheduledTask
 
     private function updateMostRecentCache($context, $request)
     {
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
         $contextId = $context->getId();
         $limit = $plugin->getSetting($contextId, 'itemsPerTab_mostRecent') ?? 4;
 
@@ -87,7 +87,7 @@ class RankingCacheUpdateTask extends ScheduledTask
 
     private function updateMostReadCache($context, $request)
     {
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
         $contextId = $context->getId();
         $limit = $plugin->getSetting($contextId, 'itemsPerTab_mostRead') ?? 4;
 
@@ -102,7 +102,7 @@ class RankingCacheUpdateTask extends ScheduledTask
             return;
         }
 
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
         $contextId = $context->getId();
         $limit = $plugin->getSetting($contextId, 'itemsPerTab_mostCited') ?? 4;
 
@@ -117,7 +117,7 @@ class RankingCacheUpdateTask extends ScheduledTask
             return;
         }
 
-        $plugin = PluginRegistry::getPlugin('generic', 'rankingplugin');
+        $plugin = PluginRegistry::getPlugin('generic', 'fgvopenrankplugin');
         $contextId = $context->getId();
         $limit = $plugin->getSetting($contextId, 'itemsPerTab_trending') ?? 4;
 

@@ -11,7 +11,7 @@
   -->
 
 <scheduled_tasks>
-	<task class="plugins.generic.rankingPlugin.classes.tasks.RankingCacheUpdateTask">
+	<task class="plugins.generic.fgvOpenRank.classes.tasks.RankingCacheUpdateTask">
     <description>Update the ranking cache for FGV OpenRank.</description>
     <frequency hour="0"/>
   </task>

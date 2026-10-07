@@ -9,10 +9,10 @@
   * Plugin version information.
   -->
 <version>
-	<application>rankingPlugin</application>
+	<application>fgvOpenRank</application>
 	<type>plugins.generic</type>
 	<release>0.0.5.3</release>
 	<date>2026-09-22</date>
 	<lazy-load>1</lazy-load>
-	<class>RankingPlugin</class>
+	<class>FgvOpenRankPlugin</class>
 </version>

@@ -1,6 +1,6 @@
 <?php
 
-import('plugins.generic.rankingPlugin.classes.HookCallback');
+import('plugins.generic.fgvOpenRank.classes.HookCallback');
 
 class HookCallbackForTests extends HookCallback
 {

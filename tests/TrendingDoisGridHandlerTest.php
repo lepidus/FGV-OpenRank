@@ -1,7 +1,7 @@
 <?php
 
 import('lib.pkp.tests.PKPTestCase');
-import('plugins.generic.rankingPlugin.controllers.grid.TrendingDoisGridHandler');
+import('plugins.generic.fgvOpenRank.controllers.grid.TrendingDoisGridHandler');
 
 class TrendingDoisGridHandlerTest extends PKPTestCase
 {

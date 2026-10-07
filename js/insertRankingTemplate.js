@@ -20,7 +20,7 @@
         }
 
         $.ajax({
-            url: `${window.app.rankingPluginApiBaseUrl}/mostRecent`,
+            url: `${window.app.fgvOpenRankApiBaseUrl}/mostRecent`,
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -38,7 +38,7 @@
         });
 
         $.ajax({
-            url: `${window.app.rankingPluginApiBaseUrl}/mostRead`,
+            url: `${window.app.fgvOpenRankApiBaseUrl}/mostRead`,
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -56,7 +56,7 @@
         });
 
         $.ajax({
-            url: `${window.app.rankingPluginApiBaseUrl}/mostCitedSubmissions`,
+            url: `${window.app.fgvOpenRankApiBaseUrl}/mostCitedSubmissions`,
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -74,7 +74,7 @@
         });
 
         $.ajax({
-            url: `${window.app.rankingPluginApiBaseUrl}/trendingSubmissions`,
+            url: `${window.app.fgvOpenRankApiBaseUrl}/trendingSubmissions`,
             method: 'GET',
             dataType: 'json',
             success: function(data) {
