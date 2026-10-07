@@ -1,8 +1,8 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\migrations;
+namespace APP\plugins\generic\fgvOpenRank\classes\migrations;
 
-use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
+use APP\plugins\generic\fgvOpenRank\classes\settings\AltmetricsApiKey;
 use Exception;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Encryption\Encrypter;
@@ -15,7 +15,7 @@ use PKP\migration\upgrade\v3_5_0\I9707_WeblateUILocales;
 
 class LegacySettingsMigration extends Migration
 {
-    private const PLUGIN_NAME = 'rankingplugin';
+    private const PLUGIN_NAME = 'fgvopenrankplugin';
     private const LOCALIZED_SETTING_PREFIXES = ['customTitle_', 'customDescription_', 'highlightContent_'];
     private const LEGACY_ENCRYPTION_CIPHER = 'aes-256-cbc';
     private const LEGACY_BASE64_PREFIX = 'base64:';

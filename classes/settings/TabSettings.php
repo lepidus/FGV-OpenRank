@@ -1,8 +1,8 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\settings;
+namespace APP\plugins\generic\fgvOpenRank\classes\settings;
 
-use APP\plugins\generic\rankingPlugin\classes\RankingTabs;
+use APP\plugins\generic\fgvOpenRank\classes\RankingTabs;
 
 class TabSettings
 {

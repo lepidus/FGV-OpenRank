@@ -9,6 +9,6 @@ jobs:
   create-release:
     uses: lepidus/github-workflows/.github/workflows/generate-package.yml@main
     with:
-      plugin_name: rankingPlugin
+      plugin_name: fgvOpenRank
     permissions:
       contents: write

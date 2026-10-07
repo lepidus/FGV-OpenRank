@@ -5,7 +5,7 @@
 			class="rankingOrderButtons__button"
 			:disabled="isFirst"
 			:aria-label="`${t('common.orderUp')}: ${label}`"
-			data-cy="ranking-plugin-order-up"
+			data-cy="fgv-open-rank-order-up"
 			@click="emit('up')"
 		>
 			<PkpIcon icon="ChevronUp" :aria-hidden="true" />
@@ -15,7 +15,7 @@
 			class="rankingOrderButtons__button"
 			:disabled="isLast"
 			:aria-label="`${t('common.orderDown')}: ${label}`"
-			data-cy="ranking-plugin-order-down"
+			data-cy="fgv-open-rank-order-down"
 			@click="emit('down')"
 		>
 			<PkpIcon icon="ChevronDown" :aria-hidden="true" />

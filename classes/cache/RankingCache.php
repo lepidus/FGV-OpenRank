@@ -1,6 +1,6 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\cache;
+namespace APP\plugins\generic\fgvOpenRank\classes\cache;
 
 use Illuminate\Support\Facades\Cache;
 
@@ -32,6 +32,6 @@ class RankingCache
 
     private function getKey(int $contextId): string
     {
-        return "rankingPlugin-{$this->name}-{$contextId}";
+        return "fgvOpenRank-{$this->name}-{$contextId}";
     }
 }

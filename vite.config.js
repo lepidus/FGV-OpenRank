@@ -10,7 +10,7 @@ export default defineConfig({
 		target: 'es2016',
 		lib: {
 			entry: resolve(import.meta.dirname, 'resources/js/main.js'),
-			name: 'RankingPlugin',
+			name: 'FgvOpenRankPlugin',
 			fileName: 'build',
 			formats: ['iife'],
 		},

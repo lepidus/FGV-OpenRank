@@ -1,8 +1,8 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests\helpers;
+namespace APP\plugins\generic\fgvOpenRank\tests\helpers;
 
-use APP\plugins\generic\rankingPlugin\classes\HookCallback;
+use APP\plugins\generic\fgvOpenRank\classes\HookCallback;
 
 class HookCallbackForTests extends HookCallback
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\settings;
+namespace APP\plugins\generic\fgvOpenRank\classes\settings;
 
 use APP\facades\Repo;
 
@@ -38,11 +38,11 @@ class TrendingDois
     {
         $doi = trim($doi);
         if (!preg_match(self::DOI_REGEX, $doi)) {
-            return __('plugins.generic.rankingPlugin.trendingDois.invalidDoi');
+            return __('plugins.generic.fgvOpenRank.trendingDois.invalidDoi');
         }
 
         if (!$this->getSubmissionRepository()->getByDoi($doi, $this->contextId)) {
-            return __('plugins.generic.rankingPlugin.trendingDois.doiNotInJournal');
+            return __('plugins.generic.fgvOpenRank.trendingDois.doiNotInJournal');
         }
 
         return null;

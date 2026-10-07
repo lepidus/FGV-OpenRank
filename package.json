@@ -1,5 +1,5 @@
 {
-  "name": "rankingplugin",
+  "name": "fgvopenrank",
   "version": "1.0.0",
   "private": true,
   "description": "FGV OpenRank plugin for Open Journal Systems",
@@ -12,6 +12,6 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.9",
     "vite": "^8.3.0",
-    "vue": "3.5.13"
+    "vue": "3.5.43"
   }
 }

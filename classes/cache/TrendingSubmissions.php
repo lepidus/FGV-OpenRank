@@ -1,10 +1,10 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\cache;
+namespace APP\plugins\generic\fgvOpenRank\classes\cache;
 
-use APP\plugins\generic\rankingPlugin\classes\factory\RankingSubmission;
-use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
-use APP\plugins\generic\rankingPlugin\classes\settings\TrendingDois;
+use APP\plugins\generic\fgvOpenRank\classes\factory\RankingSubmission;
+use APP\plugins\generic\fgvOpenRank\classes\settings\AltmetricsApiKey;
+use APP\plugins\generic\fgvOpenRank\classes\settings\TrendingDois;
 
 class TrendingSubmissions
 {

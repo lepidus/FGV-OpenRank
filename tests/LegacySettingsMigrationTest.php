@@ -1,8 +1,8 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\migrations\LegacySettingsMigration;
+use APP\plugins\generic\fgvOpenRank\classes\migrations\LegacySettingsMigration;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +26,7 @@ class LegacySettingsMigrationTest extends DatabaseTestCase
         parent::setUp();
         DB::table('journals')->insert([
             'journal_id' => self::CONTEXT_ID,
-            'path' => 'rankingPluginMigrationTest',
+            'path' => 'fgvOpenRankMigrationTest',
             'primary_locale' => 'en',
         ]);
     }
@@ -53,7 +53,7 @@ class LegacySettingsMigrationTest extends DatabaseTestCase
     private function insertSetting(string $name, string $value, string $type): void
     {
         DB::table('plugin_settings')->insert([
-            'plugin_name' => 'rankingplugin',
+            'plugin_name' => 'fgvopenrankplugin',
             'context_id' => self::CONTEXT_ID,
             'setting_name' => $name,
             'setting_value' => $value,
@@ -64,7 +64,7 @@ class LegacySettingsMigrationTest extends DatabaseTestCase
     private function getSetting(string $name): ?string
     {
         return DB::table('plugin_settings')
-            ->where('plugin_name', 'rankingplugin')
+            ->where('plugin_name', 'fgvopenrankplugin')
             ->where('context_id', self::CONTEXT_ID)
             ->where('setting_name', $name)
             ->value('setting_value');

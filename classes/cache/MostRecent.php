@@ -1,8 +1,8 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\cache;
+namespace APP\plugins\generic\fgvOpenRank\classes\cache;
 
-use APP\plugins\generic\rankingPlugin\classes\factory\RankingSubmission;
+use APP\plugins\generic\fgvOpenRank\classes\factory\RankingSubmission;
 
 class MostRecent
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\clients\Crossref;
-use APP\plugins\generic\rankingPlugin\tests\helpers\ClientInterfaceForTests;
+use APP\plugins\generic\fgvOpenRank\classes\clients\Crossref;
+use APP\plugins\generic\fgvOpenRank\tests\helpers\ClientInterfaceForTests;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
@@ -28,7 +28,7 @@ class CrossrefApiClientTest extends PKPTestCase
         $apiClient = new Crossref($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "##plugins.generic.rankingPlugin.client.crossref.serverError##"
+            "##plugins.generic.fgvOpenRank.client.crossref.serverError##"
         );
         $statusCode = $apiClient->fetchMostCitedSubmissions(self::ISSN, self::LIMIT);
     }
@@ -43,7 +43,7 @@ class CrossrefApiClientTest extends PKPTestCase
         $apiClient = new Crossref($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "##plugins.generic.rankingPlugin.client.crossref.clientError##"
+            "##plugins.generic.fgvOpenRank.client.crossref.clientError##"
         );
         $statusCode = $apiClient->fetchMostCitedSubmissions(self::ISSN, self::LIMIT);
     }
@@ -58,7 +58,7 @@ class CrossrefApiClientTest extends PKPTestCase
         $apiClient = new Crossref($httpClientMock);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            "##plugins.generic.rankingPlugin.client.crossref.transferError##"
+            "##plugins.generic.fgvOpenRank.client.crossref.transferError##"
         );
         $statusCode = $apiClient->fetchMostCitedSubmissions(self::ISSN, self::LIMIT);
     }

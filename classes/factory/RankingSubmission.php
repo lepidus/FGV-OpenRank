@@ -1,6 +1,6 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\factory;
+namespace APP\plugins\generic\fgvOpenRank\classes\factory;
 
 use APP\core\Application;
 use APP\facades\Repo;

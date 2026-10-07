@@ -1,28 +1,28 @@
 <template>
-	<PkpTable data-cy="ranking-plugin-tabs">
-		<template #label>{{ t('plugins.generic.rankingPlugin.configuration.tabs.title') }}</template>
+	<PkpTable data-cy="fgv-open-rank-tabs">
+		<template #label>{{ t('plugins.generic.fgvOpenRank.configuration.tabs.title') }}</template>
 		<PkpTableHeader>
 			<PkpTableColumn>
 				<span class="sr-only">{{ t('common.order') }}</span>
 			</PkpTableColumn>
 			<PkpTableColumn>
-				{{ t('plugins.generic.rankingPlugin.configuration.grid.column.enabled') }}
+				{{ t('plugins.generic.fgvOpenRank.configuration.grid.column.enabled') }}
 			</PkpTableColumn>
 			<PkpTableColumn>
-				{{ t('plugins.generic.rankingPlugin.configuration.grid.column.defaultTitle') }}
+				{{ t('plugins.generic.fgvOpenRank.configuration.grid.column.defaultTitle') }}
 			</PkpTableColumn>
 			<PkpTableColumn>
-				{{ t('plugins.generic.rankingPlugin.configuration.grid.column.customTitle') }}
+				{{ t('plugins.generic.fgvOpenRank.configuration.grid.column.customTitle') }}
 			</PkpTableColumn>
 			<PkpTableColumn>
-				{{ t('plugins.generic.rankingPlugin.configuration.grid.column.customDescription') }}
+				{{ t('plugins.generic.fgvOpenRank.configuration.grid.column.customDescription') }}
 			</PkpTableColumn>
 			<PkpTableColumn>
 				<span class="sr-only">{{ t('common.moreActions') }}</span>
 			</PkpTableColumn>
 		</PkpTableHeader>
 		<PkpTableBody>
-			<PkpTableRow v-for="(tab, index) in tabs" :key="tab.id" :data-cy="`ranking-plugin-tab-${tab.id}`">
+			<PkpTableRow v-for="(tab, index) in tabs" :key="tab.id" :data-cy="`fgv-open-rank-tab-${tab.id}`">
 				<PkpTableCell>
 					<RankingOrderButtons
 						:label="tab.label"
@@ -36,8 +36,8 @@
 					<input
 						type="checkbox"
 						:checked="tab.enabled"
-						:aria-label="`${t('plugins.generic.rankingPlugin.configuration.grid.column.enabled')}: ${tab.label}`"
-						:data-cy="`ranking-plugin-tab-enabled-${tab.id}`"
+						:aria-label="`${t('plugins.generic.fgvOpenRank.configuration.grid.column.enabled')}: ${tab.label}`"
+						:data-cy="`fgv-open-rank-tab-enabled-${tab.id}`"
 						@change="toggle(index, $event.target.checked)"
 					/>
 				</PkpTableCell>
@@ -45,7 +45,7 @@
 				<PkpTableCell>{{ tab.customTitle }}</PkpTableCell>
 				<PkpTableCell>{{ tab.customDescription }}</PkpTableCell>
 				<PkpTableCell>
-					<PkpButton :data-cy="`ranking-plugin-tab-edit-${tab.id}`" @click="emit('edit', tab)">
+					<PkpButton :data-cy="`fgv-open-rank-tab-edit-${tab.id}`" @click="emit('edit', tab)">
 						{{ t('common.edit') }}
 					</PkpButton>
 				</PkpTableCell>

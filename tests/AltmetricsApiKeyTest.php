@@ -1,11 +1,11 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\clients\Altmetrics;
-use APP\plugins\generic\rankingPlugin\classes\DataEncryption;
-use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
-use APP\plugins\generic\rankingPlugin\RankingPlugin;
+use APP\plugins\generic\fgvOpenRank\classes\clients\Altmetrics;
+use APP\plugins\generic\fgvOpenRank\classes\DataEncryption;
+use APP\plugins\generic\fgvOpenRank\classes\settings\AltmetricsApiKey;
+use APP\plugins\generic\fgvOpenRank\FgvOpenRankPlugin;
 use Exception;
 use PHPUnit\Framework\Attributes\Test;
 use PKP\tests\PKPTestCase;
@@ -17,7 +17,7 @@ class AltmetricsApiKeyTest extends PKPTestCase
 
     private function buildPluginMock(array &$settings)
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use (&$settings) {
                 return $settings[$key] ?? null;
@@ -85,7 +85,7 @@ class AltmetricsApiKeyTest extends PKPTestCase
         $altmetricsClient->expects($this->once())
             ->method('fetchBestScoreSubmissions')
             ->with(self::ISSN, $this->anything(), 'bad-key')
-            ->willThrowException(new Exception(__('plugins.generic.rankingPlugin.client.altmetrics.clientError')));
+            ->willThrowException(new Exception(__('plugins.generic.fgvOpenRank.client.altmetrics.clientError')));
 
         $previousErrorLog = ini_set('error_log', '/dev/null');
         try {

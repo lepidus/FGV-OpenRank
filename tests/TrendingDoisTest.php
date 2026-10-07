@@ -1,9 +1,9 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\settings\TrendingDois;
-use APP\plugins\generic\rankingPlugin\RankingPlugin;
+use APP\plugins\generic\fgvOpenRank\classes\settings\TrendingDois;
+use APP\plugins\generic\fgvOpenRank\FgvOpenRankPlugin;
 use APP\submission\Repository as SubmissionRepository;
 use APP\submission\Submission;
 use PHPUnit\Framework\Attributes\Test;
@@ -29,7 +29,7 @@ class TrendingDoisTest extends PKPTestCase
 
     private function buildPluginMock(array &$settings)
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use (&$settings) {
                 return $settings[$key] ?? null;
@@ -61,7 +61,7 @@ class TrendingDoisTest extends PKPTestCase
         $trendingDois = $this->buildTrendingDois($settings, $this->buildSubmissionRepositoryMock(new Submission()));
 
         $this->assertSame(
-            __('plugins.generic.rankingPlugin.trendingDois.invalidDoi'),
+            __('plugins.generic.fgvOpenRank.trendingDois.invalidDoi'),
             $trendingDois->validate('not-a-doi')
         );
     }
@@ -82,7 +82,7 @@ class TrendingDoisTest extends PKPTestCase
         $trendingDois = $this->buildTrendingDois($settings, $this->buildSubmissionRepositoryMock(null));
 
         $this->assertSame(
-            __('plugins.generic.rankingPlugin.trendingDois.doiNotInJournal'),
+            __('plugins.generic.fgvOpenRank.trendingDois.doiNotInJournal'),
             $trendingDois->validate(self::DOI_ABSENT_FROM_JOURNAL)
         );
     }

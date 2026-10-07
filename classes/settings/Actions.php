@@ -1,6 +1,6 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\settings;
+namespace APP\plugins\generic\fgvOpenRank\classes\settings;
 
 use PKP\linkAction\LinkAction;
 use PKP\linkAction\request\AjaxModal;
@@ -32,9 +32,9 @@ class Actions
                     'configurationGuide',
                     new AjaxModal(
                         $this->manageUrl($request, 'configurationGuide'),
-                        __('plugins.generic.rankingPlugin.configurationGuide.title')
+                        __('plugins.generic.fgvOpenRank.configurationGuide.title')
                     ),
-                    __('plugins.generic.rankingPlugin.configurationGuide.action')
+                    __('plugins.generic.fgvOpenRank.configurationGuide.action')
                 ),
             ],
             $parentActions

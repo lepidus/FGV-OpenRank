@@ -1,11 +1,11 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\DataEncryption;
-use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
-use APP\plugins\generic\rankingPlugin\classes\settings\TabSettings;
-use APP\plugins\generic\rankingPlugin\RankingPlugin;
+use APP\plugins\generic\fgvOpenRank\classes\DataEncryption;
+use APP\plugins\generic\fgvOpenRank\classes\settings\AltmetricsApiKey;
+use APP\plugins\generic\fgvOpenRank\classes\settings\TabSettings;
+use APP\plugins\generic\fgvOpenRank\FgvOpenRankPlugin;
 use PHPUnit\Framework\Attributes\Test;
 use PKP\tests\PKPTestCase;
 
@@ -16,7 +16,7 @@ class TabSettingsTest extends PKPTestCase
 
     private function buildPluginMock(array &$settings)
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use (&$settings) {
                 return $settings[$key] ?? null;

@@ -127,7 +127,7 @@ As abas são servidas a partir de um cache por revista, guardado no cache do OJS
 Para atualizar manualmente, a partir da raiz do OJS:
 
 ```bash
-php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\rankingPlugin\classes\tasks\RankingCacheUpdateTask'
+php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\fgvOpenRank\classes\tasks\RankingCacheUpdateTask'
 ```
 
 ## Requisitos
@@ -189,8 +189,18 @@ A chave não é válida para a API do Altmetric. O plugin a verifica na API ante
 
 </details>
 
+## Atualização a partir da versão 1.0.0.0 (`rankingPlugin`)
+
+A partir da versão 1.1.0.0, o plugin fica em `plugins/generic/fgvOpenRank`, e não mais em `plugins/generic/rankingPlugin`. O OJS o trata como outro plugin, por isso o **Atualizar plugin** da linha antiga recusa o pacote ("O version.xml no plugin carregado contém um nome de plugin que não se encaixa no nome do plugin atualizado"). Para atualizar, como administrador do site:
+
+1. Acesse *Configurações → Website → Plugins → Enviar novo plugin* e envie o novo `.tar.gz`. As configurações de todas as revistas (habilitação, abas, textos, chave de API do Altmetric, lista manual de DOIs e posição) passam para o plugin novo, e o antigo fica desabilitado.
+2. Em *Plugins instalados*, o FGV OpenRank aparece duas vezes: o antigo, desabilitado, e o novo, habilitado. Clique em **Excluir** no desabilitado. Não o habilite de novo, senão o bloco aparece duas vezes.
+
+Também funciona excluir o antigo primeiro e enviar o novo depois, porque as configurações continuam no banco. Se `plugins/generic/rankingPlugin` for removido direto do servidor, o registro antigo é limpo na próxima vez que o OJS instalar um plugin ou for atualizado. O marcador `<div class="rankingTabs"></div>` não mudou, então o Conteúdo adicional não precisa ser editado.
+
 ## Atualização a partir da versão para OJS 3.3
 
+- **Diretório do plugin.** O plugin agora é `plugins/generic/fgvOpenRank`. Não copie `plugins/generic/rankingPlugin` da instalação 3.3; instale o plugin novo no lugar, e a atualização do OJS leva as configurações junto.
 - **Chave de API do Altmetric.** A versão 3.3 a criptografava com o `api_key_secret`, que o OJS 3.5 não usa mais. A atualização a criptografa de novo com o `app_key` do OJS, desde que o `api_key_secret` continue no `config.inc.php`; caso contrário, a chave é removida e precisa ser informada de novo, e até lá a aba Em alta usa a lista manual de DOIs.
 - No OJS 3.5 os DOIs deixaram de ser um plugin: são configurados em *Configurações → Distribuição → DOIs*.
 
@@ -206,7 +216,7 @@ npm run build
 Os testes unitários rodam a partir da raiz do OJS:
 
 ```bash
-php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml plugins/generic/rankingPlugin/tests
+php lib/pkp/lib/vendor/bin/phpunit --configuration lib/pkp/tests/phpunit.xml plugins/generic/fgvOpenRank/tests
 ```
 
 ## Créditos

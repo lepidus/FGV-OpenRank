@@ -1,15 +1,15 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\classes\services;
+namespace APP\plugins\generic\fgvOpenRank\classes\services;
 
-use APP\plugins\generic\rankingPlugin\classes\cache\MostCitedDois;
-use APP\plugins\generic\rankingPlugin\classes\cache\MostRead;
-use APP\plugins\generic\rankingPlugin\classes\cache\MostRecent;
-use APP\plugins\generic\rankingPlugin\classes\cache\TrendingSubmissions;
-use APP\plugins\generic\rankingPlugin\classes\factory\RankingSubmission;
-use APP\plugins\generic\rankingPlugin\classes\RankingTabs;
-use APP\plugins\generic\rankingPlugin\classes\settings\AltmetricsApiKey;
-use APP\plugins\generic\rankingPlugin\classes\settings\TrendingDois;
+use APP\plugins\generic\fgvOpenRank\classes\cache\MostCitedDois;
+use APP\plugins\generic\fgvOpenRank\classes\cache\MostRead;
+use APP\plugins\generic\fgvOpenRank\classes\cache\MostRecent;
+use APP\plugins\generic\fgvOpenRank\classes\cache\TrendingSubmissions;
+use APP\plugins\generic\fgvOpenRank\classes\factory\RankingSubmission;
+use APP\plugins\generic\fgvOpenRank\classes\RankingTabs;
+use APP\plugins\generic\fgvOpenRank\classes\settings\AltmetricsApiKey;
+use APP\plugins\generic\fgvOpenRank\classes\settings\TrendingDois;
 
 class RankingTabService
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\RankingPlugin;
-use APP\plugins\generic\rankingPlugin\classes\RankingDisplayPosition;
-use APP\plugins\generic\rankingPlugin\classes\settings\DisplayPositionSettings;
-use APP\plugins\generic\rankingPlugin\tests\helpers\HookCallbackForTests;
+use APP\plugins\generic\fgvOpenRank\FgvOpenRankPlugin;
+use APP\plugins\generic\fgvOpenRank\classes\RankingDisplayPosition;
+use APP\plugins\generic\fgvOpenRank\classes\settings\DisplayPositionSettings;
+use APP\plugins\generic\fgvOpenRank\tests\helpers\HookCallbackForTests;
 use PHPUnit\Framework\Attributes\Test;
 use PKP\tests\PKPTestCase;
 
@@ -15,7 +15,7 @@ class RankingDisplayPositionTest extends PKPTestCase
 
     private function buildPluginMock(array $settings)
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use ($settings) {
                 return $settings[$key] ?? null;

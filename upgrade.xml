@@ -2,5 +2,6 @@
 <!DOCTYPE install SYSTEM "../../../lib/pkp/dtd/install.dtd">
 
 <install>
-	<migration class="APP\plugins\generic\rankingPlugin\classes\migrations\LegacySettingsMigration" />
+	<migration class="APP\plugins\generic\fgvOpenRank\classes\migrations\PluginRenameMigration" />
+	<migration class="APP\plugins\generic\fgvOpenRank\classes\migrations\LegacySettingsMigration" />
 </install>

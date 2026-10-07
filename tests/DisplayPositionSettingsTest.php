@@ -1,22 +1,22 @@
 <?php
 
-namespace APP\plugins\generic\rankingPlugin\tests;
+namespace APP\plugins\generic\fgvOpenRank\tests;
 
-use APP\plugins\generic\rankingPlugin\classes\components\forms\DisplayPositionForm;
-use APP\plugins\generic\rankingPlugin\classes\RankingDisplayPosition;
-use APP\plugins\generic\rankingPlugin\classes\settings\DisplayPositionSettings;
-use APP\plugins\generic\rankingPlugin\RankingPlugin;
+use APP\plugins\generic\fgvOpenRank\classes\components\forms\DisplayPositionForm;
+use APP\plugins\generic\fgvOpenRank\classes\RankingDisplayPosition;
+use APP\plugins\generic\fgvOpenRank\classes\settings\DisplayPositionSettings;
+use APP\plugins\generic\fgvOpenRank\FgvOpenRankPlugin;
 use PHPUnit\Framework\Attributes\Test;
 use PKP\tests\PKPTestCase;
 
 class DisplayPositionSettingsTest extends PKPTestCase
 {
     private const CONTEXT_ID = 1;
-    private const ACTION = 'http://localhost/index.php/journal/api/v1/plugins/rankingplugin/settings';
+    private const ACTION = 'http://localhost/index.php/journal/api/v1/plugins/fgvopenrankplugin/settings';
 
     private function buildPluginMock(array &$settings)
     {
-        $plugin = $this->createMock(RankingPlugin::class);
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->method('getSetting')
             ->willReturnCallback(function ($contextId, $key) use (&$settings) {
                 return $settings[$key] ?? null;

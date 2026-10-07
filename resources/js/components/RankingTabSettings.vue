@@ -3,7 +3,7 @@
 		<PkpSpinner />
 		{{ t('common.loading') }}
 	</div>
-	<div v-else class="rankingTabSettings" :data-cy="`ranking-plugin-tab-form-${tabId}`">
+	<div v-else class="rankingTabSettings" :data-cy="`fgv-open-rank-tab-form-${tabId}`">
 		<PkpForm v-bind="form" @set="setForm" @success="notify(t('common.changesSaved'), 'success')" />
 		<RankingTrendingDois
 			v-if="tabId === 'trending'"

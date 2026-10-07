@@ -1,27 +1,27 @@
 <template>
 	<div class="rankingTrendingDois">
-		<PkpTable data-cy="ranking-plugin-trending-dois">
-			<template #label>{{ t('plugins.generic.rankingPlugin.trendingDois.title') }}</template>
+		<PkpTable data-cy="fgv-open-rank-trending-dois">
+			<template #label>{{ t('plugins.generic.fgvOpenRank.trendingDois.title') }}</template>
 			<template #top-controls>
 				<PkpButton
-					data-cy="ranking-plugin-trending-doi-add"
+					data-cy="fgv-open-rank-trending-doi-add"
 					:is-disabled="!doiForm"
 					@click="openDoiForm()"
 				>
-					{{ t('plugins.generic.rankingPlugin.trendingDois.add') }}
+					{{ t('plugins.generic.fgvOpenRank.trendingDois.add') }}
 				</PkpButton>
 			</template>
 			<PkpTableHeader>
 				<PkpTableColumn>
 					<span class="sr-only">{{ t('common.order') }}</span>
 				</PkpTableColumn>
-				<PkpTableColumn>{{ t('plugins.generic.rankingPlugin.trendingDois.doi') }}</PkpTableColumn>
+				<PkpTableColumn>{{ t('plugins.generic.fgvOpenRank.trendingDois.doi') }}</PkpTableColumn>
 				<PkpTableColumn>
 					<span class="sr-only">{{ t('common.moreActions') }}</span>
 				</PkpTableColumn>
 			</PkpTableHeader>
 			<PkpTableBody>
-				<PkpTableRow v-for="(item, index) in dois" :key="item.id" data-cy="ranking-plugin-trending-doi">
+				<PkpTableRow v-for="(item, index) in dois" :key="item.id" data-cy="fgv-open-rank-trending-doi">
 					<PkpTableCell>
 						<RankingOrderButtons
 							:label="item.doi"
@@ -34,12 +34,12 @@
 					<PkpTableCell :is-row-header="true">{{ item.doi }}</PkpTableCell>
 					<PkpTableCell>
 						<div class="rankingTrendingDois__actions">
-							<PkpButton data-cy="ranking-plugin-trending-doi-edit" @click="openDoiForm(item)">
+							<PkpButton data-cy="fgv-open-rank-trending-doi-edit" @click="openDoiForm(item)">
 								{{ t('common.edit') }}
 							</PkpButton>
 							<PkpButton
 								:is-warnable="true"
-								data-cy="ranking-plugin-trending-doi-delete"
+								data-cy="fgv-open-rank-trending-doi-delete"
 								@click="confirmDelete(item)"
 							>
 								{{ t('common.delete') }}
@@ -95,8 +95,8 @@ async function send(url, method, body = undefined) {
 function openDoiForm(item = null) {
 	openSettingsModal({
 		title: item
-			? t('plugins.generic.rankingPlugin.trendingDois.edit')
-			: t('plugins.generic.rankingPlugin.trendingDois.add'),
+			? t('plugins.generic.fgvOpenRank.trendingDois.edit')
+			: t('plugins.generic.fgvOpenRank.trendingDois.add'),
 		url: props.trendingDoiUrl,
 		params: item ? {doiId: item.id} : {},
 		formId: doiForm.value.id,
@@ -107,7 +107,7 @@ function openDoiForm(item = null) {
 function confirmDelete(item) {
 	openDialog({
 		title: t('common.delete'),
-		message: t('plugins.generic.rankingPlugin.trendingDois.deleteConfirm'),
+		message: t('plugins.generic.fgvOpenRank.trendingDois.deleteConfirm'),
 		actions: [
 			{
 				label: t('common.delete'),
