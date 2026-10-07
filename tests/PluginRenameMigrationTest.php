@@ -6,6 +6,7 @@ use APP\plugins\generic\fgvOpenRank\classes\migrations\PluginRenameMigration;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
+use PKP\install\Installer;
 use PKP\tests\DatabaseTestCase;
 
 class PluginRenameMigrationTest extends DatabaseTestCase
@@ -39,6 +40,20 @@ class PluginRenameMigrationTest extends DatabaseTestCase
         parent::tearDown();
     }
 
+    private function createMigration(string $legacyPluginPath): PluginRenameMigration
+    {
+        return new class ($legacyPluginPath) extends PluginRenameMigration {
+            public function __construct(private string $testLegacyPluginPath)
+            {
+            }
+
+            protected function getLegacyPluginPath(): string
+            {
+                return $this->testLegacyPluginPath;
+            }
+        };
+    }
+
     private function insertSetting(string $pluginName, int $contextId, string $name, string $value): void
     {
         DB::table('plugin_settings')->insert([
@@ -62,6 +77,7 @@ class PluginRenameMigrationTest extends DatabaseTestCase
 
     private function insertLegacyVersion(): void
     {
+        DB::table('versions')->where('product_type', 'plugins.generic')->where('product', 'rankingPlugin')->delete();
         DB::table('versions')->insert([
             'major' => 1,
             'minor' => 0,
@@ -92,7 +108,7 @@ class PluginRenameMigrationTest extends DatabaseTestCase
         $this->insertSetting(self::LEGACY_PLUGIN_NAME, self::FIRST_CONTEXT_ID, 'itemsPerTab_mostRead', '6');
         $this->insertSetting(self::LEGACY_PLUGIN_NAME, self::SECOND_CONTEXT_ID, 'enabled', '0');
 
-        (new PluginRenameMigration(self::MISSING_LEGACY_PATH))->up();
+        $this->createMigration(self::MISSING_LEGACY_PATH)->up();
 
         $this->assertSame(['enabled' => '1', 'itemsPerTab_mostRead' => '6'], $this->getSettings(self::PLUGIN_NAME, self::FIRST_CONTEXT_ID));
         $this->assertSame(['enabled' => '0'], $this->getSettings(self::PLUGIN_NAME, self::SECOND_CONTEXT_ID));
@@ -107,7 +123,7 @@ class PluginRenameMigrationTest extends DatabaseTestCase
         $this->insertSetting(self::LEGACY_PLUGIN_NAME, self::FIRST_CONTEXT_ID, 'mostReadDays_mostRead', '30');
         $this->insertSetting(self::PLUGIN_NAME, self::FIRST_CONTEXT_ID, 'itemsPerTab_mostRead', '8');
 
-        (new PluginRenameMigration(self::MISSING_LEGACY_PATH))->up();
+        $this->createMigration(self::MISSING_LEGACY_PATH)->up();
 
         $this->assertSame(
             ['itemsPerTab_mostRead' => '8', 'mostReadDays_mostRead' => '30'],
@@ -121,8 +137,8 @@ class PluginRenameMigrationTest extends DatabaseTestCase
     {
         $this->insertSetting(self::LEGACY_PLUGIN_NAME, self::FIRST_CONTEXT_ID, 'enabled', '1');
 
-        (new PluginRenameMigration(self::MISSING_LEGACY_PATH))->up();
-        (new PluginRenameMigration(self::MISSING_LEGACY_PATH))->up();
+        $this->createMigration(self::MISSING_LEGACY_PATH)->up();
+        $this->createMigration(self::MISSING_LEGACY_PATH)->up();
 
         $this->assertSame(['enabled' => '1'], $this->getSettings(self::PLUGIN_NAME, self::FIRST_CONTEXT_ID));
     }
@@ -132,7 +148,7 @@ class PluginRenameMigrationTest extends DatabaseTestCase
     {
         $this->insertLegacyVersion();
 
-        (new PluginRenameMigration(self::MISSING_LEGACY_PATH))->up();
+        $this->createMigration(self::MISSING_LEGACY_PATH)->up();
 
         $this->assertFalse($this->isLegacyVersionCurrent());
     }
@@ -142,7 +158,7 @@ class PluginRenameMigrationTest extends DatabaseTestCase
     {
         $this->insertLegacyVersion();
 
-        (new PluginRenameMigration(__DIR__))->up();
+        $this->createMigration(__DIR__)->up();
 
         $this->assertTrue($this->isLegacyVersionCurrent());
     }
@@ -154,8 +170,19 @@ class PluginRenameMigrationTest extends DatabaseTestCase
         $legacyKey = 'rankingPlugin-most_read_submissions-' . self::FIRST_CONTEXT_ID;
         Cache::forever($legacyKey, [['id' => 1]]);
 
-        (new PluginRenameMigration(self::MISSING_LEGACY_PATH))->up();
+        $this->createMigration(self::MISSING_LEGACY_PATH)->up();
 
         $this->assertNull(Cache::get($legacyKey));
+    }
+
+    #[Test]
+    public function itShouldRunWhenTheInstallerCreatesItFromUpgradeXml()
+    {
+        $this->insertSetting(self::LEGACY_PLUGIN_NAME, self::FIRST_CONTEXT_ID, 'enabled', '1');
+
+        $migration = new PluginRenameMigration($this->createMock(Installer::class), ['class' => PluginRenameMigration::class]);
+        $migration->up();
+
+        $this->assertSame(['enabled' => '1'], $this->getSettings(self::PLUGIN_NAME, self::FIRST_CONTEXT_ID));
     }
 }

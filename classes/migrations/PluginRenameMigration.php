@@ -22,13 +22,6 @@ class PluginRenameMigration extends Migration
         'trending_submissions',
     ];
 
-    private string $legacyPluginPath;
-
-    public function __construct(?string $legacyPluginPath = null)
-    {
-        $this->legacyPluginPath = $legacyPluginPath ?? Core::getBaseDir() . '/plugins/generic/' . self::LEGACY_PRODUCT;
-    }
-
     public function up(): void
     {
         $contextIds = DB::table('plugin_settings')
@@ -80,7 +73,7 @@ class PluginRenameMigration extends Migration
 
     private function retireLegacyVersion(): void
     {
-        if (is_dir($this->legacyPluginPath)) {
+        if (is_dir($this->getLegacyPluginPath())) {
             return;
         }
 
@@ -88,6 +81,11 @@ class PluginRenameMigration extends Migration
             ->where('product_type', self::LEGACY_PRODUCT_TYPE)
             ->where('product', self::LEGACY_PRODUCT)
             ->update(['current' => 0]);
+    }
+
+    protected function getLegacyPluginPath(): string
+    {
+        return Core::getBaseDir() . '/plugins/generic/' . self::LEGACY_PRODUCT;
     }
 
     private function forgetLegacyCaches(array $contextIds): void
