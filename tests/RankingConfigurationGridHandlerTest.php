@@ -19,7 +19,8 @@ class RankingConfigurationGridHandlerTest extends PKPTestCase
     {
         $plugin = $this->createMock(FgvOpenRankPlugin::class);
         $plugin->expects($this->never())->method('updateSetting');
-        Registry::set('plugins', ['generic' => ['fgvopenrankplugin' => $plugin]]);
+        $plugins = ['generic' => ['fgvopenrankplugin' => $plugin]];
+        Registry::set('plugins', $plugins);
 
         $request = $this->createMock(PKPRequest::class);
         $request->method('checkCSRF')->willReturn(false);
