@@ -4,6 +4,9 @@ import('lib.pkp.tests.PKPTestCase');
 import('lib.pkp.classes.cache.CacheManager');
 import('classes.submission.Submission');
 import('classes.submission.SubmissionDAO');
+import('classes.publication.Publication');
+import('classes.core.Request');
+import('lib.pkp.classes.core.Dispatcher');
 import('plugins.generic.fgvOpenRank.classes.factory.RankingSubmission');
 import('plugins.generic.fgvOpenRank.classes.HookCallback');
 import('plugins.generic.fgvOpenRank.FgvOpenRankPlugin');
@@ -72,6 +75,56 @@ class UnpublishedSubmissionsTest extends PKPTestCase
             'contextId' => self::CONTEXT_ID,
             'contextPath' => 'journal',
         ]));
+    }
+
+    private function buildPublishedSubmission()
+    {
+        $publication = $this->createMock(Publication::class);
+        $publication->method('getData')->willReturnCallback(function ($key) {
+            return $key === 'title' ? ['en_US' => 'Published article'] : null;
+        });
+        $publication->method('getLocalizedData')->willReturn(null);
+
+        $submission = $this->createMock(Submission::class);
+        $submission->method('getStatus')->willReturn(STATUS_PUBLISHED);
+        $submission->method('getCurrentPublication')->willReturn($publication);
+        $submission->method('getAuthorString')->willReturn('Alice Author');
+        $submission->method('getDatePublished')->willReturn('2026-01-02');
+        $submission->method('getBestId')->willReturn('7');
+        $submission->method('getId')->willReturn(7);
+
+        return $submission;
+    }
+
+    private function buildRequest()
+    {
+        $dispatcher = $this->createMock(Dispatcher::class);
+        $dispatcher->method('url')->willReturn('https://journal.test/article/view/7');
+        $request = $this->createMock(Request::class);
+        $request->method('getDispatcher')->willReturn($dispatcher);
+        return $request;
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldKeepPublishedSubmissionsResolvedByDoi()
+    {
+        $this->registerSubmissionDaoReturning($this->buildPublishedSubmission());
+        $params = [
+            'request' => $this->buildRequest(),
+            'mostCitedDois' => [self::DOI],
+            'bestScoreDois' => [self::DOI],
+            'contextId' => self::CONTEXT_ID,
+            'contextPath' => 'journal',
+        ];
+
+        foreach ([RankingSubmission::get('mostCited', $params), RankingSubmission::get('trending', $params)] as $list) {
+            $this->assertCount(1, $list);
+            $this->assertSame(['en_US' => 'Published article'], $list[0]['title']);
+            $this->assertSame('Alice Author', $list[0]['authorString']);
+            $this->assertSame('https://journal.test/article/view/7', $list[0]['submissionUrl']);
+        }
     }
 
     /**
