@@ -30,4 +30,29 @@ class RankingConfigurationGridHandlerTest extends PKPTestCase
 
         $this->assertFalse($response->getStatus());
     }
+
+    /**
+     * @test
+     */
+    public function itShouldReorderTabsWithAValidCsrfToken()
+    {
+        $savedSequences = [];
+        $plugin = $this->createMock(FgvOpenRankPlugin::class);
+        $plugin->method('updateSetting')
+            ->willReturnCallback(function ($contextId, $name, $value) use (&$savedSequences) {
+                $savedSequences[$name] = $value;
+            });
+        $plugins = ['generic' => ['fgvopenrankplugin' => $plugin]];
+        Registry::set('plugins', $plugins);
+
+        $request = $this->createMock(PKPRequest::class);
+        $request->method('checkCSRF')->willReturn(true);
+        $request->method('getUserVar')->willReturnMap([['data', json_encode(['1', '0'])]]);
+
+        $response = (new RankingConfigurationGridHandler())->saveSequence([], $request);
+
+        $this->assertTrue($response->getStatus());
+        $this->assertSame(1, $savedSequences['tabSequence_1'] ?? null);
+        $this->assertSame(2, $savedSequences['tabSequence_0'] ?? null);
+    }
 }
