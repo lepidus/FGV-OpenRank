@@ -5,6 +5,10 @@ namespace APP\plugins\generic\fgvOpenRank\classes;
 use APP\core\Application;
 use APP\plugins\generic\fgvOpenRank\classes\api\v1\FgvOpenRankController;
 use APP\plugins\generic\fgvOpenRank\classes\api\v1\FgvOpenRankSettingsController;
+use APP\plugins\generic\fgvOpenRank\classes\cache\MostRead;
+use APP\plugins\generic\fgvOpenRank\classes\cache\MostRecent;
+use APP\plugins\generic\fgvOpenRank\classes\cache\RankingCache;
+use APP\plugins\generic\fgvOpenRank\classes\cache\TrendingSubmissions;
 use APP\plugins\generic\fgvOpenRank\classes\settings\DisplayPositionSettings;
 use APP\template\TemplateManager;
 use PKP\core\APIRouter;
@@ -134,6 +138,22 @@ class HookCallback
         $this->loadResources($templateMgr, $request, $fgvOpenRankJavaScriptVariables);
 
         return false;
+    }
+
+    /**
+     * The submission lists are cached with the data of each submission, so an
+     * unpublished one would stay listed until the daily refresh. Forgetting
+     * them makes the next request rebuild the lists from published items only.
+     */
+    public function forgetSubmissionListCaches(string $hookName, array $args): bool
+    {
+        $submission = $args[2];
+
+        foreach ([MostRecent::CACHE_NAME, MostRead::CACHE_NAME, TrendingSubmissions::CACHE_NAME] as $cacheName) {
+            (new RankingCache($cacheName))->forget((int) $submission->getData('contextId'));
+        }
+
+        return Hook::CONTINUE;
     }
 
     public function insertRankingPlaceholder($hookName, $args)
