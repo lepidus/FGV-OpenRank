@@ -100,7 +100,7 @@ class RankingSubmission
         $mostCitedSubmissions = [];
         foreach ($mostCitedDois as $doi) {
             $submission = $submissionDao->getByPubId('doi', $doi, $contextId);
-            if ($submission) {
+            if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
                 $mostCitedSubmissions[] = self::formatSubmissionData(
                     $submission,
                     $request,
@@ -123,7 +123,7 @@ class RankingSubmission
         $trendingSubmissions = [];
         foreach ($bestScoreDois as $doi) {
             $submission = $submissionDao->getByPubId('doi', $doi, $contextId);
-            if ($submission) {
+            if ($submission && $submission->getStatus() == STATUS_PUBLISHED) {
                 $trendingSubmissions[] = self::formatSubmissionData(
                     $submission,
                     $request,

@@ -28,6 +28,7 @@ class FgvOpenRankPlugin extends GenericPlugin
             HookRegistry::register('Dispatcher::dispatch', array($hookCallback, 'setupFgvOpenRankAPIHandler'));
             HookRegistry::register('TemplateManager::display', [$hookCallback, 'handleMetricsData']);
             HookRegistry::register('Templates::Index::journal', [$hookCallback, 'insertRankingPlaceholder']);
+            HookRegistry::register('Publication::unpublish', [$hookCallback, 'forgetSubmissionListCaches']);
             HookRegistry::register('Schema::get::submission', array($hookCallback, 'addScoreFieldToSubmissionSchema'));
             HookRegistry::register('LoadComponentHandler', array($hookCallback, 'setupRankingConfigurationGridHandler'));
         }

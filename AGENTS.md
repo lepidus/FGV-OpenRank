@@ -52,13 +52,14 @@ php tools/runScheduledTasks.php
 
 ### Request flow
 
-The plugin hooks OJS at five points, registered in `FgvOpenRankPlugin::register` and dispatched through `classes/HookCallback.inc.php`:
+The plugin hooks OJS at six points, registered in `FgvOpenRankPlugin::register` and dispatched through `classes/HookCallback.inc.php`:
 
 1. **`TemplateManager::display`** (frontend) — on `frontend/pages/indexJournal.tpl`, `HookCallback::handleMetricsData` injects per-tab settings, localized titles/descriptions, the fetched `ranking.tpl` HTML, and a `window.app` JS blob; then enqueues `js/insertRankingTemplate.js` + `styles/*.css`.
 2. **`Templates::Index::journal`** (frontend) — `HookCallback::insertRankingPlaceholder` appends `<div class="rankingTabs"></div>` to the hook output for every plugin-owned `displayPosition` (`top`, `afterSection`, `bottom`), which lands it as the first child of whatever element the theme uses for the homepage. It is the only frontend template hook on that page; themes that override `indexJournal.tpl` keep the `{call_hook}` they copied from core. When the setting is `additionalContent` (the default) the callback emits nothing and the manager's own placeholder is used.
 3. **`Dispatcher::dispatch`** (API) — `HookCallback::setupFgvOpenRankAPIHandler` intercepts any path matching `api/v1/fgvOpenRank`, loads `api/v1/fgvOpenRank/FgvOpenRankHandler.inc.php`, runs its Slim app, and `exit`s. The plugin never registers through OJS's normal API discovery — **all routing for this plugin is the hook's responsibility**.
 4. **`LoadComponentHandler`** (admin) — enables `RankingConfigurationGridHandler` for the settings grid.
 5. **`Schema::get::submission`** — appends an `altmetricsScore` (nullable number, `apiSummary: true`) property to the submission JSON schema.
+6. **`Publication::unpublish`** — `HookCallback::forgetSubmissionListCaches` flushes the mostRecent, mostRead and trending file caches of the submission's context, because they hold submission data and would keep an unpublished item listed until the daily refresh. `getMostCited` and `getTrending` also drop any submission resolved by DOI whose status is not `STATUS_PUBLISHED`.
 
 There's also an `AcronPlugin::parseCronTab` hook (registered directly on the plugin, not the callback object, and registered even when the plugin is not enabled in the current request) that appends `scheduledTasks.xml` so Acron picks up `RankingCacheUpdateTask`. Acron rebuilds its crontab in whatever request runs it, often the installer or a journal where the plugin is off, so gating the hook on `getEnabled()` drops the task; the task skips disabled journals itself.
 
