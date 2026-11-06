@@ -9,9 +9,12 @@ use APP\plugins\generic\fgvOpenRank\classes\cache\TrendingSubmissions;
 use APP\plugins\generic\fgvOpenRank\classes\factory\RankingSubmission;
 use APP\plugins\generic\fgvOpenRank\classes\HookCallback;
 use APP\plugins\generic\fgvOpenRank\FgvOpenRankPlugin;
+use APP\core\Request;
+use APP\publication\Publication;
 use APP\submission\Repository as SubmissionRepository;
 use APP\submission\Submission;
 use PHPUnit\Framework\Attributes\Test;
+use PKP\core\Dispatcher;
 use PKP\tests\PKPTestCase;
 
 class UnpublishedSubmissionsTest extends PKPTestCase
@@ -56,6 +59,50 @@ class UnpublishedSubmissionsTest extends PKPTestCase
         $rankingSubmission = new RankingSubmission(self::CONTEXT_ID, 'journal', null);
 
         $this->assertSame([], $rankingSubmission->getTrending([self::DOI]));
+    }
+
+    private function buildPublishedSubmission(): Submission
+    {
+        $publication = $this->createMock(Publication::class);
+        $publication->method('getData')->willReturnCallback(fn ($key) => [
+            'title' => ['en' => 'Published article'],
+            'datePublished' => '2026-01-02',
+        ][$key] ?? null);
+        $publication->method('getAuthorString')->willReturn('Alice Author');
+        $publication->method('getLocalizedData')->willReturn(null);
+
+        $submission = $this->createMock(Submission::class);
+        $submission->method('getData')->willReturnCallback(
+            fn ($key) => $key === 'status' ? Submission::STATUS_PUBLISHED : null
+        );
+        $submission->method('getCurrentPublication')->willReturn($publication);
+        $submission->method('getBestId')->willReturn('7');
+        $submission->method('getId')->willReturn(7);
+
+        return $submission;
+    }
+
+    private function buildRequest(): Request
+    {
+        $dispatcher = $this->createMock(Dispatcher::class);
+        $dispatcher->method('url')->willReturn('https://journal.test/article/view/7');
+        $request = $this->createMock(Request::class);
+        $request->method('getDispatcher')->willReturn($dispatcher);
+        return $request;
+    }
+
+    #[Test]
+    public function itShouldKeepPublishedSubmissionsResolvedByDoi()
+    {
+        $this->bindRepositoryReturning($this->buildPublishedSubmission());
+        $rankingSubmission = new RankingSubmission(self::CONTEXT_ID, 'journal', $this->buildRequest());
+
+        foreach ([$rankingSubmission->getMostCited([self::DOI]), $rankingSubmission->getTrending([self::DOI])] as $list) {
+            $this->assertCount(1, $list);
+            $this->assertSame(['en' => 'Published article'], $list[0]['title']);
+            $this->assertSame('Alice Author', $list[0]['authorString']);
+            $this->assertSame('https://journal.test/article/view/7', $list[0]['submissionUrl']);
+        }
     }
 
     #[Test]
