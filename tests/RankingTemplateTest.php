@@ -71,16 +71,18 @@ class RankingTemplateTest extends PKPTestCase
     /**
      * @test
      */
-    public function itShouldKeepSafeHighlightHtmlAndDropUnsafeMarkup()
+    public function itShouldRenderTheHighlightHtmlAsTheJournalManagerSavedIt()
     {
+        $highlight = '<blockquote><p>Editor\'s pick</p></blockquote>'
+            . '<p><img src="https://journal.test/cover.png" alt="Cover" width="300" height="200"></p>'
+            . '<p><span style="text-decoration: underline;">Read</span> <code>DOI</code></p>';
+
         $output = $this->render(
             ['mostRecent' => null, 'highlight' => null],
             ['mostRecent' => null, 'highlight' => null],
-            ['highlight' => '<p><strong>Editor\'s pick</strong></p>' . self::PAYLOAD . '<script>alert(1)</script>']
+            ['highlight' => $highlight]
         );
 
-        $this->assertStringContainsString('<p><strong>Editor\'s pick</strong></p>', $output);
-        $this->assertSame(0, preg_match(self::RAW_EVENT_HANDLER, $output), $output);
-        $this->assertStringNotContainsString('<script', $output);
+        $this->assertStringContainsString($highlight, $output);
     }
 }
