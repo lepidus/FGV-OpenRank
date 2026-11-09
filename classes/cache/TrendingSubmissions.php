@@ -8,6 +8,8 @@ use APP\plugins\generic\fgvOpenRank\classes\settings\TrendingDois;
 
 class TrendingSubmissions
 {
+    public const CACHE_NAME = 'trending_submissions';
+
     private $bestAltmetricsScoreDois;
     private RankingCache $cache;
 
@@ -20,7 +22,7 @@ class TrendingSubmissions
         $bestAltmetricsScoreDois = null
     ) {
         $this->bestAltmetricsScoreDois = $bestAltmetricsScoreDois;
-        $this->cache = new RankingCache('trending_submissions');
+        $this->cache = new RankingCache(self::CACHE_NAME);
     }
 
     public function getTrendingSubmissions(int $limit): array

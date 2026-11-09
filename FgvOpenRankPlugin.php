@@ -29,6 +29,7 @@ class FgvOpenRankPlugin extends GenericPlugin implements HasTaskScheduler
             Hook::add('Dispatcher::dispatch', [$hookCallback, 'setupApiControllers']);
             Hook::add('TemplateManager::display', [$hookCallback, 'handleMetricsData']);
             Hook::add('Templates::Index::journal', [$hookCallback, 'insertRankingPlaceholder']);
+            Hook::add('Publication::unpublish', [$hookCallback, 'forgetSubmissionListCaches']);
             $this->addBackendAssets();
         }
 

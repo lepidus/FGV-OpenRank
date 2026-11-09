@@ -44,11 +44,12 @@ php lib/pkp/tools/scheduler.php test --name='APP\plugins\generic\fgvOpenRank\cla
 
 ### Request flow
 
-`FgvOpenRankPlugin::register` registers three hooks, dispatched through `classes/HookCallback.php`, and adds the settings bundle (`public/build`) to backend pages:
+`FgvOpenRankPlugin::register` registers four hooks, dispatched through `classes/HookCallback.php`, and adds the settings bundle (`public/build`) to backend pages:
 
 1. **`TemplateManager::display`** (frontend): on `frontend/pages/indexJournal.tpl`, `HookCallback::handleMetricsData` injects per-tab settings, localized titles/descriptions, the fetched `ranking.tpl` HTML, and a `window.app` JS blob; then enqueues `js/insertRankingTemplate.js` + `styles/*.css`.
 2. **`Templates::Index::journal`** (frontend): `HookCallback::insertRankingPlaceholder` appends `<div class="rankingTabs"></div>` to the hook output for every plugin-owned `displayPosition` (`top`, `afterSection`, `bottom`), which lands it as the first child of whatever element the theme uses for the homepage. When the setting is `additionalContent` (the default) the callback emits nothing and the manager's own placeholder is used.
 3. **`Dispatcher::dispatch`** (API): `HookCallback::setupApiControllers` wraps one of two `PKPBaseController`s in an `APIHandler`, runs its routes and `exit`s. `FgvOpenRankController` (`api/v1/fgvOpenRank/{mostRecent,mostRead,mostCitedSubmissions,trendingSubmissions}`) is public and only needs a context. `FgvOpenRankSettingsController` (`api/v1/plugins/fgvopenrankplugin/settings`) needs a logged-in manager or site admin. The settings controller is matched first, because its path also starts with the plugin name. The plugin does not use `APIHandler::endpoints::plugin`, and it does not extend `PluginSettingsController` or use `PublicAccessPolicy`, because those only exist from 3.5.0-4 on.
+4. **`Publication::unpublish`**: `HookCallback::forgetSubmissionListCaches` forgets the mostRecent, mostRead and trending caches of the submission's context, because they hold submission data and would keep an unpublished item listed until the daily refresh.
 
 Route parameters must be read with `$illuminateRequest->route('name')`: the API router passes the context path as the first positional argument, so a `string $tabId` method parameter receives the journal path instead.
 
@@ -60,7 +61,7 @@ The scheduled task is registered through `HasTaskScheduler::registerSchedules` (
 
 ### The four-tab pipeline
 
-Each tab is a pair of **cache class** (in `classes/cache/`) + **query method** on `RankingSubmission` (`classes/factory/RankingSubmission.php`), which is built per context with the request and resolves submissions from the collector, the usage stats or a DOI list. All caches go through `RankingCache`, a thin wrapper on Laravel's `Cache` facade keyed `fgvOpenRank-{name}-{contextId}` and stored forever. The pattern is: `get*` reads the cache and, on miss or empty list, calls `refreshCache`; `refreshCache` hits the source, writes the cache, returns the fresh data.
+Each tab is a pair of **cache class** (in `classes/cache/`) + **query method** on `RankingSubmission` (`classes/factory/RankingSubmission.php`), which is built per context with the request and resolves submissions from the collector, the usage stats or a DOI list. All caches go through `RankingCache`, a thin wrapper on Laravel's `Cache` facade keyed `fgvOpenRank-{name}-{contextId}` and stored forever. The pattern is: `get*` reads the cache and, on miss or empty list, calls `refreshCache`; `refreshCache` hits the source, writes the cache, returns the fresh data. Only published submissions are listed: `getMostRead`, `getMostCited` and `getTrending` drop any submission whose status is not `STATUS_PUBLISHED`, including those reached through a DOI.
 
 | Tab         | Source                                  | Cache class                   | DOI-indirection |
 |-------------|-----------------------------------------|-------------------------------|-----------------|

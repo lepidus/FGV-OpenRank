@@ -4,7 +4,7 @@
             <li{if $smarty.foreach.tabLoop.first} class="active"{/if} role="presentation">
                 <a href="#{if $tabId == 'mostRecent'}mostRecentSubmissions{elseif $tabId == 'mostRead'}mostReadSubmissions{elseif $tabId == 'mostCited'}mostCitedSubmissions{elseif $tabId == 'trending'}trendingSubmissions{else}{$tabId}{/if}" aria-controls="{if $tabId == 'mostRecent'}mostRecentSubmissions{elseif $tabId == 'mostRead'}mostReadSubmissions{elseif $tabId == 'mostCited'}mostCitedSubmissions{elseif $tabId == 'trending'}trendingSubmissions{else}{$tabId}{/if}" role="tab" data-toggle="tab">
                     {if $customTitles.$tabId}
-                        {$customTitles.$tabId}
+                        {$customTitles.$tabId|escape}
                     {else}
                         {translate key="plugins.generic.fgvOpenRank.tabs.{$tabId}.defaultTitle"}
                     {/if}
@@ -20,7 +20,7 @@
                     <div>
                         <p><em>
                             {if $customDescriptions.$tabId}
-                                {$customDescriptions.$tabId}
+                                {$customDescriptions.$tabId|escape}
                                 <hr>
                             {else}
                                 {if $tabId != 'highlight'}
@@ -31,6 +31,7 @@
                         </em></p>
                     </div>
                     {if $tabId == 'highlight'}
+                        {* Rich text from the journal manager, printed without filtering like the core does with additionalHomeContent *}
                         {$highlightCustomContent.highlight}
                     {else}
                         <div id="{if $tabId == 'mostRecent'}mostRecentSubmissions{elseif $tabId == 'mostRead'}mostReadSubmissions{elseif $tabId == 'mostCited'}mostCitedSubmissions{elseif $tabId == 'trending'}trendingSubmissions{else}{$tabId}{/if}Container">

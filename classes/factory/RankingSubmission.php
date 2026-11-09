@@ -66,7 +66,7 @@ class RankingSubmission
         $mostCitedSubmissions = [];
         foreach ($dois as $doi) {
             $submission = Repo::submission()->getByDoi($doi, $this->contextId);
-            if ($submission) {
+            if ($this->isPublished($submission)) {
                 $mostCitedSubmissions[] = $this->formatSubmissionData($submission);
             }
         }
@@ -78,12 +78,17 @@ class RankingSubmission
         $trendingSubmissions = [];
         foreach ($dois as $doi) {
             $submission = Repo::submission()->getByDoi($doi, $this->contextId);
-            if ($submission) {
+            if ($this->isPublished($submission)) {
                 $trendingSubmissions[] = $this->formatSubmissionData($submission, ['doi' => $doi]);
             }
         }
 
         return $trendingSubmissions;
+    }
+
+    private function isPublished(?Submission $submission): bool
+    {
+        return $submission && $submission->getData('status') == Submission::STATUS_PUBLISHED;
     }
 
     private function formatSubmissionData(Submission $submission, array $additionalData = []): array
