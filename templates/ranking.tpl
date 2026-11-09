@@ -31,7 +31,8 @@
                         </em></p>
                     </div>
                     {if $tabId == 'highlight'}
-                        {$highlightCustomContent.highlight|strip_unsafe_html}
+                        {* Rich text from the journal manager, printed without filtering like the core does with additionalHomeContent *}
+                        {$highlightCustomContent.highlight}
                     {else}
                         <div id="{if $tabId == 'mostRecent'}mostRecentSubmissions{elseif $tabId == 'mostRead'}mostReadSubmissions{elseif $tabId == 'mostCited'}mostCitedSubmissions{elseif $tabId == 'trending'}trendingSubmissions{else}{$tabId}{/if}Container">
                             <div class="loading-message">
