@@ -6,6 +6,7 @@ import('plugins.generic.fgvOpenRank.tests.helpers.ClientInterfaceForTests');
 
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
@@ -14,6 +15,8 @@ class AltmetricsApiClientTest extends PKPTestCase
 {
     private const ISSN = '1234-5678';
     private const LIMIT = 4;
+    private const API_KEY = 'secret-altmetric-key';
+    private const URI_WITH_KEY = 'https://api.altmetric.com/v1/citations/at?num_results=4&issns=1234-5678&order_by=score&key=secret-altmetric-key';
 
     /**
      * @test
@@ -113,5 +116,66 @@ class AltmetricsApiClientTest extends PKPTestCase
 
         $apiClient = new Altmetrics($httpClientMock);
         $apiClient->fetchBestScoreSubmissions(self::ISSN, self::LIMIT);
+    }
+
+    private function fetchAndCaptureLog($httpClientMock)
+    {
+        $logFile = tempnam(sys_get_temp_dir(), 'fgvOpenRankLog');
+        $previousLog = ini_set('error_log', $logFile);
+        $message = null;
+
+        try {
+            (new Altmetrics($httpClientMock))->fetchBestScoreSubmissions(self::ISSN, self::LIMIT, self::API_KEY);
+        } catch (Exception $error) {
+            $message = $error->getMessage();
+        } finally {
+            ini_set('error_log', $previousLog);
+            $log = file_get_contents($logFile);
+            unlink($logFile);
+        }
+
+        return [$message, $log];
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldNotWriteTheApiKeyToTheLogWhenTheRequestFails()
+    {
+        $request = new Request('GET', self::URI_WITH_KEY);
+        $failures = [
+            new ClientException('Client error: `GET ' . self::URI_WITH_KEY . '` resulted in a `403 Forbidden` response', $request, new Response(403)),
+            new ServerException('Server error: `GET ' . self::URI_WITH_KEY . '` resulted in a `502 Bad Gateway` response', $request, new Response(502)),
+            new TransferException('cURL error 28: Operation timed out for ' . self::URI_WITH_KEY),
+        ];
+
+        foreach ($failures as $failure) {
+            $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
+            $httpClientMock->method('request')->willThrowException($failure);
+
+            list($message, $log) = $this->fetchAndCaptureLog($httpClientMock);
+
+            $this->assertNotNull($message);
+            $this->assertNotSame('', $log, get_class($failure));
+            $this->assertStringNotContainsString(self::API_KEY, $log, get_class($failure));
+            $this->assertStringNotContainsString(self::API_KEY, $message, get_class($failure));
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldNotPutTheApiKeyInTheMessageOfOtherGuzzleErrors()
+    {
+        $failure = new class ('Invalid URI ' . self::URI_WITH_KEY) extends \RuntimeException implements GuzzleException {
+        };
+        $httpClientMock = $this->createMock(ClientInterfaceForTests::class);
+        $httpClientMock->method('request')->willThrowException($failure);
+
+        list($message, $log) = $this->fetchAndCaptureLog($httpClientMock);
+
+        $this->assertStringStartsWith('Altmetrics Error: ', $message);
+        $this->assertStringNotContainsString(self::API_KEY, $message);
+        $this->assertStringNotContainsString(self::API_KEY, $log);
     }
 }

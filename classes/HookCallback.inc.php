@@ -4,6 +4,8 @@ import('plugins.generic.fgvOpenRank.classes.RankingDisplayPosition');
 
 class HookCallback
 {
+    public const SUBMISSION_LIST_CACHES = ['most_recent_submissions', 'most_read_submissions', 'trending_submissions'];
+
     private $plugin;
 
     public function __construct($plugin)
@@ -158,6 +160,28 @@ class HookCallback
         );
 
         return false;
+    }
+
+    /**
+     * The submission lists are cached with the data of each submission, so an
+     * unpublished one would stay listed until the daily refresh. Flushing them
+     * makes the next request rebuild the lists from published items only.
+     */
+    public function forgetSubmissionListCaches($hookName, $args)
+    {
+        $submission = $args[2];
+        $cacheManager = CacheManager::getManager();
+
+        foreach (self::SUBMISSION_LIST_CACHES as $cacheName) {
+            $cacheManager->getFileCache((int) $submission->getData('contextId'), $cacheName, [$this, 'cacheDismiss'])->flush();
+        }
+
+        return false;
+    }
+
+    public function cacheDismiss()
+    {
+        return null;
     }
 
     public function insertRankingPlaceholder($hookName, $args)

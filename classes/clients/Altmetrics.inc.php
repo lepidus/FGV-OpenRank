@@ -3,6 +3,7 @@
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\TransferException;
 
 class Altmetrics
@@ -36,26 +37,37 @@ class Altmetrics
             );
             return json_decode($response->getBody()->getContents(), true);
         } catch (ServerException $error) {
-            error_log($error->getMessage());
+            error_log($this->describeFailure($error));
             throw new \Exception(
                 __("plugins.generic.fgvOpenRank.client.altmetrics.serverError")
             );
         } catch (ClientException $error) {
-            error_log($error->getMessage());
+            error_log($this->describeFailure($error));
             throw new \Exception(
                 __("plugins.generic.fgvOpenRank.client.altmetrics.clientError")
             );
         } catch (TransferException $error) {
-            error_log($error->getMessage());
+            error_log($this->describeFailure($error));
             throw new \Exception(
                 __("plugins.generic.fgvOpenRank.client.altmetrics.transferError")
             );
         } catch (GuzzleException $error) {
-            throw new \Exception(
-                "Altmetrics Error: " . $error->getMessage(),
-                0,
-                $error
-            );
+            throw new \Exception('Altmetrics Error: ' . $this->describeFailure($error));
         }
+    }
+
+    /**
+     * Guzzle messages carry the request URI, whose query holds the API key,
+     * so only the exception class and the HTTP status are reported.
+     */
+    private function describeFailure(GuzzleException $error): string
+    {
+        $description = 'Altmetric request failed: ' . (new \ReflectionClass($error))->getShortName();
+
+        if ($error instanceof RequestException && $error->hasResponse()) {
+            $description .= ' (HTTP ' . $error->getResponse()->getStatusCode() . ')';
+        }
+
+        return $description;
     }
 }

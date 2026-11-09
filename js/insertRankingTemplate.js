@@ -147,39 +147,45 @@
                         const articleItem = $('<div class="article-item"></div>');
 
                         if (submission.coverImage) {
-                            const coverHtml = `
-                                <div class="article-cover">
-                                    <div class="item cover_image">
-                                        <div class="sub_item">
-                                            <img src="${submission.coverImage.coverImageUrl}" alt="${submission.altText || ''}">
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                            articleItem.append(coverHtml);
+                            const coverImage = $('<img>')
+                                .attr('src', submission.coverImage.coverImageUrl)
+                                .attr('alt', submission.altText || '');
+                            articleItem.append(
+                                $('<div class="article-cover"></div>').append(
+                                    $('<div class="item cover_image"></div>').append(
+                                        $('<div class="sub_item"></div>').append(coverImage)
+                                    )
+                                )
+                            );
                         }
 
-                        const detailsHtml = `
-                            <div class="article-details">
-                                <h3><a href="${submission.submissionUrl}">${localize(submission.title)}</a></h3>
-                                <div class="article-authors">
-                                    <div>${submission.authorString}</div>
-                                </div>
-                                <div class="article-date-published">
-                                    <p>${localizeDatePublished(submission.datePublished)}</p>
-                                </div>
-                            </div>
-                        `;
-                        articleItem.append(detailsHtml);
+                        const titleLink = $('<a></a>')
+                            .attr('href', submission.submissionUrl)
+                            .append(sanitizeTitle(localize(submission.title)));
+                        const details = $('<div class="article-details"></div>')
+                            .append($('<h3></h3>').append(titleLink))
+                            .append(
+                                $('<div class="article-authors"></div>').append(
+                                    $('<div></div>').text(submission.authorString || '')
+                                )
+                            )
+                            .append(
+                                $('<div class="article-date-published"></div>').append(
+                                    $('<p></p>').text(localizeDatePublished(submission.datePublished))
+                                )
+                            );
+                        articleItem.append(details);
 
                         if (tabId === 'trending') {
-                            const altmetricsBadgeHtml = `
-                                <script type='text/javascript' src='https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js'></script>
-                                <div class="article-cover">
-                                    <div class='altmetric-embed' data-badge-type='donut' data-doi="${submission.doi}"></div>
-                                </div>
-                            `;
-                            articleItem.append(altmetricsBadgeHtml);
+                            articleItem.append(
+                                "<script type='text/javascript' src='https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js'></script>"
+                            );
+                            articleItem.append(
+                                $('<div class="article-cover"></div>').append(
+                                    $('<div class="altmetric-embed" data-badge-type="donut"></div>')
+                                        .attr('data-doi', submission.doi || '')
+                                )
+                            );
                         }
 
                         container.append(articleItem);
@@ -263,6 +269,38 @@
 
             showPage(currentPage);
             renderPagination();
+        }
+
+        // Titles may carry the inline formatting the core allows in titles
+        // (allowed_title_html); everything else is kept as plain text.
+        // DOMParser builds an inert document, so nothing in the title runs
+        // or loads while it is parsed.
+        function sanitizeTitle(title) {
+            const allowedTags = ['B', 'STRONG', 'I', 'EM', 'U', 'SUP', 'SUB'];
+            const parsed = new DOMParser().parseFromString(
+                '<body>' + String(title || '') + '</body>',
+                'text/html'
+            );
+            const fragment = document.createDocumentFragment();
+
+            function copyAllowed(source, target) {
+                source.childNodes.forEach(function(node) {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        target.appendChild(document.createTextNode(node.nodeValue));
+                    } else if (node.nodeType === Node.ELEMENT_NODE) {
+                        if (allowedTags.indexOf(node.tagName) !== -1) {
+                            const element = document.createElement(node.tagName.toLowerCase());
+                            copyAllowed(node, element);
+                            target.appendChild(element);
+                        } else if (node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE') {
+                            copyAllowed(node, target);
+                        }
+                    }
+                });
+            }
+
+            copyAllowed(parsed.body, fragment);
+            return fragment;
         }
 
         function localize(multilingualData) {
