@@ -21,6 +21,7 @@ use PKP\core\PKPBaseController;
 use PKP\core\PKPRequest;
 use PKP\facades\Locale;
 use PKP\security\Role;
+use PKP\security\authorization\CanAccessSettingsPolicy;
 use PKP\security\authorization\ContextRequiredPolicy;
 use PKP\security\authorization\PolicySet;
 use PKP\security\authorization\RoleBasedHandlerOperationPolicy;
@@ -43,7 +44,7 @@ class FgvOpenRankSettingsController extends PKPBaseController
         return [
             'has.user',
             'has.context',
-            self::roleAuthorizer([Role::ROLE_ID_SITE_ADMIN, Role::ROLE_ID_MANAGER]),
+            self::roleAuthorizer([Role::ROLE_ID_MANAGER]),
         ];
     }
 
@@ -80,6 +81,7 @@ class FgvOpenRankSettingsController extends PKPBaseController
             $rolePolicy->addPolicy(new RoleBasedHandlerOperationPolicy($request, $role, $operations));
         }
         $this->addPolicy($rolePolicy);
+        $this->addPolicy(new CanAccessSettingsPolicy());
 
         return parent::authorize($request, $args, $roleAssignments);
     }
